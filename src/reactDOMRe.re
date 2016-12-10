@@ -1,11 +1,11 @@
-external render : ReactRe.reactElement => DomRe.element => unit = "render" [@@bs.val] [@@bs.module
-                                                                    "reactDOM"
+external render : ReactRe.reactElement => ReasonJs.Document.element => unit = "render" [@@bs.val] [@@bs.module
+                                                                    "react-dom"
                                                                     ];
 
-external unmountComponentAtNode : DomRe.element => unit = "unmountComponentAtNode" [@@bs.val] [@@bs.module
-                                                                    "reactDOM"
+external unmountComponentAtNode : ReasonJs.Document.element => unit = "unmountComponentAtNode" [@@bs.val] [@@bs.module
+                                                                    "react-dom"
                                                                     ];
 
-external findDOMNode : 'reactRef => DomRe.element = "findDOMNode" [@@bs.val] [@@bs.module
-                                                                    "reactDOM"
+external findDOMNode : 'reactRef => ReasonJs.Document.element = "findDOMNode" [@@bs.val] [@@bs.module
+                                                                    "react-dom"
                                                                     ];
