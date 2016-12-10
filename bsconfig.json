@@ -1,3 +1,7 @@
+/* This is the BuckleScript configuration file. Note that this is a comment;
+  BuckleScript comes with a JSON parser that supports comments and trailing
+  comma. If this screws with your editor highlighting, please tell us by filing
+  an issue! */
 {
   "name" : "ReactRe",
   "version": "0.0.0",
@@ -11,7 +15,7 @@
       "public":"all",
       "files": {
         "slow-re": "[A-Za-z]+\\.re"
-      }
-    }
-  ]
+      },
+    },
+  ],
 }
