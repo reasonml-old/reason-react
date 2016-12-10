@@ -3,7 +3,7 @@
   comma. If this screws with your editor highlighting, please tell us by filing
   an issue! */
 {
-  "name" : "ReactRe",
+  "name" : "ReactRePureExample",
   "version": "0.0.0",
   "ppx-flags": ["./node_modules/reason/reactjs_jsx_ppx.native"],
   "bsc-flags": ["-bs-sort-imports", "-bin-annot"],
@@ -12,10 +12,37 @@
   "sources": [
     {
       "dir": "src",
-      "public":"all",
+      "public": "all",
       "files": {
-        "slow-re": "[A-Za-z]+\\.re"
+        "slow-re": "[A-Za-z]+\\.re",
       },
+    },
+    {
+      "dir": "node_modules",
+      "subdirs": [
+        {
+          "dir": "reason-js",
+          "subdirs": [
+            {
+              "dir": "src",
+              "files": {
+                "slow-re": "[A-Za-z]+\\.re"
+              },
+            }
+          ],
+        }
+      ],
+    },
+    {
+      "dir": "examples",
+      "subdirs": [
+        {
+          "dir": "pure",
+          "files": {
+            "slow-re": "[A-Za-z]+\\.re"
+          },
+        }
+      ],
     },
   ],
 }
