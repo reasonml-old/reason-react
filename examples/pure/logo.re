@@ -1,8 +1,8 @@
 include ReactRe.StatelessComponent;
 
-type props = unit;
+type props = {message: string};
 
-let render _ => <div> (ReactRe.toElement "Hello!") </div>;
+let render {props} => <div> (ReactRe.toElement props.message) </div>;
 
 let (comp, wrapProps) =
   createClass
@@ -14,4 +14,5 @@ let (comp, wrapProps) =
     ::componentWillUnmount
     render;
 
-let createElement ::ref=? ::key=? children => wrapProps ::ref ::key ::children ();
+let createElement ::ref=? ::key=? ::message children =>
+  wrapProps ::ref ::key ::children {message: message};
