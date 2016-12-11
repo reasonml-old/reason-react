@@ -6,23 +6,28 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bsb -w",
-    "build": "webpack ./lib/js/examples/pure/index.js --output-filename ./finalOutput/out.js"
+    "build": "webpack ./lib/js/examples/pure/index.js --output-filename ./finalOutput/out.js",
+    "env": "eval $(dependencyEnv) && env"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "bs-platform": "^1.3.3",
-    "reason": "https://github.com/facebook/Reason.git",
-    "webpack": "^1.14.0",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0"
+    "@opam-alpha/merlin": "2.5.0"
   },
   "peerDependencies": {
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
   "dependencies": {
-    "reason-js": "0.0.1"
+    "nopam": "https://github.com/yunxing/nopam.git",
+    "reason-js": "0.0.1",
+    "@opam-alpha/ocaml": "4.02.3",
+    "reason": "https://github.com/facebook/reason.git",
+    "dependency-env": "https://github.com/npm-ml/dependency-env.git",
+    "bs-platform": "^1.3.3",
+    "webpack": "^1.14.0",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
   }
 }
