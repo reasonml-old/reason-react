@@ -1,3 +1,4 @@
 bsconfig.json
 .merlin
 /lib/
+!/lib/ocaml

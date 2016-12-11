@@ -73,4 +73,16 @@ And now, we provide a macro (ppx), `reactjs_jsx_ppx`, that transforms the above 
 
 3. Finally, `MyReasonComponent.createElement foo::bar [child1, child2][@JSX]` stays the same, with the `[@JSX]` part stripped.
 
-## Idioms
+## Bindings Usage
+
+See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS.
+
+To declare a component, you do the usual React stuff, except now all your functions can be standalone and take in `state`, `props`, and the rest as arguments instead.*
+
+
+
+
+
+
+
+*This was the original React API envisioned three years ago; back then we had many other social challenged that prompted us to make tradeoffs in terms of API for the sake of familiarity; Now that React's commonplace, we can finally go back to the original plan =).

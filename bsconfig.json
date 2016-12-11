@@ -9,6 +9,7 @@
   "bsc-flags": ["-bs-sort-imports", "-bin-annot"],
   "refmt": "./node_modules/reason/refmt_impl.native",
   "generate-merlin": true,
+  "bs-dependencies": ["reason-js"],
   "sources": [
     {
       "dir": "src",
@@ -16,22 +17,6 @@
       "files": {
         "slow-re": "[A-Za-z]+\\.re",
       },
-    },
-    {
-      "dir": "node_modules",
-      "subdirs": [
-        {
-          "dir": "reason-js",
-          "subdirs": [
-            {
-              "dir": "src",
-              "files": {
-                "slow-re": "[A-Za-z]+\\.re"
-              },
-            }
-          ],
-        }
-      ],
     },
     {
       "dir": "examples",
