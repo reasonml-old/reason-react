@@ -17,3 +17,30 @@ npm run build
 
 ## Usage
 See the `examples/` folder.
+
+
+## Known Issues:
+
+`bsb` currently builds a `.merlin` file that doesn't quite work right for some reason.
+Comment it out before editing, and it won't fail, but you won't get any type checking by merlin.
+To fix the `.merlin` file,  make it look something like this (by hand).
+
+
+```
+####{BSB GENERATED: NO EDIT
+S /absolute/path/to/rehydrate/node_modules/bs-platform/bin/../lib/ocaml
+B /absolute/path/to/rehydrate/node_modules/bs-platform/bin/../lib/ocaml
+FLG -ppx bsppx.exe
+FLG -ppx reactjs_jsx_ppx
+
+S examples
+B lib/bs/examples
+
+S examples/pure
+B lib/bs/examples/pure
+
+S src
+B lib/bs/src
+
+####BSB GENERATED: NO EDIT}
+```
