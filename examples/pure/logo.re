@@ -1,19 +1,17 @@
-include ReactRe.StatelessComponent;
+/**
+ * Logo component.
+ */
+open ReactRe;
 
-type props = {message: string};
+type logoProps = {message: string};
 
-let render {props} => <div> (ReactRe.toElement props.message) </div>;
+include ReactRe.CreateComponent {
+  include ReactRe.StatelessComponent;
+  type props = logoProps;
+  let name = "Logo";
+  let render {props} => <div> (ReactRe.toElement props.message) </div>;
+  /* let createElement = fun wrapProps => (fun ::message children => wrapProps {message: message} children); */
+  let createElement = fun wrapProps => fun ::message children => wrapProps {message: message} children;
+};
 
-/* This part is the secret sauce that briges to Reactjs. It's a bit verbose (but consistentt) right now; We'll
-   find a way to make it shorter in the future. */
-let (comp, wrapProps) =
-  createClass
-    name::"Logo"
-    ::getInstanceVariables
-    ::componentDidMount
-    ::componentWillReceiveProps
-    ::componentDidUpdate
-    ::componentWillUnmount
-    render;
-
-let createElement ::message => wrapProps {message: message};
+let createElement ::message children => wrapProps {message: message} children;
