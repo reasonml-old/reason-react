@@ -5,9 +5,9 @@
 {
   "name" : "ReactRePureExample",
   "version": "0.0.0",
-  "ppx-flags": ["./node_modules/reason/reactjs_jsx_ppx.native"],
+  "ppx-flags": ["reason/reactjs_jsx_ppx.native"],
   "bsc-flags": ["-bs-sort-imports", "-bin-annot"],
-  "refmt": "./node_modules/reason/refmt_impl.native",
+  "refmt": "reason/refmt_impl.native",
   "generate-merlin": true,
   "bs-dependencies": ["reason-js"],
   "sources": [
