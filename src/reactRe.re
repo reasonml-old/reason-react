@@ -267,7 +267,7 @@ module StatelessComponent = {
 
           pub updaterMethod callback => {
             let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedUpdaterCallbacks;
-            if (List.length results > 0) {
+            if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
             }
@@ -301,7 +301,7 @@ module StatelessComponent = {
 
           pub refSetterMethod callback => {
             let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedRefCallbacks;
-            if (List.length results > 0) {
+            if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
             } else {
@@ -531,7 +531,7 @@ module Component = {
           };
           pub refSetterMethod callback => {
             let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedRefCallbacks;
-            if (List.length results > 0) {
+            if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
             }
@@ -567,7 +567,7 @@ module Component = {
 
           pub updaterMethod callback => {
             let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedUpdaterCallbacks;
-            if (List.length results > 0) {
+            if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
             }
