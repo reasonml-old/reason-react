@@ -27,7 +27,7 @@
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "reason-js": "0.0.4",
-    "nopam": "https://github.com/reasonml/nopam.git",
+    "nopam": "*",
     "dependency-env": "*"
   }
 }
