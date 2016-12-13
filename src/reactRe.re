@@ -199,8 +199,8 @@ module StatelessComponent = {
           val mutable instanceVariables = None;
           val mutable memoizedUpdaterCallbacks = [];
           val mutable memoizedRefCallbacks = [];
-          pub componentWillMount () => this##instanceVariables#=(Some (getInstanceVariables ()));
-          pub componentDidMount () => {
+          pri componentWillMount () => this##instanceVariables#=(Some (getInstanceVariables ()));
+          pri componentDidMount () => {
             let that: jsComponentThis props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -217,7 +217,7 @@ module StatelessComponent = {
               refSetter: Obj.magic this##refSetterMethod
             }
           };
-          pub componentDidUpdate prevProps _ => {
+          pri componentDidUpdate prevProps _ => {
             let that: jsComponentThis props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -236,7 +236,7 @@ module StatelessComponent = {
                 refSetter: Obj.magic this##refSetterMethod
               }
           };
-          pub componentWillReceiveProps nextProps => {
+          pri componentWillReceiveProps nextProps => {
             let that: jsComponentThis props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -255,7 +255,7 @@ module StatelessComponent = {
                 refSetter: Obj.magic this##refSetterMethod
               }
           };
-          pub componentWillUnmount () => {
+          pri componentWillUnmount () => {
             let that: jsComponentThis props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -273,7 +273,7 @@ module StatelessComponent = {
             }
           };
 
-          pub updaterMethod callback => {
+          pri updaterMethod callback => {
             let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
@@ -307,7 +307,7 @@ module StatelessComponent = {
             }
           };
 
-          pub refSetterMethod callback => {
+          pri refSetterMethod callback => {
             let results = findFirstCallback this##memoizedRefCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
@@ -339,7 +339,7 @@ module StatelessComponent = {
               memoizedCallback
             }
           };
-          pub render () => {
+          pri render () => {
             let that: jsComponentThis props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -434,14 +434,14 @@ module Component = {
           val mutable instanceVariables = None;
           val mutable memoizedUpdaterCallbacks = [];
           val mutable memoizedRefCallbacks = [];
-          pub getInitialState () :jsState state => {
+          pri getInitialState () :jsState state => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let props = convertPropsIfTheyreFromJs that##props;
             let state = getInitialState props;
             this##instanceVariables#=(Some (getInstanceVariables ()));
             {"mlState": state}
           };
-          pub componentDidMount () => {
+          pri componentDidMount () => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -465,7 +465,7 @@ module Component = {
             | Some state => that##setState {"mlState": state}
             }
           };
-          pub componentDidUpdate prevProps prevState => {
+          pri componentDidUpdate prevProps prevState => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -492,7 +492,7 @@ module Component = {
             | Some state => that##setState {"mlState": state}
             }
           };
-          pub componentWillReceiveProps nextProps => {
+          pri componentWillReceiveProps nextProps => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -518,7 +518,7 @@ module Component = {
             | Some state => that##setState {"mlState": state}
             }
           };
-          pub componentWillUnmount () => {
+          pri componentWillUnmount () => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
@@ -537,7 +537,7 @@ module Component = {
               refSetter: Obj.magic this##refSetterMethod
             }
           };
-          pub refSetterMethod callback => {
+          pri refSetterMethod callback => {
             let results = findFirstCallback this##memoizedRefCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
@@ -573,7 +573,7 @@ module Component = {
             }
           };
 
-          pub updaterMethod callback => {
+          pri updaterMethod callback => {
             let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
@@ -613,7 +613,7 @@ module Component = {
               memoizedCallback
             }
           };
-          pub render () => {
+          pri render () => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let instanceVariables =
               switch this##instanceVariables {
