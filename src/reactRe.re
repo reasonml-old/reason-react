@@ -134,13 +134,12 @@ let jsToReasonChildren (children: Js.null_undefined reactChildren) :list reactEl
     }
   };
 
-let rec findFirstCallback callbacks callback => {
+let rec findFirstCallback callbacks callback =>
   switch callbacks {
-  | [(cb, memorized), ...rest] when cb === callback => [(cb, memorized)]
-  | [(cb, memorized), ...rest] => findFirstCallback rest callback
-  | [] => []
+  | [(cb, memorized), ...rest] when cb === callback => Some memorized
+  | [_, ...rest] => findFirstCallback rest callback
+  | [] => None
   };
-};
 
 module StatelessComponent = {
   type componentBag 'props 'instanceVariables = {
@@ -272,14 +271,10 @@ module StatelessComponent = {
               refSetter: Obj.magic this##refSetterMethod
             }
           };
-
-          pri updaterMethod callback => {
-            let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
-            if (results !== []) {
-              let (cb, memoized) = List.nth results 0;
-              memoized;
-            }
-            else {
+          pri updaterMethod callback =>
+            switch (findFirstCallback this##memoizedUpdaterCallbacks callback) {
+            | Some memoized => memoized
+            | None =>
               let that: jsComponentThis props = [%bs.raw "this"];
               let memoizedCallback event => {
                 let instanceVariables =
@@ -304,15 +299,11 @@ module StatelessComponent = {
                                                 ...this##memoizedUpdaterCallbacks
                                               ];
               memoizedCallback
-            }
-          };
-
-          pri refSetterMethod callback => {
-            let results = findFirstCallback this##memoizedRefCallbacks callback;
-            if (results !== []) {
-              let (cb, memoized) = List.nth results 0;
-              memoized;
-            } else {
+            };
+          pri refSetterMethod callback =>
+            switch (findFirstCallback this##memoizedRefCallbacks callback) {
+            | Some memoized => memoized
+            | None =>
               let that: jsComponentThis props = [%bs.raw "this"];
               let memoizedCallback (theRef: reactRef) => {
                 let instanceVariables =
@@ -337,8 +328,7 @@ module StatelessComponent = {
                                             ...this##memoizedRefCallbacks
                                           ];
               memoizedCallback
-            }
-          };
+            };
           pri render () => {
             let that: jsComponentThis props = [%bs.raw "this"];
             let instanceVariables =
@@ -537,13 +527,10 @@ module Component = {
               refSetter: Obj.magic this##refSetterMethod
             }
           };
-          pri refSetterMethod callback => {
-            let results = findFirstCallback this##memoizedRefCallbacks callback;
-            if (results !== []) {
-              let (cb, memoized) = List.nth results 0;
-              memoized;
-            }
-            else {
+          pri refSetterMethod callback =>
+            switch (findFirstCallback this##memoizedRefCallbacks callback) {
+            | Some memoized => memoized
+            | None =>
               let that: jsComponentThis state props = [%bs.raw "this"];
               let memoizedCallback (theRef: reactRef) => {
                 let instanceVariables =
@@ -570,16 +557,11 @@ module Component = {
                                             ...this##memoizedRefCallbacks
                                           ];
               memoizedCallback
-            }
-          };
-
-          pri updaterMethod callback => {
-            let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
-            if (results !== []) {
-              let (cb, memoized) = List.nth results 0;
-              memoized;
-            }
-            else {
+            };
+          pri updaterMethod callback =>
+            switch (findFirstCallback this##memoizedUpdaterCallbacks callback) {
+            | Some memoized => memoized
+            | None =>
               let that: jsComponentThis state props = [%bs.raw "this"];
               let memoizedCallback event => {
                 let instanceVariables =
@@ -611,8 +593,7 @@ module Component = {
                                                 ...this##memoizedUpdaterCallbacks
                                               ];
               memoizedCallback
-            }
-          };
+            };
           pri render () => {
             let that: jsComponentThis state props = [%bs.raw "this"];
             let instanceVariables =
