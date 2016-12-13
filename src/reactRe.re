@@ -134,6 +134,14 @@ let jsToReasonChildren (children: Js.null_undefined reactChildren) :list reactEl
     }
   };
 
+let rec findFirstCallback callbacks callback => {
+  switch callbacks {
+  | [(cb, memorized), ...rest] when cb === callback => [(cb, memorized)]
+  | [(cb, memorized), ...rest] => findFirstCallback rest callback
+  | [] => []
+  };
+};
+
 module StatelessComponent = {
   type componentBag 'props 'instanceVariables = {
     props: 'props,
@@ -266,7 +274,7 @@ module StatelessComponent = {
           };
 
           pub updaterMethod callback => {
-            let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedUpdaterCallbacks;
+            let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
@@ -300,7 +308,7 @@ module StatelessComponent = {
           };
 
           pub refSetterMethod callback => {
-            let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedRefCallbacks;
+            let results = findFirstCallback this##memoizedRefCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
@@ -530,7 +538,7 @@ module Component = {
             }
           };
           pub refSetterMethod callback => {
-            let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedRefCallbacks;
+            let results = findFirstCallback this##memoizedRefCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
@@ -566,7 +574,7 @@ module Component = {
           };
 
           pub updaterMethod callback => {
-            let results = List.filter (fun (cb, memoized) => cb === callback) this##memoizedUpdaterCallbacks;
+            let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
             if (results !== []) {
               let (cb, memoized) = List.nth results 0;
               memoized;
