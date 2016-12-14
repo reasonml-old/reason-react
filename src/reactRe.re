@@ -83,7 +83,7 @@ let wrapPropsInternal
     | Some ref => Js.Undefined.return ref
     };
   let keyValue =
-    switch ref {
+    switch key {
     | None => Js.Undefined.empty
     | Some key => Js.Undefined.return key
     };
