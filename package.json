@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bsb -w",
     "postinstall": "eval $(dependencyEnv) && nopam && echo 'execute npm start'",
-    "build": "webpack ./lib/js/examples/pure/index.js --output-filename ./finalOutput/out.js",
+    "build": "webpack -w ./lib/js/examples/pure/index.js --output-filename ./finalOutput/out.js",
     "top": "eval $(dependencyEnv) && rtop",
     "env": "eval $(dependencyEnv) && env"
   },
