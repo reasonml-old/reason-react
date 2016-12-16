@@ -16,5 +16,4 @@ let (comp, wrapProps) =
     ::componentWillUnmount
     render;
 
-let createElement ::ref=? ::key=? ::message children =>
-  wrapProps ::ref ::key ::children {message: message};
+let createElement ::message => wrapProps {message: message};

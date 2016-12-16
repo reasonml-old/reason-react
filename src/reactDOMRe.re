@@ -9,3 +9,5 @@ external unmountComponentAtNode : ReasonJs.Document.element => unit = "unmountCo
 external findDOMNode : 'reactRef => ReasonJs.Document.element = "findDOMNode" [@@bs.val] [@@bs.module
                                                                     "react-dom"
                                                                     ];
+
+external domElementToObj : ReasonJs.Document.element => Js.t {..} = "%identity";

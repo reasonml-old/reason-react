@@ -1,3 +1,4 @@
+/* ============================================ some types */
 type reactClass;
 
 type reactElement;
@@ -8,10 +9,6 @@ type event;
 type reactRef;
 
 type reactChildren;
-
-external createClass : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ];
 
 external createDOMElement : string => Js.null (Js.t {..}) => array reactElement => reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
                                                                     "react"
@@ -25,6 +22,10 @@ external createCompositeElement : reactClass =>
                                                                     ];
 
 /* ================================================== old api, don't use */
+external createClass : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module
+                                                                    "react"
+                                                                    ];
+
 external getProps : 'this => 'reactJsProps = "props" [@@bs.get];
 
 external getState : 'this => 'reactJsState = "state" [@@bs.get];
@@ -32,11 +33,6 @@ external getState : 'this => 'reactJsState = "state" [@@bs.get];
 external setState : 'this => 'state => unit = "setState" [@@bs.send];
 
 external getRefs : 'this => 'refs = "refs" [@@bs.get];
-
-/* ================================================== old api, don't use */
-external toElement : _ => reactElement = "%identity";
-
-external nullElement : reactElement = "null" [@@bs.val];
 
 module PropTypes = {
   type propType;
@@ -58,6 +54,7 @@ module PropTypes = {
   external shape : Js.t 'shape => propType = "React.PropTypes.shape" [@@bs.val];
 };
 
+/* ================================================== old api, don't use */
 external createCompositeElementInternalHack : reactClass =>
                                               Js.t {.. reasonProps : 'props} =>
                                               array reactElement =>
@@ -65,18 +62,23 @@ external createCompositeElementInternalHack : reactClass =>
                                                                     "react"
                                                                     ] [@@bs.splice];
 
+external nullElement : reactElement = "null" [@@bs.val];
+
+external toElement : _ => reactElement = "%identity";
+
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 
-external reactClassToJsObj : reactClass => Js.t {..} = "%identity";
+external classToJsObj : reactClass => Js.t {..} = "%identity";
 
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
 let wrapPropsInternal
     ::comp
-    ref::(ref: option (reactRef => unit))
-    key::(key: option string)
-    ::children
-    props => {
+    props
+    children
+    ref::(ref: option (reactRef => unit))=?
+    key::(key: option string)=?
+    () => {
   let refValue =
     switch ref {
     | None => Js.Undefined.empty

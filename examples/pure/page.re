@@ -29,4 +29,4 @@ let (comp, wrapProps) =
     ::componentWillUnmount
     render;
 
-let createElement ::ref=? ::key=? children => wrapProps ::ref ::key ::children ();
+let createElement children => wrapProps () children;
