@@ -1,17 +1,14 @@
 /**
  * Logo component.
  */
-open ReactRe;
-
-type logoProps = {message: string};
-
-include ReactRe.CreateComponent {
+module Logo = {
+  type logoProps = {message: string};
   include ReactRe.StatelessComponent;
   type props = logoProps;
   let name = "Logo";
-  let render {props} => <div> (ReactRe.toElement props.message) </div>;
-  /* let createElement = fun wrapProps => (fun ::message children => wrapProps {message: message} children); */
-  let createElement = fun wrapProps => fun ::message children => wrapProps {message: message} children;
+  let render {ReactRe.Component.props: props} => <div> (ReactRe.toElement props.message) </div>;
 };
+
+include ReactRe.CreateComponent Logo;
 
 let createElement ::message children => wrapProps {message: message} children;

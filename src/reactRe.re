@@ -14,17 +14,12 @@ external createDOMElement : string => Js.null (Js.t {..}) => array reactElement 
                                                                     "react"
                                                                     ];
 
-external createCompositeElement : reactClass =>
-                                  Js.null (Js.t {..}) =>
-                                  array reactElement =>
-                                  reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
+external createCompositeElement : reactClass => Js.null (Js.t {..}) => array reactElement => reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
                                                                     "react"
                                                                     ];
 
 /* ================================================== old api, don't use */
-external createClass : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ];
+external createClass : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module "react"];
 
 external getProps : 'this => 'reactJsProps = "props" [@@bs.get];
 
@@ -58,9 +53,7 @@ module PropTypes = {
 external createCompositeElementInternalHack : reactClass =>
                                               Js.t {.. reasonProps : 'props} =>
                                               array reactElement =>
-                                              reactElement = "createElement" [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ] [@@bs.splice];
+                                              reactElement = "createElement" [@@bs.val] [@@bs.module "react"] [@@bs.splice];
 
 external nullElement : reactElement = "null" [@@bs.val];
 
@@ -99,8 +92,7 @@ let wrapPropsInternal
   | [a, b, c, d, e] => createCompositeElementInternalHack comp props [|a, b, c, d, e|]
   | [a, b, c, d, e, f] => createCompositeElementInternalHack comp props [|a, b, c, d, e, f|]
   | [a, b, c, d, e, f, g] => createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g|]
-  | [a, b, c, d, e, f, g, h] =>
-    createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h|]
+  | [a, b, c, d, e, f, g, h] => createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h|]
   | [a, b, c, d, e, f, g, h, i] =>
     createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h, i|]
   | [a, b, c, d, e, f, g, h, i, j] =>
@@ -142,30 +134,28 @@ let rec findFirstCallback callbacks callback =>
   | [_, ...rest] => findFirstCallback rest callback
   | [] => None
   };
+
 type jsState 'state = Js.t {. mlState : 'state};
 
 type jsComponentThis 'state 'props =
   Js.t {. state : jsState 'state, props : Obj.t, setState : (jsState 'state => unit) [@bs.meth]};
 
-type componentBag 'state 'props 'instanceVariables = {
-  state: 'state,
-  props: 'props,
-  updater:
-    'dataPassedToHandler .
-    ('dataPassedToHandler => componentBag 'state 'props 'instanceVariables => option 'state) =>
-    'dataPassedToHandler =>
-    unit,
+module Component = {
+  type componentBag 'state 'props 'instanceVariables = {
+    state: 'state,
+    props: 'props,
+    updater:
+      'dataPassedToHandler .
+      ('dataPassedToHandler => componentBag 'state 'props 'instanceVariables => option 'state) =>
+      'dataPassedToHandler =>
+      unit,
 
-  refSetter: (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
-  instanceVariables: 'instanceVariables
-};
-
-module StatelessComponent = {
-  type state = unit;
+    refSetter: (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
+    instanceVariables: 'instanceVariables
+  };
   type instanceVariables = unit;
-  type jsComponentThis 'props = Js.t {. props : Obj.t};
+  type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
   let getInstanceVariables () => ();
-  let getInitialState _ => ();
   let componentDidMount _ => None;
   /* let shouldComponentUpdate _ _ => true; */
   let componentDidUpdate _ _ _ => None;
@@ -174,10 +164,12 @@ module StatelessComponent = {
   let jsPropsToReasonProps = None;
 };
 
-module Component = {
+module StatelessComponent = {
+  type state = unit;
   type instanceVariables = unit;
-  type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
+  type jsComponentThis 'props = Js.t {. props : Obj.t};
   let getInstanceVariables () => ();
+  let getInitialState _ => ();
   let componentDidMount _ => None;
   /* let shouldComponentUpdate _ _ => true; */
   let componentDidUpdate _ _ _ => None;
@@ -213,19 +205,21 @@ module type CompleteComponentSpec = {
    * TODO: Preallocate a "returnNone", and then at runtime check for reference
    * equality to this function and avoid even invoking it.
    */
-  let componentDidMount: componentBag state props instanceVariables => option state;
-  let componentWillReceiveProps: props => componentBag state props instanceVariables => option state;
+  let componentDidMount: Component.componentBag state props instanceVariables => option state;
+  let componentWillReceiveProps:
+    props => Component.componentBag state props instanceVariables => option state;
   let componentDidUpdate:
-    props => state => componentBag state props instanceVariables => option state;
-  let componentWillUnmount: componentBag state props instanceVariables => unit;
+    props => state => Component.componentBag state props instanceVariables => option state;
+  let componentWillUnmount: Component.componentBag state props instanceVariables => unit;
   let jsPropsToReasonProps: option (Js.t 'a => props);
-  let render: componentBag state props instanceVariables => reactElement;
+  let render: Component.componentBag state props instanceVariables => reactElement;
 };
 
 module type ReactComponent = {
   type props_;
   let comp: reactClass;
-  let wrapProps: props_ => list reactElement => reactElement;
+  let wrapProps:
+    props_ => list reactElement => ref::(reactRef => unit)? => key::string? => unit => reactElement;
 };
 
 module CreateComponent
@@ -369,12 +363,10 @@ module CreateComponent
             refSetter: Obj.magic this##refSetterMethod
           }
         };
-        pub refSetterMethod callback => {
-          let results = findFirstCallback this##memoizedRefCallbacks callback;
-          if results !== [] {
-            let (cb, memoized) = List.nth results 0;
-            memoized;
-          } else {
+        pub refSetterMethod callback =>
+          switch (findFirstCallback this##memoizedRefCallbacks callback) {
+          | Some memoized => memoized
+          | None =>
             let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
               "this"
             ];
@@ -391,7 +383,7 @@ module CreateComponent
               callback
                 theRef
                 {
-                  props: convertPropsIfTheyreFromJs that##props,
+                  Component.props: convertPropsIfTheyreFromJs that##props,
                   state: currState,
                   instanceVariables,
                   updater: Obj.magic this##updaterMethod,
@@ -401,13 +393,10 @@ module CreateComponent
             this##memoizedRefCallbacks#=[(callback, memoizedCallback), ...this##memoizedRefCallbacks];
             memoizedCallback
           };
-        };
         pub updaterMethod callback =>
-          let results = findFirstCallback this##memoizedUpdaterCallbacks callback;
-          if (results !== []) {
-              let (cb, memoized) = List.nth results 0;
-              memoized;
-          } else {
+          switch (findFirstCallback this##memoizedUpdaterCallbacks callback) {
+          | Some memoized => memoized
+          | None =>
             let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
               "this"
             ];
@@ -425,7 +414,7 @@ module CreateComponent
                 callback
                   event
                   {
-                    props: convertPropsIfTheyreFromJs that##props,
+                    Component.props: convertPropsIfTheyreFromJs that##props,
                     state: currState,
                     instanceVariables,
                     updater: Obj.magic this##updaterMethod,
@@ -465,18 +454,6 @@ module CreateComponent
       }
       [@bs]
     );
-  let wrapProps props children => wrapPropsInternal ::comp ref::None key::None ::children props;
+  let wrapProps (props: props_) children ::ref=? ::key=? () =>
+    wrapPropsInternal ::comp props children ::?key ::?ref ();
 };
-
-let decorate ::key=? ::ref=? children => {
-  /**
-   * TODO: Assert that there's only one.
-   */
-};
-/**
- * Keys/refs should be placed like this:
- *
- * <ReactRe.decorate key="key" ref="ref">
- *   <MyComponent blah="hi" />;
- * </ReactRe>
- */
