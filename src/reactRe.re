@@ -140,7 +140,7 @@ type jsState 'state = Js.t {. mlState : 'state};
 type jsComponentThis 'state 'props =
   Js.t {. state : jsState 'state, props : Obj.t, setState : (jsState 'state => unit) [@bs.meth]};
 
-module Component = {
+module ComponentBase = {
   type componentBag 'state 'props 'instanceVariables = {
     state: 'state,
     props: 'props,
@@ -153,6 +153,10 @@ module Component = {
     refSetter: (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
     instanceVariables: 'instanceVariables
   };
+};
+
+module Component = {
+  include ComponentBase;
   type instanceVariables = unit;
   type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
   let getInstanceVariables () => ();
@@ -165,6 +169,7 @@ module Component = {
 };
 
 module StatelessComponent = {
+  include ComponentBase;
   type state = unit;
   type instanceVariables = unit;
   type jsComponentThis 'props = Js.t {. props : Obj.t};
