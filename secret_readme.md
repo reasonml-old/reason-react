@@ -4,7 +4,7 @@ If you got to this place then you know what this is for! Please don't publicize 
 
 ## Installation
 
-Prerequisite: having [Ninja](https://ninja-build.org/) installed, e.g. `brew install ninja` if you're on macOS.
+Prerequisite: having [Ninja](https://ninja-build.org/) installed (version 1.7+), e.g. `brew install ninja` if you're on macOS.
 
 ```sh
 git clone https://github.com/reasonml/rehydrate.git
@@ -17,4 +17,3 @@ npm run build
 
 ## Usage
 See the `examples/` folder.
-
