@@ -6,7 +6,7 @@
   "name" : "ReactRePureExample",
   "version": "0.0.0",
   "ppx-flags": ["reason/reactjs_jsx_ppx.native"],
-  "bsc-flags": ["-bs-sort-imports", "-bin-annot"],
+  "bsc-flags": ["-w -40 -bs-sort-imports", "-bin-annot"],
   "refmt": "reason/refmt_impl.native",
   "generate-merlin": true,
   "bs-dependencies": ["reason-js"],
