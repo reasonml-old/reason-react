@@ -2,11 +2,10 @@
  * Logo component.
  */
 module Logo = {
-  type logoProps = {message: string};
   include ReactRe.StatelessComponent;
-  type props = logoProps;
+  type props = {message: string};
   let name = "Logo";
-  let render {ReactRe.Component.props: props} => <div> (ReactRe.toElement props.message) </div>;
+  let render {props} => <div> (ReactRe.toElement props.message) </div>;
 };
 
 include ReactRe.CreateComponent Logo;
