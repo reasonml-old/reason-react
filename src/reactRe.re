@@ -157,6 +157,20 @@ module ComponentBase = {
 
 module Component = {
   include ComponentBase;
+  type jsPropTypes = unit;
+  type instanceVariables = unit;
+  type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
+  let getInstanceVariables () => ();
+  let componentDidMount _ => None;
+  /* let shouldComponentUpdate _ _ => true; */
+  let componentDidUpdate _ _ _ => None;
+  let componentWillReceiveProps _ _ => None;
+  let componentWillUnmount _ => ();
+  let jsPropsToReasonProps = None;
+};
+
+module ComponentJs = {
+  include ComponentBase;
   type instanceVariables = unit;
   type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
   let getInstanceVariables () => ();
@@ -169,6 +183,22 @@ module Component = {
 };
 
 module StatelessComponent = {
+  include ComponentBase;
+  type jsPropTypes = unit;
+  type state = unit;
+  type instanceVariables = unit;
+  type jsComponentThis 'props = Js.t {. props : Obj.t};
+  let getInstanceVariables () => ();
+  let getInitialState _ => ();
+  let componentDidMount _ => None;
+  /* let shouldComponentUpdate _ _ => true; */
+  let componentDidUpdate _ _ _ => None;
+  let componentWillReceiveProps _ _ => None;
+  let componentWillUnmount _ => ();
+  let jsPropsToReasonProps = None;
+};
+
+module StatelessComponentJs = {
   include ComponentBase;
   type state = unit;
   type instanceVariables = unit;
@@ -203,6 +233,7 @@ module type CompleteComponentSpec = {
   type props;
   type state;
   type instanceVariables;
+  type jsPropTypes;
   let getInstanceVariables: unit => instanceVariables;
   let getInitialState: props => state;
 
@@ -216,7 +247,7 @@ module type CompleteComponentSpec = {
   let componentDidUpdate:
     props => state => Component.componentBag state props instanceVariables => option state;
   let componentWillUnmount: Component.componentBag state props instanceVariables => unit;
-  let jsPropsToReasonProps: option (Js.t 'a => props);
+  let jsPropsToReasonProps: option (jsPropTypes => props);
   let render: Component.componentBag state props instanceVariables => reactElement;
 };
 
