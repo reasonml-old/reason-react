@@ -5,7 +5,6 @@ module Page = {
   include ReactRe.Component;
   type props = unit;
   type state = {clicks: int};
-  type jsPropTypes = string;
   let name = "Page";
   let getInitialState props => {clicks: 0};
   let handleClick event {state} => Some {clicks: state.clicks + 2};
