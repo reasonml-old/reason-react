@@ -17,4 +17,4 @@ module Logo = {
 
 include ReactRe.CreateComponent Logo;
 
-let createElement ::message children => wrapProps Logo.{message: message} children;
+let createElement ::message children => wrapProps {message: message} children;

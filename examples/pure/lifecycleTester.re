@@ -25,4 +25,4 @@ module LifecycleTester = {
 include ReactRe.CreateComponent LifecycleTester;
 
 let createElement ::incrOnDidMount=false ::incr=0 ::initialCount=0 children =>
-  wrapProps LifecycleTester.{incrOnDidMount, initialCount, incr} children;
+  wrapProps {incrOnDidMount, initialCount, incr} children;
