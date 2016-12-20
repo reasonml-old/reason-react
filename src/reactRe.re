@@ -23,32 +23,6 @@ external createClass : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] 
 
 external getProps : 'this => 'reactJsProps = "props" [@@bs.get];
 
-external getState : 'this => 'reactJsState = "state" [@@bs.get];
-
-external setState : 'this => 'state => unit = "setState" [@@bs.send];
-
-external getRefs : 'this => 'refs = "refs" [@@bs.get];
-
-module PropTypes = {
-  type propType;
-  external isRequired : propType => propType = "isRequired" [@@bs.get];
-  external string : propType = "React.PropTypes.string" [@@bs.val];
-  external bool : propType = "React.PropTypes.bool" [@@bs.val];
-  external number : propType = "React.PropTypes.number" [@@bs.val];
-  external object_ : propType = "React.PropTypes.object" [@@bs.val];
-  external symbol : propType = "React.PropTypes.symbol" [@@bs.val];
-  external any : propType = "React.PropTypes.any" [@@bs.val];
-  external node : propType = "React.PropTypes.node" [@@bs.val];
-  external oneOfType : array propType => propType = "React.PropTypes.oneOfType" [@@bs.val];
-  external oneOf : array string => propType = "React.PropTypes.oneOf" [@@bs.val];
-  external element : propType = "React.PropTypes.element" [@@bs.val];
-  external func : propType = "React.PropTypes.func" [@@bs.val];
-  external objectOf : propType => propType = "React.PropTypes.objectOf" [@@bs.val];
-  external arrayOf : propType => propType = "React.PropTypes.arrayOf" [@@bs.val];
-  external instanceOf : propType => propType = "React.PropTypes.instanceOf" [@@bs.val];
-  external shape : Js.t 'shape => propType = "React.PropTypes.shape" [@@bs.val];
-};
-
 /* ================================================== old api, don't use */
 external createCompositeElementInternalHack : reactClass =>
                                               Js.t {.. reasonProps : 'props} =>
