@@ -131,7 +131,7 @@ module ComponentBase = {
 
 module Component = {
   include ComponentBase;
-  type jsPropTypes = unit;
+  type jsProps = unit;
   type instanceVariables = unit;
   type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
   let getInstanceVariables () => ();
@@ -158,7 +158,7 @@ module ComponentJs = {
 
 module StatelessComponent = {
   include ComponentBase;
-  type jsPropTypes = unit;
+  type jsProps = unit;
   type state = unit;
   type instanceVariables = unit;
   type jsComponentThis 'props = Js.t {. props : Obj.t};
@@ -176,7 +176,7 @@ module StatelessComponentJs = {
   include ComponentBase;
   type state = unit;
   type instanceVariables = unit;
-  type jsComponentThis 'props = Js.t {. props : Obj.t};
+  type nonrec jsComponentThis 'props = Js.t {. props : Obj.t};
   let getInstanceVariables () => ();
   let getInitialState _ => ();
   let componentDidMount _ => None;
@@ -207,7 +207,7 @@ module type CompleteComponentSpec = {
   type props;
   type state;
   type instanceVariables;
-  type jsPropTypes;
+  type jsProps;
   let getInstanceVariables: unit => instanceVariables;
   let getInitialState: props => state;
 
@@ -221,7 +221,7 @@ module type CompleteComponentSpec = {
   let componentDidUpdate:
     props => state => Component.componentBag state props instanceVariables => option state;
   let componentWillUnmount: Component.componentBag state props instanceVariables => unit;
-  let jsPropsToReasonProps: option (jsPropTypes => props);
+  let jsPropsToReasonProps: option (jsProps => props);
   let render: Component.componentBag state props instanceVariables => reactElement;
 };
 
