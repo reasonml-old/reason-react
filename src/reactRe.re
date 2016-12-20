@@ -14,20 +14,23 @@ external createDOMElement : string => Js.null (Js.t {..}) => array reactElement 
                                                                     "react"
                                                                     ];
 
-external createCompositeElement : reactClass => Js.null (Js.t {..}) => array reactElement => reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
+external createCompositeElement : reactClass =>
+                                  Js.null (Js.t {..}) =>
+                                  array reactElement =>
+                                  reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
                                                                     "react"
                                                                     ];
 
-/* ================================================== old api, don't use */
-external createClass : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module "react"];
+external createClassInternalHack : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module
+                                                                    "react"
+                                                                    ];
 
-external getProps : 'this => 'reactJsProps = "props" [@@bs.get];
-
-/* ================================================== old api, don't use */
 external createCompositeElementInternalHack : reactClass =>
                                               Js.t {.. reasonProps : 'props} =>
                                               array reactElement =>
-                                              reactElement = "createElement" [@@bs.val] [@@bs.module "react"] [@@bs.splice];
+                                              reactElement = "createElement" [@@bs.val] [@@bs.module
+                                                                    "react"
+                                                                    ] [@@bs.splice];
 
 external nullElement : reactElement = "null" [@@bs.val];
 
@@ -66,7 +69,8 @@ let wrapPropsInternal
   | [a, b, c, d, e] => createCompositeElementInternalHack comp props [|a, b, c, d, e|]
   | [a, b, c, d, e, f] => createCompositeElementInternalHack comp props [|a, b, c, d, e, f|]
   | [a, b, c, d, e, f, g] => createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g|]
-  | [a, b, c, d, e, f, g, h] => createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h|]
+  | [a, b, c, d, e, f, g, h] =>
+    createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h|]
   | [a, b, c, d, e, f, g, h, i] =>
     createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h, i|]
   | [a, b, c, d, e, f, g, h, i, j] =>
@@ -124,7 +128,8 @@ module ComponentBase = {
       'dataPassedToHandler =>
       unit,
 
-    refSetter: (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
+    refSetter:
+      (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
     instanceVariables: 'instanceVariables
   };
 };
@@ -254,7 +259,7 @@ module CreateComponent
     }
   };
   let comp =
-    createClass (
+    createClassInternalHack (
       {
         val displayName = CompleteComponentSpec.name;
         val mutable instanceVariables = None;
@@ -400,7 +405,10 @@ module CreateComponent
                   refSetter: Obj.magic this##refSetterMethod
                 }
             };
-            this##memoizedRefCallbacks#=[(callback, memoizedCallback), ...this##memoizedRefCallbacks];
+            this##memoizedRefCallbacks#=[
+                                          (callback, memoizedCallback),
+                                          ...this##memoizedRefCallbacks
+                                        ];
             memoizedCallback
           };
         pub updaterMethod callback =>
