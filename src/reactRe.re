@@ -118,6 +118,13 @@ type jsState 'state = Js.t {. mlState : 'state};
 type jsComponentThis 'state 'props =
   Js.t {. state : jsState 'state, props : Obj.t, setState : (jsState 'state => unit) [@bs.meth]};
 
+module CommonLifecycle = {
+  let componentDidMount _ => None;
+  let componentDidUpdate _ _ _ => None;
+  let componentWillReceiveProps _ _ => None;
+  let componentWillUnmount _ => ();
+};
+
 module ComponentBase = {
   type componentBag 'state 'props 'instanceVariables = {
     state: 'state,
@@ -132,79 +139,57 @@ module ComponentBase = {
       (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
     instanceVariables: 'instanceVariables
   };
+  include CommonLifecycle;
 };
 
 module Component = {
   include ComponentBase;
   type jsProps = unit;
   type instanceVariables = unit;
-  type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
-  let getInstanceVariables () => ();
-  let componentDidMount _ => None;
-  /* let shouldComponentUpdate _ _ => true; */
-  let componentDidUpdate _ _ _ => None;
-  let componentWillReceiveProps _ _ => None;
-  let componentWillUnmount _ => ();
-  let jsPropsToReasonProps = None;
-};
-
-module ComponentJs = {
-  include ComponentBase;
-  type instanceVariables = unit;
-  type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
-  let getInstanceVariables () => ();
-  let componentDidMount _ => None;
-  /* let shouldComponentUpdate _ _ => true; */
-  let componentDidUpdate _ _ _ => None;
-  let componentWillReceiveProps _ _ => None;
-  let componentWillUnmount _ => ();
-  let jsPropsToReasonProps = None;
-};
-
-module StatelessComponent = {
-  include ComponentBase;
-  type jsProps = unit;
   type state = unit;
-  type instanceVariables = unit;
-  type jsComponentThis 'props = Js.t {. props : Obj.t};
   let getInstanceVariables () => ();
+  let jsPropsToReasonProps = None;
   let getInitialState _ => ();
-  let componentDidMount _ => None;
-  /* let shouldComponentUpdate _ _ => true; */
-  let componentDidUpdate _ _ _ => None;
-  let componentWillReceiveProps _ _ => None;
-  let componentWillUnmount _ => ();
-  let jsPropsToReasonProps = None;
-};
-
-module StatelessComponentJs = {
-  include ComponentBase;
-  type state = unit;
-  type instanceVariables = unit;
-  type nonrec jsComponentThis 'props = Js.t {. props : Obj.t};
-  let getInstanceVariables () => ();
-  let getInitialState _ => ();
-  let componentDidMount _ => None;
-  /* let shouldComponentUpdate _ _ => true; */
-  let componentDidUpdate _ _ _ => None;
-  let componentWillReceiveProps _ _ => None;
-  let componentWillUnmount _ => ();
-  let jsPropsToReasonProps = None;
-};
-
-
-/**
- * Ironically, this mixin doesn't include type instanceVariables.
- */
-module ComponentWithInstanceVariable = {
-  type nonrec jsComponentThis 'props = jsComponentThis unit 'props;
-  let getInstanceVariables () => ();
-  let componentDidMount _ => None;
-  /* let shouldComponentUpdate _ _ => true; */
-  let componentDidUpdate _ _ _ => None;
-  let componentWillReceiveProps _ _ => None;
-  let componentWillUnmount _ => ();
-  let jsPropsToReasonProps = None;
+  module Stateful = {
+    include ComponentBase;
+    type jsProps = unit;
+    type instanceVariables = unit;
+    let getInstanceVariables () => ();
+    let jsPropsToReasonProps = None;
+    module JsProps = {
+      include ComponentBase;
+      type instanceVariables = unit;
+      let getInstanceVariables () => ();
+      let jsPropsToReasonProps = None;
+    };
+    module InstanceVars = {
+      include ComponentBase;
+      type jsProps = unit;
+      let jsPropsToReasonProps = None;
+      module JsProps = {
+        include ComponentBase;
+      };
+    };
+  };
+  module JsProps = {
+    include ComponentBase;
+    type instanceVariables = unit;
+    type state = unit;
+    let getInstanceVariables () => ();
+    let getInitialState _ => ();
+  };
+  module InstanceVars = {
+    include ComponentBase;
+    type jsProps = unit;
+    type state = unit;
+    let getInitialState _ => ();
+    let jsPropsToReasonProps = None;
+    module JsProps = {
+      include ComponentBase;
+      type state = unit;
+      let getInitialState _ => ();
+    };
+  };
 };
 
 module type CompleteComponentSpec = {

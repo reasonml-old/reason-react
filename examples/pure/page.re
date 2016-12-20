@@ -2,7 +2,7 @@
  * Page component.
  */
 module Page = {
-  include ReactRe.Component;
+  include ReactRe.Component.Stateful;
   type props = unit;
   type state = {clicks: int};
   let name = "Page";
@@ -14,7 +14,8 @@ module Page = {
         (ReactRe.toElement ("Clicked " ^ string_of_int state.clicks ^ " time(s)"))
       </button>
       <Logo message="Hello!" />
-      <LifecycleTester incrOnDidMount=true initialCount=10 incr=3 />
+      <LifecycleTester.StandardTester incrOnDidMount=true initialCount=10 incr=3 />
+      <LifecycleTester.WithStatefulInstanceVars incrOnDidMount=true initialCount=10 incr=3 />
     </div>;
 };
 

@@ -7,7 +7,7 @@ module Logo = {
    * Includes StatelessComponentJs instead of StatelessComponent so that it
    * can convert from js prop types.
    */
-  include ReactRe.StatelessComponentJs;
+  include ReactRe.Component.JsProps;
   type jsProps = Js.t {. message : string};
   type props = {message: string};
   let name = "Logo";
