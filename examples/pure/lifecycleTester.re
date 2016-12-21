@@ -8,6 +8,11 @@ module StandardTesterImpl = {
   let name = "StandardTester";
   let getInitialState props => {clicks: props.initialCount};
   let handleClick event {props, state} => Some {clicks: state.clicks + props.incr};
+  let componentWillMount {state} => {
+    print_string "Component will mount!";
+    print_newline ();
+    Some {clicks: state.clicks + 10}
+  };
   let componentDidMount {props, state} => {
     print_string "IN MOUNT";
     print_newline ();
