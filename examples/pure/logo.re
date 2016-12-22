@@ -1,5 +1,7 @@
 /**
  * Logo component.
+ * vim: set ft=rust:
+ * vim: set ft=reason:
  */
 module Logo = {
 

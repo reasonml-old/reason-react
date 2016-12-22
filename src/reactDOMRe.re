@@ -1,3 +1,8 @@
+/**
+ * ReactDomRe.
+ * vim: set ft=rust:
+ * vim: set ft=reason:
+ */
 external render : ReactRe.reactElement => ReasonJs.Document.element => unit = "render" [@@bs.val] [@@bs.module
                                                                     "react-dom"
                                                                     ];
