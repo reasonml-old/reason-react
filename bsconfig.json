@@ -3,7 +3,7 @@
   comma. If this screws with your editor highlighting, please tell us by filing
   an issue! */
 {
-  "name" : "ReactRePureExample",
+  "name" : "rehydrate",
   "version": "0.0.0",
   "ppx-flags": ["reason/reactjs_jsx_ppx.native"],
   "bsc-flags": ["-w -40 -bs-sort-imports", "-bin-annot"],
