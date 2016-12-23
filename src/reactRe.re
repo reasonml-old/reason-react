@@ -124,6 +124,7 @@ type jsComponentThis 'state 'props =
   Js.t {. state : jsState 'state, props : Obj.t, setState : (jsState 'state => unit) [@bs.meth]};
 
 module CommonLifecycle = {
+  let componentWillMount _ => None;
   let componentDidMount _ => None;
   let componentDidUpdate _ _ _ => None;
   let componentWillReceiveProps _ _ => None;
@@ -210,6 +211,7 @@ module type CompleteComponentSpec = {
    * TODO: Preallocate a "returnNone", and then at runtime check for reference
    * equality to this function and avoid even invoking it.
    */
+  let componentWillMount: Component.componentBag state props instanceVariables => option state;
   let componentDidMount: Component.componentBag state props instanceVariables => option state;
   let componentWillReceiveProps:
     props => Component.componentBag state props instanceVariables => option state;
@@ -263,6 +265,32 @@ module CreateComponent
           let state = CompleteComponentSpec.getInitialState props;
           this##instanceVariables#=(Some (CompleteComponentSpec.getInstanceVariables ()));
           {"mlState": state}
+        };
+        pub componentWillMount () => {
+          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
+            "this"
+          ];
+          let instanceVariables =
+            switch this##instanceVariables {
+            | None =>
+              raise (
+                Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+              )
+            | Some s => s
+            };
+          let currState = that##state##mlState;
+          let newState =
+            CompleteComponentSpec.componentWillMount {
+              props: convertPropsIfTheyreFromJs that##props,
+              state: currState,
+              instanceVariables,
+              updater: Obj.magic this##updaterMethod,
+              refSetter: Obj.magic this##refSetterMethod
+            };
+          switch newState {
+          | None => ()
+          | Some state => that##setState {"mlState": state}
+          }
         };
         pub componentDidMount () => {
           let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
