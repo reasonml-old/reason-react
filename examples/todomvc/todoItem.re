@@ -60,16 +60,18 @@ module TodoItem = {
     | (false, true, Some field) =>
       let node = ReactDOMRe.domElementToObj (ReactDOMRe.findDOMNode field);
       ignore (node##focus ());
-      ignore (node##setSelectionRange (node##value##length, node##value##length));
+      ignore (node##setSelectionRange node##value##length node##value##length);
       None
     | _ => None
     };
   let render {props, state, updater, refSetter} => {
     let {todo, editing, onDestroy, onToggle} = props;
-    <li className=[|todo.completed ? "completed" : "", editing ? "editing" : ""|]>
+    let className =
+      [todo.completed ? "completed" : "", editing ? "editing" : ""] |> String.concat " ";
+    <li className>
       <div className="view">
         <input className="toggle" type_="checkbox" checked=todo.completed onChange=onToggle />
-        <label onDoubleClick=handleEdit> (ReactRe.toElement todo.title) </label>
+        <label onDoubleClick=(updater handleEdit)> (ReactRe.toElement todo.title) </label>
         <button className="destroy" onClick=onDestroy />
       </div>
       <input
@@ -80,7 +82,7 @@ module TodoItem = {
         onChange=(updater handleChange)
         onKeyDown=(updater handleKeyDown)
       />
-    </li>
+    </li>;
   };
 };
 

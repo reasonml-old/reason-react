@@ -142,8 +142,7 @@ module ComponentBase = {
       'dataPassedToHandler =>
       unit,
 
-    refSetter:
-      (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
+    refSetter: (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
     instanceVars: 'instanceVars
   };
   include CommonLifecycle;
