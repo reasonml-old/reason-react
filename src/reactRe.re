@@ -45,6 +45,8 @@ external refToJsObj : reactRef => Js.t {..} = "%identity";
 
 external classToJsObj : reactClass => Js.t {..} = "%identity";
 
+external eventToJsObj : event => Js.t {..} = "%identity";
+
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
 let wrapPropsInternal
@@ -131,18 +133,18 @@ module CommonLifecycle = {
 };
 
 module ComponentBase = {
-  type componentBag 'state 'props 'instanceVariables = {
+  type componentBag 'state 'props 'instanceVars = {
     state: 'state,
     props: 'props,
     updater:
       'dataPassedToHandler .
-      ('dataPassedToHandler => componentBag 'state 'props 'instanceVariables => option 'state) =>
+      ('dataPassedToHandler => componentBag 'state 'props 'instanceVars => option 'state) =>
       'dataPassedToHandler =>
       unit,
 
     refSetter:
-      (reactRef => componentBag 'state 'props 'instanceVariables => unit) => reactRef => unit,
-    instanceVariables: 'instanceVariables
+      (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
+    instanceVars: 'instanceVars
   };
   include CommonLifecycle;
 };
@@ -150,21 +152,21 @@ module ComponentBase = {
 module Component = {
   include ComponentBase;
   type jsProps = unit;
-  type instanceVariables = unit;
+  type instanceVars = unit;
   type state = unit;
-  let getInstanceVariables () => ();
+  let getInstanceVars () => ();
   let jsPropsToReasonProps = None;
   let getInitialState _ => ();
   module Stateful = {
     include ComponentBase;
     type jsProps = unit;
-    type instanceVariables = unit;
-    let getInstanceVariables () => ();
+    type instanceVars = unit;
+    let getInstanceVars () => ();
     let jsPropsToReasonProps = None;
     module JsProps = {
       include ComponentBase;
-      type instanceVariables = unit;
-      let getInstanceVariables () => ();
+      type instanceVars = unit;
+      let getInstanceVars () => ();
       let jsPropsToReasonProps = None;
     };
     module InstanceVars = {
@@ -178,9 +180,9 @@ module Component = {
   };
   module JsProps = {
     include ComponentBase;
-    type instanceVariables = unit;
+    type instanceVars = unit;
     type state = unit;
-    let getInstanceVariables () => ();
+    let getInstanceVars () => ();
     let getInitialState _ => ();
   };
   module InstanceVars = {
@@ -201,23 +203,23 @@ module type CompleteComponentSpec = {
   let name: string;
   type props;
   type state;
-  type instanceVariables;
+  type instanceVars;
   type jsProps;
-  let getInstanceVariables: unit => instanceVariables;
+  let getInstanceVars: unit => instanceVars;
   let getInitialState: props => state;
 
   /**
    * TODO: Preallocate a "returnNone", and then at runtime check for reference
    * equality to this function and avoid even invoking it.
    */
-  let componentDidMount: Component.componentBag state props instanceVariables => option state;
+  let componentDidMount: Component.componentBag state props instanceVars => option state;
   let componentWillReceiveProps:
-    props => Component.componentBag state props instanceVariables => option state;
+    props => Component.componentBag state props instanceVars => option state;
   let componentDidUpdate:
-    props => state => Component.componentBag state props instanceVariables => option state;
-  let componentWillUnmount: Component.componentBag state props instanceVariables => unit;
+    props => state => Component.componentBag state props instanceVars => option state;
+  let componentWillUnmount: Component.componentBag state props instanceVars => unit;
   let jsPropsToReasonProps: option (jsProps => props);
-  let render: Component.componentBag state props instanceVariables => reactElement;
+  let render: Component.componentBag state props instanceVars => reactElement;
 };
 
 module type ReactComponent = {
@@ -252,7 +254,7 @@ module CreateComponent
     createClassInternalHack (
       {
         val displayName = CompleteComponentSpec.name;
-        val mutable instanceVariables = None;
+        val mutable instanceVars = None;
         val mutable memoizedUpdaterCallbacks = [];
         val mutable memoizedRefCallbacks = [];
         pub getInitialState () :jsState CompleteComponentSpec.state => {
@@ -261,18 +263,18 @@ module CreateComponent
           ];
           let props = convertPropsIfTheyreFromJs that##props;
           let state = CompleteComponentSpec.getInitialState props;
-          this##instanceVariables#=(Some (CompleteComponentSpec.getInstanceVariables ()));
+          this##instanceVars#=(Some (CompleteComponentSpec.getInstanceVars ()));
           {"mlState": state}
         };
         pub componentDidMount () => {
           let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
             "this"
           ];
-          let instanceVariables =
-            switch this##instanceVariables {
+          let instanceVars =
+            switch this##instanceVars {
             | None =>
               raise (
-                Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
               )
             | Some s => s
             };
@@ -281,7 +283,7 @@ module CreateComponent
             CompleteComponentSpec.componentDidMount {
               props: convertPropsIfTheyreFromJs that##props,
               state: currState,
-              instanceVariables,
+              instanceVars,
               updater: Obj.magic this##updaterMethod,
               refSetter: Obj.magic this##refSetterMethod
             };
@@ -294,11 +296,11 @@ module CreateComponent
           let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
             "this"
           ];
-          let instanceVariables =
-            switch this##instanceVariables {
+          let instanceVars =
+            switch this##instanceVars {
             | None =>
               raise (
-                Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
               )
             | Some s => s
             };
@@ -310,7 +312,7 @@ module CreateComponent
               {
                 props: convertPropsIfTheyreFromJs that##props,
                 state: currState,
-                instanceVariables,
+                instanceVars,
                 updater: Obj.magic this##updaterMethod,
                 refSetter: Obj.magic this##refSetterMethod
               };
@@ -323,11 +325,11 @@ module CreateComponent
           let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
             "this"
           ];
-          let instanceVariables =
-            switch this##instanceVariables {
+          let instanceVars =
+            switch this##instanceVars {
             | None =>
               raise (
-                Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
               )
             | Some s => s
             };
@@ -338,7 +340,7 @@ module CreateComponent
               {
                 props: convertPropsIfTheyreFromJs that##props,
                 state: currState,
-                instanceVariables,
+                instanceVars,
                 updater: Obj.magic this##updaterMethod,
                 refSetter: Obj.magic this##refSetterMethod
               };
@@ -351,11 +353,11 @@ module CreateComponent
           let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
             "this"
           ];
-          let instanceVariables =
-            switch this##instanceVariables {
+          let instanceVars =
+            switch this##instanceVars {
             | None =>
               raise (
-                Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
               )
             | Some s => s
             };
@@ -363,7 +365,7 @@ module CreateComponent
           CompleteComponentSpec.componentWillUnmount {
             props: convertPropsIfTheyreFromJs that##props,
             state: currState,
-            instanceVariables,
+            instanceVars,
             updater: Obj.magic this##updaterMethod,
             refSetter: Obj.magic this##refSetterMethod
           }
@@ -376,11 +378,11 @@ module CreateComponent
               "this"
             ];
             let memoizedCallback (theRef: reactRef) => {
-              let instanceVariables =
-                switch this##instanceVariables {
+              let instanceVars =
+                switch this##instanceVars {
                 | None =>
                   raise (
-                    Invalid_argument "ReactRe stateless component: instanceVariables somehow isn't initialized."
+                    Invalid_argument "ReactRe stateless component: instanceVars somehow isn't initialized."
                   )
                 | Some s => s
                 };
@@ -390,7 +392,7 @@ module CreateComponent
                 {
                   Component.props: convertPropsIfTheyreFromJs that##props,
                   state: currState,
-                  instanceVariables,
+                  instanceVars,
                   updater: Obj.magic this##updaterMethod,
                   refSetter: Obj.magic this##refSetterMethod
                 }
@@ -409,11 +411,11 @@ module CreateComponent
               "this"
             ];
             let memoizedCallback event => {
-              let instanceVariables =
-                switch this##instanceVariables {
+              let instanceVars =
+                switch this##instanceVars {
                 | None =>
                   raise (
-                    Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+                    Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
                   )
                 | Some s => s
                 };
@@ -424,7 +426,7 @@ module CreateComponent
                   {
                     Component.props: convertPropsIfTheyreFromJs that##props,
                     state: currState,
-                    instanceVariables,
+                    instanceVars,
                     updater: Obj.magic this##updaterMethod,
                     refSetter: Obj.magic this##refSetterMethod
                   };
@@ -443,18 +445,18 @@ module CreateComponent
           let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
             "this"
           ];
-          let instanceVariables =
-            switch this##instanceVariables {
+          let instanceVars =
+            switch this##instanceVars {
             | None =>
               raise (
-                Invalid_argument "ReactRe stateful component: instanceVariables somehow isn't initialized."
+                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
               )
             | Some s => s
             };
           CompleteComponentSpec.render {
             props: convertPropsIfTheyreFromJs that##props,
             state: that##state##mlState,
-            instanceVariables,
+            instanceVars,
             updater: Obj.magic this##updaterMethod,
             refSetter: Obj.magic this##refSetterMethod
           }

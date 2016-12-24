@@ -34,10 +34,10 @@ module WithStatefulInstanceVarsImpl = {
   include ReactRe.Component.Stateful.InstanceVars;
   type props = {incrOnDidMount: bool, initialCount: int, incr: int};
   type state = {clicks: int};
-  type instanceVariables = (int, string);
+  type instanceVars = (int, string);
   let name = "LifecycleTester";
   let getInitialState props => {clicks: props.initialCount};
-  let getInstanceVariables () => (10, "test");
+  let getInstanceVars () => (10, "test");
   let handleClick event {props, state} => Some {clicks: state.clicks + props.incr};
   let componentDidMount {props, state} => {
     print_string "IN MOUNT";

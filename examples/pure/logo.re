@@ -10,10 +10,10 @@ module Logo = {
    * can convert from js prop types.
    */
   include ReactRe.Component.JsProps;
-  type jsProps = Js.t {. message : string};
   type props = {message: string};
   let name = "Logo";
   let render {props} => <div> (ReactRe.toElement props.message) </div>;
+  type jsProps = Js.t {. message : string};
   let jsPropsToReasonProps = Some (fun props => {message: props##message});
 };
 
