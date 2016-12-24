@@ -26,7 +26,13 @@
           "files": {
             "slow-re": "[A-Za-z]+\\.re"
           },
-        }
+        },
+        {
+          "dir": "todomvc",
+          "files": {
+            "slow-re": "[A-Za-z]+\\.re"
+          },
+        },
       ],
     },
   ],
