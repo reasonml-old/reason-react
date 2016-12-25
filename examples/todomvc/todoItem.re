@@ -71,7 +71,7 @@ module TodoItem = {
     <li className>
       <div className="view">
         <input className="toggle" type_="checkbox" checked=todo.completed onChange=onToggle />
-        <label onDoubleClick=(updater handleEdit)> (ReactRe.toElement todo.title) </label>
+        <label onDoubleClick=(updater handleEdit)> (ReactRe.stringToElement todo.title) </label>
         <button className="destroy" onClick=onDestroy />
       </div>
       <input

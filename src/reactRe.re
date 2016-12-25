@@ -39,7 +39,9 @@ external createCompositeElementInternalHack : reactClass =>
 
 external nullElement : reactElement = "null" [@@bs.val];
 
-external toElement : _ => reactElement = "%identity";
+external stringToElement : string => reactElement = "%identity";
+
+external arrayToElement : array reactElement => reactElement = "%identity";
 
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 

@@ -12,7 +12,7 @@ module Logo = {
   include ReactRe.Component.JsProps;
   type props = {message: string};
   let name = "Logo";
-  let render {props} => <div> (ReactRe.toElement props.message) </div>;
+  let render {props} => <div> (ReactRe.stringToElement props.message) </div>;
   type jsProps = Js.t {. message : string};
   let jsPropsToReasonProps = Some (fun props => {message: props##message});
 };

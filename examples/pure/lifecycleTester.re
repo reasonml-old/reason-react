@@ -18,7 +18,7 @@ module StandardTesterImpl = {
   let render {state, updater} =>
     <div>
       <button onClick=(updater handleClick)>
-        (ReactRe.toElement ("Clicked " ^ string_of_int state.clicks ^ " time(s)"))
+        (ReactRe.stringToElement ("Clicked " ^ string_of_int state.clicks ^ " time(s)"))
       </button>
       <Logo message="Hello!" />
     </div>;
@@ -47,7 +47,7 @@ module WithStatefulInstanceVarsImpl = {
   let render {state, updater} =>
     <div>
       <button onClick=(updater handleClick)>
-        (ReactRe.toElement ("Clicked " ^ string_of_int state.clicks ^ " time(s)"))
+        (ReactRe.stringToElement ("Clicked " ^ string_of_int state.clicks ^ " time(s)"))
       </button>
       <Logo message="Hello!" />
     </div>;

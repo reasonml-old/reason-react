@@ -148,11 +148,11 @@ module Top = {
               onChange=(updater toggleAll)
               checked=(activeTodoCount === 0)
             />
-            <ul className="todo-list"> (ReactRe.toElement (Array.of_list todoItems)) </ul>
+            <ul className="todo-list"> (ReactRe.arrayToElement (Array.of_list todoItems)) </ul>
           </section>;
       <div>
         <header className="header">
-          <h1> (ReactRe.toElement "todos") </h1>
+          <h1> (ReactRe.stringToElement "todos") </h1>
           <input
             className="new-todo"
             placeholder="What needs to be done?"
