@@ -2,15 +2,11 @@ type router = Js.t {. init : (string => unit) [@bs.meth]};
 
 external routerMake : _ => router = "Router" [@@bs.module "director"] [@@bs.new];
 
-external stringify : 'a => string = "JSON.stringify" [@@bs.val];
-
-external parse : string => 'a = "JSON.parse" [@@bs.val];
-
 let enterKey = 13;
 
 let namespace = "reason-react-todos";
 
-let saveLocally todos => ReasonJs.LocalStorage.setItem namespace (stringify todos);
+let saveLocally todos => ReasonJs.LocalStorage.setItem namespace (ReasonJs.JSON.stringify todos);
 
 module Top = {
   module TodoApp = {
@@ -27,7 +23,7 @@ module Top = {
       let todos =
         switch (Js.Null.to_opt (ReasonJs.LocalStorage.getItem namespace)) {
         | None => []
-        | Some todos => parse todos
+        | Some todos => ReasonJs.JSON.parse todos
         };
       {nowShowing: AllTodos, editing: None, newTodo: "", todos}
     };
