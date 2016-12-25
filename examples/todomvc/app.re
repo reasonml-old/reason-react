@@ -1,9 +1,16 @@
-/* external routerMake : Js.t {.. init : string => unit} = "Router" [@@bs.module "director"] [@@bs.new]; */
 type router = Js.t {. init : (string => unit) [@bs.meth]};
 
 external routerMake : _ => router = "Router" [@@bs.module "director"] [@@bs.new];
 
+external stringify : 'a => string = "JSON.stringify" [@@bs.val];
+
+external parse : string => 'a = "JSON.parse" [@@bs.val];
+
 let enterKey = 13;
+
+let namespace = "reason-react-todos";
+
+let saveLocally todos => ReasonJs.LocalStorage.setItem namespace (stringify todos);
 
 module Top = {
   module TodoApp = {
@@ -16,7 +23,14 @@ module Top = {
       newTodo: string,
       todos: list TodoItem.todo
     };
-    let getInitialState props => {nowShowing: AllTodos, editing: None, newTodo: "", todos: []};
+    let getInitialState props => {
+      let todos =
+        switch (Js.Null.to_opt (ReasonJs.LocalStorage.getItem namespace)) {
+        | None => []
+        | Some todos => parse todos
+        };
+      {nowShowing: AllTodos, editing: None, newTodo: "", todos}
+    };
     let componentDidMount {updater} => {
       let f1 () {state} => Some {...state, nowShowing: AllTodos};
       let f2 () {state} => Some {...state, nowShowing: ActiveTodos};
@@ -33,48 +47,53 @@ module Top = {
         switch (String.trim state.newTodo) {
         | "" => None
         | nonEmptyValue =>
-          Some {
-            ...state,
-            newTodo: "",
-            todos: state.todos @ [{id: Utils.uuid (), title: nonEmptyValue, completed: false}]
-          }
+          let todos =
+            state.todos @ [
+              {id: string_of_int (ReasonJs.Date.now ()), title: nonEmptyValue, completed: false}
+            ];
+          saveLocally todos;
+          Some {...state, newTodo: "", todos}
         }
       } else {
         None
       };
     let toggleAll event {state} => {
       let checked = event##target##checked;
-      Some {
-        ...state,
-        todos: List.map (fun todo => {...todo, TodoItem.completed: Js.to_bool checked}) state.todos
-      }
+      let todos =
+        List.map (fun todo => {...todo, TodoItem.completed: Js.to_bool checked}) state.todos;
+      saveLocally todos;
+      Some {...state, todos}
     };
-    let toggle todoToToggle event {state} =>
-      Some {
-        ...state,
-        todos:
-          List.map
-            (
-              fun todo =>
-                todo == todoToToggle ?
-                  {...todo, TodoItem.completed: not TodoItem.(todo.completed)} : todo
-            )
-            state.todos
-      };
-    let destroy todo event {state} =>
-      Some {...state, todos: List.filter (fun candidate => candidate !== todo) state.todos};
+    let toggle todoToToggle event {state} => {
+      let todos =
+        List.map
+          (
+            fun todo =>
+              todo == todoToToggle ?
+                {...todo, TodoItem.completed: not TodoItem.(todo.completed)} : todo
+          )
+          state.todos;
+      saveLocally todos;
+      Some {...state, todos}
+    };
+    let destroy todo event {state} => {
+      let todos = List.filter (fun candidate => candidate !== todo) state.todos;
+      saveLocally todos;
+      Some {...state, todos}
+    };
     let edit todo event {state} => Some {...state, editing: Some TodoItem.(todo.id)};
-    let save todoToSave text {state} =>
-      Some {
-        ...state,
-        editing: None,
-        todos:
-          List.map
-            (fun todo => todo == todoToSave ? {...todo, TodoItem.title: text} : todo) state.todos
-      };
+    let save todoToSave text {state} => {
+      let todos =
+        List.map
+          (fun todo => todo == todoToSave ? {...todo, TodoItem.title: text} : todo) state.todos;
+      Some {...state, editing: None, todos}
+    };
     let cancel event {state} => Some {...state, editing: None};
-    let clearCompleted event {state} =>
-      Some {...state, todos: List.filter (fun todo => not TodoItem.(todo.completed)) state.todos};
+    let clearCompleted event {state} => {
+      let todos = List.filter (fun todo => not TodoItem.(todo.completed)) state.todos;
+      saveLocally todos;
+      Some {...state, todos}
+    };
     let render {state, updater} => {
       let {todos, editing} = state;
       let todoItems =
@@ -97,7 +116,7 @@ module Top = {
               | Some editing => editing === TodoItem.(todo.id)
               };
             <TodoItem
-              key=(Obj.magic todo.id)
+              key=todo.id
               todo
               onToggle=(updater (toggle todo))
               onDestroy=(updater (destroy todo))

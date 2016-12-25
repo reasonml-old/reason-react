@@ -12,7 +12,7 @@ module TodoFooter = {
     onClearCompleted: ReactRe.event => unit
   };
   let render {props} => {
-    let activeTodoWord = Utils.pluralize props.count "item";
+    let activeTodoWord = props.count === 1? "item" : "items";
     let clearButton =
       props.completedCount > 0 ?
         <button className="clear-completed" onClick=props.onClearCompleted>
