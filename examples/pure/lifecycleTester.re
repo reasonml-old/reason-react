@@ -40,8 +40,6 @@ module WithStatefulInstanceVarsImpl = {
   let getInstanceVars () => (10, "test");
   let handleClick event {props, state} => Some {clicks: state.clicks + props.incr};
   let componentDidMount {props, state} => {
-    print_string "IN MOUNT";
-    print_newline ();
     props.incrOnDidMount ? Some {clicks: state.clicks + props.incr} : None
   };
   let render {state, updater} =>

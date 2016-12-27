@@ -49,6 +49,9 @@ external classToJsObj : reactClass => Js.t {..} = "%identity";
 
 external eventToJsObj : event => Js.t {..} = "%identity";
 
+
+let __DEV__ : bool = [%bs.raw "typeof __DEV__ !== 'undefined' && !!__DEV__"];
+
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
 let wrapPropsInternal
@@ -124,9 +127,6 @@ let rec findFirstCallback callbacks callback =>
 
 type jsState 'state = Js.t {. mlState : 'state};
 
-type jsComponentThis 'state 'props =
-  Js.t {. state : jsState 'state, props : Obj.t, setState : (jsState 'state => unit) [@bs.meth]};
-
 module CommonLifecycle = {
   let componentDidMount _ => None;
   let componentDidUpdate _ _ _ => None;
@@ -143,10 +143,23 @@ module ComponentBase = {
       ('dataPassedToHandler => componentBag 'state 'props 'instanceVars => option 'state) =>
       'dataPassedToHandler =>
       unit,
-
+    /**
+     * Work in progress / prototype API for setState. This isn't sufficient for
+     * every use case and there is some overlap with updater. In a world
+     * without `this`, it is even more important that `setState` accept a
+     * callback. With `ReactJS`, absence of the callback form often relies on
+     * trapping `this` in scope, and relies on the fact that
+     * `this.state`/`this.props` will be mutated to have the new
+     * `state`/`props` on `this`. Still, this `setState` API doesn't do
+     * everything we wish so it will likely change.
+     */
+    setState: (componentBag 'state 'props 'instanceVars => 'state) => unit,
     refSetter: (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
     instanceVars: 'instanceVars
   };
+  type jsComponentThis 'state 'props 'instanceVars =
+    Js.t {. state : jsState 'state, props : Obj.t, setState : ((jsState 'state => 'props => jsState 'state) => unit) [@bs.meth]};
+
   include CommonLifecycle;
 };
 
@@ -251,6 +264,8 @@ module CreateComponent
       )
     }
   };
+  type jsComponentThis_ =
+    ComponentBase.jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props CompleteComponentSpec.instanceVars;
   let comp =
     createClassInternalHack (
       {
@@ -259,18 +274,14 @@ module CreateComponent
         val mutable memoizedUpdaterCallbacks = [];
         val mutable memoizedRefCallbacks = [];
         pub getInitialState () :jsState CompleteComponentSpec.state => {
-          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-            "this"
-          ];
+          let that: jsComponentThis_ = [%bs.raw "this"];
           let props = convertPropsIfTheyreFromJs that##props;
           let state = CompleteComponentSpec.getInitialState props;
           this##instanceVars#=(Some (CompleteComponentSpec.getInstanceVars ()));
           {"mlState": state}
         };
         pub componentDidMount () => {
-          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-            "this"
-          ];
+          let that: jsComponentThis_ = [%bs.raw "this"];
           let instanceVars =
             switch this##instanceVars {
             | None =>
@@ -286,17 +297,16 @@ module CreateComponent
               state: currState,
               instanceVars,
               updater: Obj.magic this##updaterMethod,
+              setState: Obj.magic this##setStateMethod,
               refSetter: Obj.magic this##refSetterMethod
             };
           switch newState {
           | None => ()
-          | Some state => that##setState {"mlState": state}
+          | Some state => that##setState (fun _ _ => {"mlState": state})
           }
         };
         pub componentDidUpdate prevProps prevState => {
-          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-            "this"
-          ];
+          let that: jsComponentThis_ = [%bs.raw "this"];
           let instanceVars =
             switch this##instanceVars {
             | None =>
@@ -315,17 +325,16 @@ module CreateComponent
                 state: currState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
+                setState: Obj.magic this##setStateMethod,
                 refSetter: Obj.magic this##refSetterMethod
               };
           switch newState {
           | None => ()
-          | Some state => that##setState {"mlState": state}
+          | Some state => that##setState (fun _ _ => {"mlState": state})
           }
         };
         pub componentWillReceiveProps nextProps => {
-          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-            "this"
-          ];
+          let that: jsComponentThis_ = [%bs.raw "this"];
           let instanceVars =
             switch this##instanceVars {
             | None =>
@@ -343,17 +352,16 @@ module CreateComponent
                 state: currState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
+                setState: Obj.magic this##setStateMethod,
                 refSetter: Obj.magic this##refSetterMethod
               };
           switch newState {
           | None => ()
-          | Some state => that##setState {"mlState": state}
+          | Some state => that##setState (fun _ _ => {"mlState": state})
           }
         };
         pub componentWillUnmount () => {
-          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-            "this"
-          ];
+          let that: jsComponentThis_ = [%bs.raw "this"];
           let instanceVars =
             switch this##instanceVars {
             | None =>
@@ -368,6 +376,7 @@ module CreateComponent
             state: currState,
             instanceVars,
             updater: Obj.magic this##updaterMethod,
+            setState: Obj.magic this##setStateMethod,
             refSetter: Obj.magic this##refSetterMethod
           }
         };
@@ -375,9 +384,7 @@ module CreateComponent
           switch (findFirstCallback this##memoizedRefCallbacks callback) {
           | Some memoized => memoized
           | None =>
-            let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-              "this"
-            ];
+            let that: jsComponentThis_ = [%bs.raw "this"];
             let memoizedCallback (theRef: reactRef) => {
               let instanceVars =
                 switch this##instanceVars {
@@ -395,6 +402,7 @@ module CreateComponent
                   state: currState,
                   instanceVars,
                   updater: Obj.magic this##updaterMethod,
+                  setState: Obj.magic this##setStateMethod,
                   refSetter: Obj.magic this##refSetterMethod
                 }
             };
@@ -404,13 +412,31 @@ module CreateComponent
                                         ];
             memoizedCallback
           };
+        pub setStateMethod cb => {
+          let that : jsComponentThis_ = [%bs.raw "this"];
+          /**
+           * Makes sense to adapt the API to the Reason API where you are often
+           * passed the entire bag for every lifecycle/callback.
+           */
+          that##setState (
+            fun prevState props => {
+              let bag = {
+                Component.props: convertPropsIfTheyreFromJs props,
+                state: prevState##mlState,
+                instanceVars: this##instanceVars,
+                updater: Obj.magic this##updaterMethod,
+                setState: Obj.magic this##setStateMethod,
+                refSetter: Obj.magic this##refSetterMethod
+              };
+              {"mlState": cb bag}
+            }
+          )
+        };
         pub updaterMethod callback =>
           switch (findFirstCallback this##memoizedUpdaterCallbacks callback) {
           | Some memoized => memoized
           | None =>
-            let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-              "this"
-            ];
+            let that: jsComponentThis_ = [%bs.raw "this"];
             let memoizedCallback event => {
               let instanceVars =
                 switch this##instanceVars {
@@ -429,11 +455,12 @@ module CreateComponent
                     state: currState,
                     instanceVars,
                     updater: Obj.magic this##updaterMethod,
+                    setState: Obj.magic this##setStateMethod,
                     refSetter: Obj.magic this##refSetterMethod
                   };
               switch newState {
               | None => ()
-              | Some state => that##setState {"mlState": state}
+              | Some state => that##setState (fun _ _ => {"mlState": state})
               }
             };
             this##memoizedUpdaterCallbacks#=[
@@ -443,9 +470,7 @@ module CreateComponent
             memoizedCallback
           };
         pub render () => {
-          let that: jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props = [%bs.raw
-            "this"
-          ];
+          let that: jsComponentThis_ = [%bs.raw "this"];
           let instanceVars =
             switch this##instanceVars {
             | None =>
@@ -459,6 +484,7 @@ module CreateComponent
             state: that##state##mlState,
             instanceVars,
             updater: Obj.magic this##updaterMethod,
+            setState: Obj.magic this##setStateMethod,
             refSetter: Obj.magic this##refSetterMethod
           }
         }
