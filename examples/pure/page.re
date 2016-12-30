@@ -11,13 +11,9 @@ module Page = {
   let getInitialState props => {clicks: 0};
   let handleClick event {state} => Some {clicks: state.clicks + 2};
   let render {state, updater} =>
-    <div>
-      <button onClick=(updater handleClick)>
-        (ReactRe.stringToElement ("Clicked " ^ string_of_int state.clicks ^ " time(s)"))
-      </button>
+    <div style={"color": "#444444", "webkitUserSelect": "none", "paddingTop": "40px", "fontSize": "68px", "fontFamily": "Montserrat", "textAlign":"center"}>
+      (ReactRe.stringToElement ("REASON REACT"))
       <Logo message="Hello!" />
-      <LifecycleTester.StandardTester incrOnDidMount=true initialCount=10 incr=3 />
-      <LifecycleTester.WithStatefulInstanceVars incrOnDidMount=true initialCount=10 incr=3 />
     </div>;
 };
 
