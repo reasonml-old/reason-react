@@ -26,8 +26,8 @@ module StandardTesterImpl = {
 
 module StandardTester = {
   include ReactRe.CreateComponent StandardTesterImpl;
-  let createElement ::incrOnDidMount=false ::incr=0 ::initialCount=0 children =>
-    wrapProps {incrOnDidMount, initialCount, incr} children;
+  let createElement ::incrOnDidMount=false ::incr=0 ::initialCount=0 =>
+    wrapProps {incrOnDidMount, initialCount, incr};
 };
 
 module WithStatefulInstanceVarsImpl = {
@@ -55,6 +55,6 @@ module WithStatefulInstanceVarsImpl = {
 
 module WithStatefulInstanceVars = {
   include ReactRe.CreateComponent WithStatefulInstanceVarsImpl;
-  let createElement ::incrOnDidMount=false ::incr=0 ::initialCount=0 children =>
-    wrapProps {incrOnDidMount, initialCount, incr} children;
+  let createElement ::incrOnDidMount=false ::incr=0 ::initialCount=0 =>
+    wrapProps {incrOnDidMount, initialCount, incr};
 };

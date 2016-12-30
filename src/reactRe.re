@@ -54,7 +54,7 @@ external eventToJsObj : event => Js.t {..} = "%identity";
 let wrapPropsInternal
     ::comp
     props
-    children
+    ::children
     ref::(ref: option (reactRef => unit))=?
     key::(key: option string)=?
     () => {
@@ -227,7 +227,7 @@ module type ReactComponent = {
   type props_;
   let comp: reactClass;
   let wrapProps:
-    props_ => list reactElement => ref::(reactRef => unit)? => key::string? => unit => reactElement;
+    props_ => children::(list reactElement) => ref::(reactRef => unit)? => key::string? => unit => reactElement;
 };
 
 module CreateComponent
@@ -465,6 +465,6 @@ module CreateComponent
       }
       [@bs]
     );
-  let wrapProps (props: props_) children ::ref=? ::key=? () =>
-    wrapPropsInternal ::comp props children ::?key ::?ref ();
+  let wrapProps (props: props_) ::children ::ref=? ::key=? () =>
+    wrapPropsInternal ::comp props ::children ::?key ::?ref ();
 };

@@ -23,4 +23,4 @@ module Page = {
 
 include ReactRe.CreateComponent Page;
 
-let createElement children => wrapProps () children;
+let createElement ::children => wrapProps () ::children;
