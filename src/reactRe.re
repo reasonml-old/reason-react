@@ -49,8 +49,7 @@ external classToJsObj : reactClass => Js.t {..} = "%identity";
 
 external eventToJsObj : event => Js.t {..} = "%identity";
 
-
-let __DEV__ : bool = [%bs.raw "typeof __DEV__ !== 'undefined' && !!__DEV__"];
+let __DEV__: bool = [%bs.raw "typeof __DEV__ !== 'undefined' && !!__DEV__"];
 
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
@@ -143,6 +142,9 @@ module ComponentBase = {
       ('dataPassedToHandler => componentBag 'state 'props 'instanceVars => option 'state) =>
       'dataPassedToHandler =>
       unit,
+
+    refSetter: (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
+    instanceVars: 'instanceVars,
     /**
      * Work in progress / prototype API for setState. This isn't sufficient for
      * every use case and there is some overlap with updater. In a world
@@ -153,13 +155,15 @@ module ComponentBase = {
      * `state`/`props` on `this`. Still, this `setState` API doesn't do
      * everything we wish so it will likely change.
      */
-    setState: (componentBag 'state 'props 'instanceVars => 'state) => unit,
-    refSetter: (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
-    instanceVars: 'instanceVars
+    setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
   };
   type jsComponentThis 'state 'props 'instanceVars =
-    Js.t {. state : jsState 'state, props : Obj.t, setState : ((jsState 'state => 'props => jsState 'state) => unit) [@bs.meth]};
-
+    Js.t {
+      .
+      state : jsState 'state,
+      props : Obj.t,
+      setState : ((jsState 'state => 'props => jsState 'state) => unit) [@bs.meth]
+    };
   include CommonLifecycle;
 };
 
@@ -240,7 +244,12 @@ module type ReactComponent = {
   type props_;
   let comp: reactClass;
   let wrapProps:
-    props_ => children::(list reactElement) => ref::(reactRef => unit)? => key::string? => unit => reactElement;
+    props_ =>
+    children::list reactElement =>
+    ref::(reactRef => unit)? =>
+    key::string? =>
+    unit =>
+    reactElement;
 };
 
 module CreateComponent
@@ -265,7 +274,8 @@ module CreateComponent
     }
   };
   type jsComponentThis_ =
-    ComponentBase.jsComponentThis CompleteComponentSpec.state CompleteComponentSpec.props CompleteComponentSpec.instanceVars;
+    ComponentBase.jsComponentThis
+      CompleteComponentSpec.state CompleteComponentSpec.props CompleteComponentSpec.instanceVars;
   let comp =
     createClassInternalHack (
       {
@@ -297,8 +307,8 @@ module CreateComponent
               state: currState,
               instanceVars,
               updater: Obj.magic this##updaterMethod,
-              setState: Obj.magic this##setStateMethod,
-              refSetter: Obj.magic this##refSetterMethod
+              refSetter: Obj.magic this##refSetterMethod,
+              setState: Obj.magic this##setStateMethod
             };
           switch newState {
           | None => ()
@@ -325,8 +335,8 @@ module CreateComponent
                 state: currState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                setState: Obj.magic this##setStateMethod,
-                refSetter: Obj.magic this##refSetterMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               };
           switch newState {
           | None => ()
@@ -352,8 +362,8 @@ module CreateComponent
                 state: currState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                setState: Obj.magic this##setStateMethod,
-                refSetter: Obj.magic this##refSetterMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               };
           switch newState {
           | None => ()
@@ -376,8 +386,8 @@ module CreateComponent
             state: currState,
             instanceVars,
             updater: Obj.magic this##updaterMethod,
-            setState: Obj.magic this##setStateMethod,
-            refSetter: Obj.magic this##refSetterMethod
+            refSetter: Obj.magic this##refSetterMethod,
+            setState: Obj.magic this##setStateMethod
           }
         };
         pub refSetterMethod callback =>
@@ -402,8 +412,8 @@ module CreateComponent
                   state: currState,
                   instanceVars,
                   updater: Obj.magic this##updaterMethod,
-                  setState: Obj.magic this##setStateMethod,
-                  refSetter: Obj.magic this##refSetterMethod
+                  refSetter: Obj.magic this##refSetterMethod,
+                  setState: Obj.magic this##setStateMethod
                 }
             };
             this##memoizedRefCallbacks#=[
@@ -413,7 +423,8 @@ module CreateComponent
             memoizedCallback
           };
         pub setStateMethod cb => {
-          let that : jsComponentThis_ = [%bs.raw "this"];
+          let that: jsComponentThis_ = [%bs.raw "this"];
+
           /**
            * Makes sense to adapt the API to the Reason API where you are often
            * passed the entire bag for every lifecycle/callback.
@@ -425,8 +436,8 @@ module CreateComponent
                 state: prevState##mlState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                setState: Obj.magic this##setStateMethod,
-                refSetter: Obj.magic this##refSetterMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               };
               {"mlState": cb bag}
             }
@@ -455,8 +466,8 @@ module CreateComponent
                     state: currState,
                     instanceVars,
                     updater: Obj.magic this##updaterMethod,
-                    setState: Obj.magic this##setStateMethod,
-                    refSetter: Obj.magic this##refSetterMethod
+                    refSetter: Obj.magic this##refSetterMethod,
+                    setState: Obj.magic this##setStateMethod
                   };
               switch newState {
               | None => ()
@@ -484,8 +495,8 @@ module CreateComponent
             state: that##state##mlState,
             instanceVars,
             updater: Obj.magic this##updaterMethod,
-            setState: Obj.magic this##setStateMethod,
-            refSetter: Obj.magic this##refSetterMethod
+            refSetter: Obj.magic this##refSetterMethod,
+            setState: Obj.magic this##setStateMethod
           }
         }
       }
