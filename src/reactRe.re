@@ -49,8 +49,6 @@ external classToJsObj : reactClass => Js.t {..} = "%identity";
 
 external eventToJsObj : event => Js.t {..} = "%identity";
 
-let __DEV__: bool = [%bs.raw "typeof __DEV__ !== 'undefined' && !!__DEV__"];
-
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
 let wrapPropsInternal
