@@ -87,7 +87,7 @@ module Logo = {
     /**
      * To create JS Objects in Reason,
      */
-    let rotationStyle = {"WebkitTransformOrigin": transformOrigin, "WebkitTransform": transform};
+    let rotationStyle = {"transformOrigin": transformOrigin, "transform": transform};
     <svg
       width="100%"
       height="100%"
