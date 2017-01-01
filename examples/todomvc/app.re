@@ -36,7 +36,8 @@ module Top = {
       router##init "/";
       None
     };
-    let handleChange event {state} => Some {...state, newTodo: event##target##value};
+    let handleChange event {state} =>
+      Some {...state, newTodo: ReasonJs.Document.value event##target};
     let handleNewTodoKeyDown event {props, state} =>
       if (event##keyCode === enterKey) {
         event##preventDefault ();
@@ -54,7 +55,7 @@ module Top = {
         None
       };
     let toggleAll event {state} => {
-      let checked = event##target##checked;
+      let checked = ReasonJs.Document.checked event##target;
       let todos =
         List.map (fun todo => {...todo, TodoItem.completed: Js.to_bool checked}) state.todos;
       saveLocally todos;
@@ -146,7 +147,7 @@ module Top = {
               className="toggle-all"
               type_="checkbox"
               onChange=(updater toggleAll)
-              checked=(activeTodoCount === 0)
+              checked=(Js.Boolean.to_js_boolean (activeTodoCount === 0))
             />
             <ul className="todo-list"> (ReactRe.arrayToElement (Array.of_list todoItems)) </ul>
           </section>;
@@ -159,7 +160,7 @@ module Top = {
             value=state.newTodo
             onKeyDown=(updater handleNewTodoKeyDown)
             onChange=(updater handleChange)
-            autoFocus=true
+            autoFocus=Js.true_
           />
         </header>
         main

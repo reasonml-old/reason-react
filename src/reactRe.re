@@ -8,21 +8,25 @@ type reactClass;
 
 type reactElement;
 
-/* TODO: (chenglou) type event */
-type event;
+/* TODO: (chenglou) type event better */
+type event =
+  Js.t {
+    .
+    charCode : int,
+    keyCode : int,
+    which : int,
+    stopPropagation : (unit => unit) [@bs.meth],
+    preventDefault : (unit => unit) [@bs.meth],
+    currentTarget : ReasonJs.Document.element,
+    relatedTarget : ReasonJs.Document.element,
+    target : ReasonJs.Document.element
+  };
 
 type reactRef;
 
 type reactChildren;
 
-external createDOMElement : string => Js.null (Js.t {..}) => array reactElement => reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ];
-
-external createCompositeElement : reactClass =>
-                                  Js.null (Js.t {..}) =>
-                                  array reactElement =>
-                                  reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
+external createElement : reactClass => props::Js.t {..}? => array reactElement => reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
                                                                     "react"
                                                                     ];
 
@@ -46,8 +50,6 @@ external arrayToElement : array reactElement => reactElement = "%identity";
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 
 external classToJsObj : reactClass => Js.t {..} = "%identity";
-
-external eventToJsObj : event => Js.t {..} = "%identity";
 
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */

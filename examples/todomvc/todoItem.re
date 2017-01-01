@@ -10,7 +10,7 @@ module TodoItem = {
   type props = {
     todo: todo,
     editing: bool,
-    onDestroy: unit => unit,
+    onDestroy: ReactRe.event => unit,
     onSave: string => unit,
     onEdit: unit => unit,
     onToggle: ReactRe.event => unit,
@@ -23,7 +23,7 @@ module TodoItem = {
   let handleSubmit event {props, state} =>
     switch (String.trim state.editText) {
     | "" =>
-      props.onDestroy ();
+      props.onDestroy event;
       None
     | nonEmptyValue =>
       props.onSave nonEmptyValue;
@@ -33,20 +33,19 @@ module TodoItem = {
     props.onEdit ();
     Some {editText: props.todo.title}
   };
-  let handleKeyDown event ({props} as componentBag) => {
-    let eventWhich = (ReactRe.eventToJsObj event)##which;
-    if (eventWhich === escapeKey) {
+  let handleKeyDown event ({props} as componentBag) =>
+    if (event##which === escapeKey) {
       props.onCancel event;
       Some {editText: props.todo.title}
     } else if (
-      eventWhich === enterKey
+      event##which === enterKey
     ) {
       handleSubmit event componentBag
     } else {
       None
-    }
-  };
-  let handleChange event {props} => props.editing ? Some {editText: event##target##value} : None;
+    };
+  let handleChange event {props} =>
+    props.editing ? Some {editText: ReasonJs.Document.value event##target} : None;
   let setEditFieldRef r {instanceVars} => instanceVars.editFieldRef = Some r;
 
   /**
@@ -70,7 +69,12 @@ module TodoItem = {
       [todo.completed ? "completed" : "", editing ? "editing" : ""] |> String.concat " ";
     <li className>
       <div className="view">
-        <input className="toggle" type_="checkbox" checked=todo.completed onChange=onToggle />
+        <input
+          className="toggle"
+          type_="checkbox"
+          checked=(Js.Boolean.to_js_boolean todo.completed)
+          onChange=onToggle
+        />
         <label onDoubleClick=(updater handleEdit)> (ReactRe.stringToElement todo.title) </label>
         <button className="destroy" onClick=onDestroy />
       </div>
@@ -82,7 +86,7 @@ module TodoItem = {
         onChange=(updater handleChange)
         onKeyDown=(updater handleKeyDown)
       />
-    </li>;
+    </li>
   };
 };
 
