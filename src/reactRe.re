@@ -305,7 +305,7 @@ module CreateComponent
               state: currState,
               instanceVars,
               updater: Obj.magic this##updaterMethod,
-              refSetter: Obj.magic this##refSetterMethod,
+              refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
               setState: Js_unsafe.js_method_run1 this##setStateMethod
             };
           switch newState {
@@ -331,7 +331,7 @@ module CreateComponent
                 state: currState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                 setState: Js_unsafe.js_method_run1 this##setStateMethod
               };
           switch newState {
@@ -356,7 +356,7 @@ module CreateComponent
                 state: currState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                 setState: Js_unsafe.js_method_run1 this##setStateMethod
               };
           switch newState {
@@ -378,7 +378,7 @@ module CreateComponent
             state: currState,
             instanceVars,
             updater: Obj.magic this##updaterMethod,
-            refSetter: Obj.magic this##refSetterMethod,
+            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
             setState: Js_unsafe.js_method_run1 this##setStateMethod
           }
         };
@@ -404,7 +404,7 @@ module CreateComponent
                   state: currState,
                   instanceVars,
                   updater: Obj.magic this##updaterMethod,
-                  refSetter: Obj.magic this##refSetterMethod,
+                  refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                   setState: Js_unsafe.js_method_run1 this##setStateMethod
                 }
             };
@@ -436,7 +436,7 @@ module CreateComponent
                 state: prevState##mlState,
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                 setState: Js_unsafe.js_method_run1 this##setStateMethod
               };
               {"mlState": cb bag}
@@ -466,7 +466,7 @@ module CreateComponent
                     state: currState,
                     instanceVars,
                     updater: Obj.magic this##updaterMethod,
-                    refSetter: Obj.magic this##refSetterMethod,
+                    refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                     setState: Js_unsafe.js_method_run1 this##setStateMethod
                   };
               switch newState {
@@ -493,7 +493,7 @@ module CreateComponent
             state: that##state##mlState,
             instanceVars,
             updater: Obj.magic this##updaterMethod,
-            refSetter: Obj.magic this##refSetterMethod,
+            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
             setState: Js_unsafe.js_method_run1 this##setStateMethod
           }
         }
