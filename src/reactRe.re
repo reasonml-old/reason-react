@@ -306,7 +306,7 @@ module CreateComponent
               instanceVars,
               updater: Obj.magic this##updaterMethod,
               refSetter: Obj.magic this##refSetterMethod,
-              setState: Obj.magic this##setStateMethod
+              setState: Js_unsafe.js_method_run1 this##setStateMethod
             };
           switch newState {
           | None => ()
@@ -332,7 +332,7 @@ module CreateComponent
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
                 refSetter: Obj.magic this##refSetterMethod,
-                setState: Obj.magic this##setStateMethod
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
               };
           switch newState {
           | None => ()
@@ -357,7 +357,7 @@ module CreateComponent
                 instanceVars,
                 updater: Obj.magic this##updaterMethod,
                 refSetter: Obj.magic this##refSetterMethod,
-                setState: Obj.magic this##setStateMethod
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
               };
           switch newState {
           | None => ()
@@ -379,7 +379,7 @@ module CreateComponent
             instanceVars,
             updater: Obj.magic this##updaterMethod,
             refSetter: Obj.magic this##refSetterMethod,
-            setState: Obj.magic this##setStateMethod
+            setState: Js_unsafe.js_method_run1 this##setStateMethod
           }
         };
         pub refSetterMethod callback =>
@@ -405,7 +405,7 @@ module CreateComponent
                   instanceVars,
                   updater: Obj.magic this##updaterMethod,
                   refSetter: Obj.magic this##refSetterMethod,
-                  setState: Obj.magic this##setStateMethod
+                  setState: Js_unsafe.js_method_run1 this##setStateMethod
                 }
             };
             this##memoizedRefCallbacks#=[
@@ -423,13 +423,21 @@ module CreateComponent
            */
           that##setState (
             fun prevState props => {
+              let instanceVars =
+                switch this##instanceVars {
+                | None =>
+                  raise (
+                    Invalid_argument "ReactRe component: instanceVars somehow isn't initialized."
+                  )
+                | Some s => s
+                };
               let bag = {
                 Component.props: convertPropsIfTheyreFromJs props,
                 state: prevState##mlState,
-                instanceVars: this##instanceVars,
+                instanceVars,
                 updater: Obj.magic this##updaterMethod,
                 refSetter: Obj.magic this##refSetterMethod,
-                setState: Obj.magic this##setStateMethod
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
               };
               {"mlState": cb bag}
             }
@@ -459,7 +467,7 @@ module CreateComponent
                     instanceVars,
                     updater: Obj.magic this##updaterMethod,
                     refSetter: Obj.magic this##refSetterMethod,
-                    setState: Obj.magic this##setStateMethod
+                    setState: Js_unsafe.js_method_run1 this##setStateMethod
                   };
               switch newState {
               | None => ()
@@ -486,7 +494,7 @@ module CreateComponent
             instanceVars,
             updater: Obj.magic this##updaterMethod,
             refSetter: Obj.magic this##refSetterMethod,
-            setState: Obj.magic this##setStateMethod
+            setState: Js_unsafe.js_method_run1 this##setStateMethod
           }
         }
       }
