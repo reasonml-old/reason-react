@@ -295,9 +295,7 @@ module CreateComponent
           let instanceVars =
             switch this##instanceVars {
             | None =>
-              raise (
-                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
-              )
+              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
             | Some s => s
             };
           let currState = that##state##mlState;
@@ -320,9 +318,7 @@ module CreateComponent
           let instanceVars =
             switch this##instanceVars {
             | None =>
-              raise (
-                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
-              )
+              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
             | Some s => s
             };
           let currState = that##state##mlState;
@@ -348,9 +344,7 @@ module CreateComponent
           let instanceVars =
             switch this##instanceVars {
             | None =>
-              raise (
-                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
-              )
+              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
             | Some s => s
             };
           let currState = that##state##mlState;
@@ -375,9 +369,7 @@ module CreateComponent
           let instanceVars =
             switch this##instanceVars {
             | None =>
-              raise (
-                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
-              )
+              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
             | Some s => s
             };
           let currState = that##state##mlState;
@@ -400,7 +392,7 @@ module CreateComponent
                 switch this##instanceVars {
                 | None =>
                   raise (
-                    Invalid_argument "ReactRe stateless component: instanceVars somehow isn't initialized."
+                    Invalid_argument "ReactRe component: instanceVars somehow isn't initialized."
                   )
                 | Some s => s
                 };
@@ -453,7 +445,7 @@ module CreateComponent
                 switch this##instanceVars {
                 | None =>
                   raise (
-                    Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
+                    Invalid_argument "ReactRe component: instanceVars somehow isn't initialized."
                   )
                 | Some s => s
                 };
@@ -485,9 +477,7 @@ module CreateComponent
           let instanceVars =
             switch this##instanceVars {
             | None =>
-              raise (
-                Invalid_argument "ReactRe stateful component: instanceVars somehow isn't initialized."
-              )
+              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
             | Some s => s
             };
           CompleteComponentSpec.render {
