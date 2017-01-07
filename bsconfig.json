@@ -14,24 +14,15 @@
     {
       "dir": "src",
       "public": "all",
-      "files": {
-        "slow-re": "[A-Za-z]+\\.re",
-      },
     },
     {
       "dir": "examples",
       "subdirs": [
         {
           "dir": "pure",
-          "files": {
-            "slow-re": "[A-Za-z]+\\.re"
-          },
         },
         {
           "dir": "todomvc",
-          "files": {
-            "slow-re": "[A-Za-z]+\\.re"
-          },
         },
       ],
     },
