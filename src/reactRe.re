@@ -54,23 +54,24 @@ external classToJsObj : reactClass => Js.t {..} = "%identity";
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
 let wrapPropsInternal
-    ::comp
+    comp
     props
+    wrapPropsHow
     ::children
     ref::(ref: option (reactRef => unit))=?
     key::(key: option string)=?
     () => {
-  let refValue =
+  let ref =
     switch ref {
     | None => Js.Undefined.empty
     | Some ref => Js.Undefined.return ref
     };
-  let keyValue =
+  let key =
     switch key {
     | None => Js.Undefined.empty
     | Some key => Js.Undefined.return key
     };
-  let props = {"reasonProps": props, "ref": refValue, "key": keyValue};
+  let props = wrapPropsHow ::props ::ref ::key;
   switch children {
   | [] => createCompositeElementInternalHack comp props [||]
   | [a] => createCompositeElementInternalHack comp props [|a|]
@@ -100,6 +101,14 @@ let wrapPropsInternal
     )
   }
 };
+
+let wrapPropsAndPutIndicatorThatItComesFromReason =
+  (fun ::props ::ref ::key => {"reasonProps": props, "ref": ref, "key": key}) [@bs];
+
+external object_ : _ = "Object" [@@bs.val];
+
+let wrapPropsAndPutRefAndKey =
+  (fun ::props ::ref ::key => object_##assign [%bs.raw "{}"] props {"ref": ref, "key": key}) [@bs];
 
 /* Array.isArray is es2015 */
 let isArrayPolyfill: (Obj.t => Js.boolean) [@bs] = [%bs.raw
@@ -500,6 +509,12 @@ module CreateComponent
       }
       [@bs]
     );
+  /* fully apply this to avoid currying overhead */
   let wrapProps (props: props_) ::children ::ref=? ::key=? () =>
-    wrapPropsInternal ::comp props ::children ::?key ::?ref ();
+    wrapPropsInternal
+      comp props wrapPropsAndPutIndicatorThatItComesFromReason ::children ::?key ::?ref ();
 };
+
+/* fully apply this to avoid currying overhead */
+let wrapPropsShamelessly comp (props: Js.t {..}) ::children ::ref=? ::key=? () =>
+  wrapPropsInternal comp props wrapPropsAndPutRefAndKey ::children ::?ref ::?key ();
