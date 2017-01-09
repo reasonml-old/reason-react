@@ -102,13 +102,14 @@ let wrapPropsInternal
   }
 };
 
-let wrapPropsAndPutIndicatorThatItComesFromReason =
-  (fun ::props ::ref ::key => {"reasonProps": props, "ref": ref, "key": key}) [@bs];
+let wrapPropsAndPutIndicatorThatItComesFromReason ::props ::ref ::key => {
+  "reasonProps": props,
+  "ref": ref,
+  "key": key
+};
 
-external object_ : _ = "Object" [@@bs.val];
-
-let wrapPropsAndPutRefAndKey =
-  (fun ::props ::ref ::key => object_##assign [%bs.raw "{}"] props {"ref": ref, "key": key}) [@bs];
+let wrapPropsAndPutRefAndKey ::props ::ref ::key =>
+  ReasonJs.Object.assign [%bs.raw "{}"] props {"ref": ref, "key": key};
 
 /* Array.isArray is es2015 */
 let isArrayPolyfill: (Obj.t => Js.boolean) [@bs] = [%bs.raw
