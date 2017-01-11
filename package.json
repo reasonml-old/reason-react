@@ -21,7 +21,9 @@
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "nopam": "*",
-    "dependency-env": "*"
+    "dependency-env": "*",
+    "blessed": "*",
+    "split": "*"
   },
   "peerDependencies": {
     "react": "^15.0.0",
