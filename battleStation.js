@@ -23,7 +23,7 @@ const tipsEntries = [
   'Ideas for Reason projects: https://github.com/chenglou/reason-project-ideas',
   'bsb (the build system running under-the-hood) is just the Ninja build system (used by Chrome & Android) + bsc',
   // bad PR move?
-  'Coding in Reason/OCaml shows reveals you more errors, not less. Think about it!',
+  'Coding in Reason/OCaml reveals to you more errors, not less. Think about it!',
   'Blocked by Adblock Plus',
 ];
 
