@@ -11,7 +11,7 @@ if (args.length === 0) {
   process.exit(1);
 }
 
-const proc = child_process.spawn('bsb', ['-w']);
+const proc = child_process.spawn(args[0], args.slice(1));
 process.on('exit', () => {
   proc.kill();
 });

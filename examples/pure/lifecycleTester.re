@@ -56,4 +56,3 @@ module WithStatefulInstanceVars = {
   let createElement ::incrOnDidMount=false ::incr=0 ::initialCount=0 =>
     wrapProps {incrOnDidMount, initialCount, incr};
 };
-let a:int=1.;
