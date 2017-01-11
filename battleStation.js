@@ -21,7 +21,9 @@ const tipsEntries = [
   'Wanna know how Reason compilation works under the hood? https://github.com/chenglou/intro-to-reason-compilation',
   'The original Reactjs implementation was written in SML (cousin of OCaml). Writing in OCaml/Reason gives you such inspirations!',
   'Ideas for Reason projects: https://github.com/chenglou/reason-project-ideas',
-  'bsb (the under-the=hood build system running right now) is just the Ninja build system (used by Chrome & Android) + bsc',
+  'bsb (the build system running under-the-hood) is just the Ninja build system (used by Chrome & Android) + bsc',
+  // bad PR move?
+  'Coding in Reason/OCaml shows reveals you more errors, not less. Think about it!',
   'Blocked by Adblock Plus',
 ];
 
@@ -38,7 +40,20 @@ function prettifyPath(p) {
 };
 
 proc.stdout.pipe(require('split')()).on('data', (data) => {
-  if (data.startsWith('[')) {
+  if (data.startsWith('>>>> Start compiling')) {
+    lastCompileTime = Date.now();
+    modulesData = '';
+    errorData = '';
+    hasError = false;
+    waitingForMoreErrors = false;
+
+    operations.setContent('Started compiling.');
+    modules.setContent(modulesData);
+    error.setContent(errorData);
+    status.setContent('{yellow-fg}Compiling...{/yellow-fg}')
+    tips.setContent(tipsEntries[Math.floor(Math.random() * tipsEntries.length)]);
+    progress.setContent('bsb too fast to display progress bar.');
+  } else if (data.startsWith('[')) {
     // this one has to come first
     waitingForMoreErrors = false;
     const match = data.match(/\[(\d+)\/(\d+)\] Building (.+)/);
@@ -48,47 +63,38 @@ proc.stdout.pipe(require('split')()).on('data', (data) => {
       total = parseInt(total);
       paths = paths.trim().split(' ');
       let display = paths.map(p => {
-        return `[${curr}/${total}] ${prettifyPath(p)}`
+        return `${prettifyPath(p)}`
       }).join('\n');
       modulesData += '\n' + display;
       modules.setContent(modulesData);
     }
-  } else if (data.startsWith('>>>> Start compiling')) {
-    lastCompileTime = Date.now();
-    modulesData = '';
-    errorData = '';
-    hasError = false;
-    waitingForMoreErrors = false;
-
-    operations.setContent('Started compiling');
-    modules.setContent(modulesData);
-    error.setContent(errorData);
-    status.setContent('{yellow-fg}Compiling...{/yellow-fg}')
-    tips.setContent(tipsEntries[Math.floor(Math.random() * tipsEntries.length)]);
   } else if (data.startsWith('>>>> Finish compiling')) {
     waitingForMoreErrors = false;
     // console timestamp highly inaccurate; in reality the build time is much smaller.
     const duration = Math.round((Date.now() - lastCompileTime) / 10) / 100;
-    operations.setContent('Waiting for new changes');
+    operations.setContent('Waiting for new changes.');
     if (hasError) {
-      // previously set
+      // previously set already
       // status.setContent('{red-fg}Error{/red-fg}')
     } else {
       status.setContent(`{green-fg}Done!{/green-fg} (${duration}s)`)
+      error.setContent(`{green-fg}¯\_(ツ)_/¯{/green-fg}`)
     }
   } else if (data.startsWith('FAILED: ')) {
     waitingForMoreErrors = true;
     hasError = true;
-    let display = data
-      .slice('FAILED: '.length)
-      .trim()
-      .split(' ')
-      .map(prettifyPath)
-      .join('\n');
-    errorData += '\n' + display;
-    error.setContent(errorData);
+    // let display = data
+    //   .slice('FAILED: '.length)
+    //   .trim()
+    //   .split(' ')
+    //   .map(prettifyPath)
+    //   .join('\n');
+    // errorData += '\n' + display;
+    // error.setContent(errorData);
     status.setContent('{red-fg}Error{/red-fg}')
   } else if (data.startsWith('ninja: Entering directory ')) {
+    waitingForMoreErrors = false;
+  } else if (data.startsWith('ninja: build stopped: ')) {
     waitingForMoreErrors = false;
   } else if (data === 'Event change') {
     waitingForMoreErrors = false;
@@ -106,9 +112,14 @@ proc.stdout.pipe(require('split')()).on('data', (data) => {
     }
 
   } else if (waitingForMoreErrors) {
-    errorData += '\n' + data;
-    error.setContent(errorData);
-    status.setContent('{red-fg}Error{/red-fg}')
+    let test = data.split(' ');
+    if (test.length > 0 && test[0].endsWith('bsc.exe')) {
+      // TODO: the whole command that failed. A bit noisy.
+    } else {
+      errorData += '\n' + data;
+      error.setContent(errorData);
+      status.setContent('{red-fg}Error{/red-fg}')
+    }
   } else {
     logText.log(data);
   }
@@ -122,7 +133,8 @@ const color = 'green';
 
 // Create a screen object.
 const screen = blessed.screen({
-  smartCSR: true
+  smartCSR: true,
+  fullUnicode: true,
 });
 
 const error = blessed.box({
@@ -298,20 +310,20 @@ progress = blessed.box({
   },
 });
 
-progressbar = blessed.ProgressBar({
-  parent: progress,
-  height: 1,
-  width: "90%",
-  top: "center",
-  left: "center",
-  hidden: minimal,
-  orientation: "horizontal",
-  style: {
-    bar: {
-      bg: color,
-    },
-  }
-});
+// progressbar = blessed.ProgressBar({
+//   parent: progress,
+//   height: 1,
+//   width: "90%",
+//   top: "center",
+//   left: "center",
+//   hidden: minimal,
+//   orientation: "horizontal",
+//   style: {
+//     bar: {
+//       bg: color,
+//     },
+//   }
+// });
 
 // Quit on Escape, q, or Control-C.
 screen.key(['escape', 'q', 'C-c'], function(ch, key) {
