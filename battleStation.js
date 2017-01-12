@@ -10,14 +10,27 @@ run(
 
 // wrapping this so that internal and open-source requires can both work
 function run(blessed, child_process, fs, path, split, args, processOptions) {
+  let lastCompileTime = null;
+  let modulesData = '';
+  let errorData = '';
+  let hasError = false;
+  let waitingForMoreErrors = false;
+  let procExited = false;
+
   if (args.length === 0) {
     console.error('Please pass in the bsb command, like so: node foo.js -- bsb -w');
     process.exit(1);
   }
 
   const proc = child_process.spawn(args[0], args.slice(1), processOptions);
+  // these two functions below aren't mutually recursive; if proc exists, proc.kill() is a no-op (I think...)
   process.on('exit', () => {
     proc.kill();
+    procExited = true;
+  });
+  proc.on('exit', code => {
+    procExited = true;
+    status.setContent('{yellow-fg}Bsb exited...?{/yellow-fg} (Please restart this)')
   });
 
   const tipsEntries = [
@@ -28,14 +41,9 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
     'bsb (the build system running under-the-hood) is just the Ninja build system (used by Chrome & Android) + bsc',
     // bad PR move?
     'Coding in Reason/OCaml reveals to you more errors, not less. Think about it!',
+    'If you see some type `Foo.t`, it\'s a convention that means "the Foo module\'s type. Whatever that means in context."',
     'Blocked by Adblock Plus',
   ];
-
-  let lastCompileTime = null;
-  let modulesData = '';
-  let errorData = '';
-  let hasError = false;
-  let waitingForMoreErrors = false;
 
   function prettifyPath(p) {
     const dir = path.dirname(p);
@@ -44,7 +52,9 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
   };
 
   proc.stdout.pipe(split()).on('data', (data) => {
-    if (data.startsWith('>>>> Start compiling')) {
+    if (procExited) {
+      // do nothing here, for now.
+    } else if (data.startsWith('>>>> Start compiling')) {
       lastCompileTime = Date.now();
       modulesData = '';
       errorData = '';
@@ -79,7 +89,7 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
         // status.setContent('{red-fg}Error{/red-fg}')
       } else {
         status.setContent(`{green-fg}Done!{/green-fg} (${duration}s)`)
-        error.setContent(`{green-fg}¯\_(ツ)_/¯{/green-fg}`)
+        error.setContent(`{green-fg}¯\\_(ツ)_/¯{/green-fg}`)
       }
     } else if (data.startsWith('FAILED: ')) {
       waitingForMoreErrors = true;
