@@ -30,7 +30,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
   });
   proc.on('exit', code => {
     procExited = true;
-    status.setContent('{yellow-fg}Bsb exited...?{/yellow-fg} (Please restart this)')
+    status.setContent('Bsb exited...? (Please restart this)')
+    status.style.bg = 'yellow';
   });
 
   const tipsEntries = [
@@ -65,7 +66,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
       operations.setContent('Started compiling.');
       modules.setContent(modulesData);
       error.setContent(errorData);
-      status.setContent('{yellow-fg}Compiling...{/yellow-fg}')
+      status.setContent('Compiling...')
+      status.style.bg = 'yellow';
       tips.setContent(tipsEntries[Math.floor(Math.random() * tipsEntries.length)]);
       progress.setContent('bsb too fast to display progress bar.');
     } else if (data.startsWith('[')) {
@@ -89,7 +91,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
         // previously set already
         // status.setContent('{red-fg}Error{/red-fg}')
       } else {
-        status.setContent(`{green-fg}Done!{/green-fg} (${duration}s)`)
+        status.setContent(`Done! (${duration}s)`)
+        status.style.bg = 'green';
         error.setContent(`{green-fg}¯\\_(ツ)_/¯{/green-fg}`)
       }
     } else if (data.startsWith('FAILED: ')) {
@@ -103,7 +106,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
       //   .join('\n');
       // errorData += '\n' + display;
       // error.setContent(errorData);
-      status.setContent('{red-fg}Error{/red-fg}')
+      status.setContent('Error')
+      status.style.bg = 'red';
     } else if (data.startsWith('ninja: Entering directory ')) {
       waitingForMoreErrors = false;
     } else if (data.startsWith('ninja: build stopped: ')) {
@@ -130,7 +134,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
       } else {
         errorData += '\n' + data;
         error.setContent(errorData);
-        status.setContent('{red-fg}Error{/red-fg}')
+        status.setContent('Error')
+        status.style.bg = 'red';
       }
     } else {
       logText.log(data);
@@ -295,7 +300,6 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
   const status = blessed.box({
     parent: wrapper,
     label: "Status",
-    tags: true,
     padding: {
       left: 1,
     },
