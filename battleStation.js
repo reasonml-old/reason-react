@@ -56,7 +56,6 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
       // do nothing here, for now. Still show tip I guess.
       tips.setContent(tipsEntries[Math.floor(Math.random() * tipsEntries.length)]);
     } else if (data.startsWith('>>>> Start compiling')) {
-      tips.setContent(tipsEntries[Math.floor(Math.random() * tipsEntries.length)]);
       lastCompileTime = Date.now();
       modulesData = '';
       errorData = '';
