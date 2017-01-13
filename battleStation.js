@@ -52,12 +52,18 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
     return `{grey-fg}${dir}/{/grey-fg}${file}`;
   };
 
+  // bsb compiles files faster than the modules log can be written on screen
+  // without freezing. Debounce the modules setContent calls.
+  let modulesDebounceNow = Date.now();
+
   proc.stdout.pipe(split()).on('data', (data) => {
+    const now = Date.now();
+
     if (procExited) {
       // do nothing here, for now. Still show tip I guess.
       tips.setContent(tipsEntries[Math.floor(Math.random() * tipsEntries.length)]);
     } else if (data.startsWith('>>>> Start compiling')) {
-      lastCompileTime = Date.now();
+      lastCompileTime = now;
       modulesData = '';
       errorData = '';
       hasError = false;
@@ -73,19 +79,24 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
     } else if (data.startsWith('[')) {
       // this one has to come first
       waitingForMoreErrors = false;
-      const match = data.match(/\[(\d+)\/(\d+)\] Building (.+)/);
-      if (match) {
-        const paths = match[3].trim().split(' ');
-        let display = paths.map(p => {
-          return `${prettifyPath(p)}`
-        }).join('\n');
+      const msg = 'Building ';
+      const idx = data.indexOf(msg);
+      if (idx >= 0) {
+        let display = data
+          .slice(idx + msg.length).split(' ')
+          .map(prettifyPath)
+          .join('\n');
         modulesData += '\n' + display;
-        modules.setContent(modulesData);
+
+        if (now - modulesDebounceNow > 100) {
+          modules.setContent(modulesData);
+          modulesDebounceNow = now;
+        }
       }
     } else if (data.startsWith('>>>> Finish compiling')) {
       waitingForMoreErrors = false;
       // console timestamp highly inaccurate; in reality the build time is much smaller.
-      const duration = Math.round((Date.now() - lastCompileTime) / 10) / 100;
+      const duration = Math.round((now - lastCompileTime) / 10) / 100;
       operations.setContent('Waiting for new changes.');
       if (hasError) {
         // previously set already
@@ -120,9 +131,10 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
       waitingForMoreErrors = false;
     } else if (data.startsWith('Rebuilding since [')) {
       waitingForMoreErrors = false;
-      const match = data.match(/Rebuilding since \[(.+)?\]/);
-      if (match) {
-        logText.log('Detected: ' + match[1].trim());
+      const msg = 'Rebuilding since ';
+      if (data.indexOf(msg) === 0) {
+        const match = data.slice(msg.length);
+        logText.log('Detected: ' + data.slice(msg.length));
       } else {
         logText.log(data);
       }
