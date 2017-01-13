@@ -1,3 +1,5 @@
+'use strict';
+
 run(
   require('blessed'),
   require('child_process'),
