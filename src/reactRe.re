@@ -49,8 +49,6 @@ external arrayToElement : array reactElement => reactElement = "%identity";
 
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 
-external classToJsObj : reactClass => Js.t {..} = "%identity";
-
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
 let wrapPropsInternal
@@ -96,6 +94,7 @@ let wrapPropsInternal
   | [a, b, c, d, e, f, g, h, i, j, k, l, m, n] =>
     createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h, i, j, k, l, m, n|]
   | _ =>
+    /* 14 is a good number because it fills the cache line. Just kidding, submit an issue if you want more */
     raise (
       Invalid_argument "Reason allows up to 14 static children (dynamic children can be unlimited in size); If you have more, please put them in an array and assign key to the elements. Sorry for the inconvenience!"
     )
@@ -149,11 +148,11 @@ module ComponentBase = {
     props: 'props,
     updater:
       'dataPassedToHandler .
-      ('dataPassedToHandler => componentBag 'state 'props 'instanceVars => option 'state) =>
+      (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
       'dataPassedToHandler =>
       unit,
 
-    refSetter: (reactRef => componentBag 'state 'props 'instanceVars => unit) => reactRef => unit,
+    refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
     instanceVars: 'instanceVars,
     /**
      * Work in progress / prototype API for setState. This isn't sufficient for
@@ -408,7 +407,6 @@ module CreateComponent
                 };
               let currState = that##state##mlState;
               callback
-                theRef
                 {
                   Component.props: convertPropsIfTheyreFromJs that##props,
                   state: currState,
@@ -417,6 +415,7 @@ module CreateComponent
                   refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                   setState: Js_unsafe.js_method_run1 this##setStateMethod
                 }
+                theRef
             };
             this##memoizedRefCallbacks#=[
                                           (callback, memoizedCallback),
@@ -458,7 +457,7 @@ module CreateComponent
           | Some memoized => memoized
           | None =>
             let that: jsComponentThis_ = [%bs.raw "this"];
-            let memoizedCallback event => {
+            let memoizedCallback callbackPayload => {
               let instanceVars =
                 switch this##instanceVars {
                 | None =>
@@ -470,7 +469,6 @@ module CreateComponent
               let currState = that##state##mlState;
               let newState =
                 callback
-                  event
                   {
                     Component.props: convertPropsIfTheyreFromJs that##props,
                     state: currState,
@@ -478,7 +476,8 @@ module CreateComponent
                     updater: Obj.magic this##updaterMethod,
                     refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                     setState: Js_unsafe.js_method_run1 this##setStateMethod
-                  };
+                  }
+                  callbackPayload;
               switch newState {
               | None => ()
               | Some state => that##setState (fun _ _ => {"mlState": state})

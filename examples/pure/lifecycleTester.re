@@ -9,7 +9,7 @@ module StandardTesterImpl = {
   type state = {clicks: int};
   let name = "StandardTester";
   let getInitialState props => {clicks: props.initialCount};
-  let handleClick event {props, state} => Some {clicks: state.clicks + props.incr};
+  let handleClick {props, state} event => Some {clicks: state.clicks + props.incr};
   let componentDidMount {props, state} => {
     print_string "IN MOUNT";
     print_newline ();
@@ -38,10 +38,9 @@ module WithStatefulInstanceVarsImpl = {
   let name = "LifecycleTester";
   let getInitialState props => {clicks: props.initialCount};
   let getInstanceVars () => (10, "test");
-  let handleClick event {props, state} => Some {clicks: state.clicks + props.incr};
-  let componentDidMount {props, state} => {
-    props.incrOnDidMount ? Some {clicks: state.clicks + props.incr} : None
-  };
+  let handleClick {props, state} event => Some {clicks: state.clicks + props.incr};
+  let componentDidMount {props, state} =>
+    props.incrOnDidMount ? Some {clicks: state.clicks + props.incr} : None;
   let render {state, updater} =>
     <div>
       <button onClick=(updater handleClick)>

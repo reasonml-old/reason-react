@@ -6,27 +6,19 @@
 open Constants;
 
 module Logo = {
+
   /**
    * Include Stateful Component Base!
    */
   include ReactRe.Component.Stateful;
-
-  type state = {
-    degrees: float,
-    velocity: float,
-    drag: float,
-    lastMs: int
-  };
-
+  type state = {degrees: float, velocity: float, drag: float, lastMs: int};
   type props = {message: string};
-
   let getInitialState props => {
     drag: mouseUpDrag,
     degrees: 0.0,
     velocity: 0.1,
     lastMs: ReasonJs.Date.now ()
   };
-
   let componentDidMount {props, state, updater, setState} => {
     let rec onAnimationFrame () => {
       let stateSetter {props, state} => {
@@ -34,8 +26,7 @@ module Logo = {
         /* How many 16ms virtual frames elapsed, even if clock runs at 30hz */
         let idealFramesSinceLast = 1 + (now - state.lastMs) / 16;
         let nextDegrees =
-          state.degrees +. (baseVel +. state.velocity) *.
-            float_of_int idealFramesSinceLast;
+          state.degrees +. (baseVel +. state.velocity) *. float_of_int idealFramesSinceLast;
         let nextVelocity = state.velocity *. state.drag;
         {...state, degrees: nextDegrees, velocity: nextVelocity, lastMs: now}
       };
@@ -45,9 +36,7 @@ module Logo = {
     ReasonJs.requestAnimationFrame onAnimationFrame;
     None
   };
-
   let name = "Logo";
-
   let renderGraphic rotationStyle =>
     <g fill="none" stroke="none">
       <g transform="scale(1.5, 1.5) translate(100.000000, 105.000000)">
@@ -69,7 +58,7 @@ module Logo = {
   /**
    * On Mouse Up.
    */
-  let handleMouseUp e {props, state, updater} => {
+  let handleMouseUp {props, state, updater} event => {
     let withAccel = state.velocity +. clickAccel;
     let nextVelocity = withAccel < maxVel ? withAccel : maxVel;
     Some {...state, velocity: nextVelocity, drag: mouseUpDrag}
@@ -78,8 +67,7 @@ module Logo = {
   /**
    * On Mouse Down.
    */
-  let handleMouseDown e {props, state} => Some {...state, drag: mouseDownDrag};
-
+  let handleMouseDown {props, state} event => Some {...state, drag: mouseDownDrag};
   let render {props, state, updater} => {
     let transformOrigin = "50% 50%";
     let transform = Printf.sprintf "rotate(%fdeg)" state.degrees;

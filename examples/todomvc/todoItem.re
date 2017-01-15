@@ -20,7 +20,7 @@ module TodoItem = {
   type instanceVars = {mutable editFieldRef: option ReactRe.reactRef};
   let getInstanceVars () => {editFieldRef: None};
   let getInitialState props => {editText: props.todo.title};
-  let handleSubmit event {props, state} =>
+  let handleSubmit {props, state} event =>
     switch (String.trim state.editText) {
     | "" =>
       props.onDestroy event;
@@ -29,24 +29,24 @@ module TodoItem = {
       props.onSave nonEmptyValue;
       Some {editText: nonEmptyValue}
     };
-  let handleEdit event {props} => {
+  let handleEdit {props} event => {
     props.onEdit ();
     Some {editText: props.todo.title}
   };
-  let handleKeyDown event ({props} as componentBag) =>
+  let handleKeyDown ({props} as componentBag) event =>
     if (event##which === escapeKey) {
       props.onCancel event;
       Some {editText: props.todo.title}
     } else if (
       event##which === enterKey
     ) {
-      handleSubmit event componentBag
+      handleSubmit componentBag event
     } else {
       None
     };
-  let handleChange event {props} =>
+  let handleChange {props} event =>
     props.editing ? Some {editText: ReasonJs.Document.value event##target} : None;
-  let setEditFieldRef r {instanceVars} => instanceVars.editFieldRef = Some r;
+  let setEditFieldRef {instanceVars} r => instanceVars.editFieldRef = Some r;
 
   /**
    * Safely manipulate the DOM after updating the state when invoking

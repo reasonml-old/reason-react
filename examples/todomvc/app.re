@@ -28,17 +28,17 @@ module Top = {
       {nowShowing: AllTodos, editing: None, newTodo: "", todos}
     };
     let componentDidMount {updater} => {
-      let f1 () {state} => Some {...state, nowShowing: AllTodos};
-      let f2 () {state} => Some {...state, nowShowing: ActiveTodos};
-      let f3 () {state} => Some {...state, nowShowing: CompletedTodos};
+      let f1 {state} () => Some {...state, nowShowing: AllTodos};
+      let f2 {state} () => Some {...state, nowShowing: ActiveTodos};
+      let f3 {state} () => Some {...state, nowShowing: CompletedTodos};
       let router =
         routerMake {"/": updater f1, "/active": updater f2, "/completed": updater f3};
       router##init "/";
       None
     };
-    let handleChange event {state} =>
+    let handleChange {state} event =>
       Some {...state, newTodo: ReasonJs.Document.value event##target};
-    let handleNewTodoKeyDown event {props, state} =>
+    let handleNewTodoKeyDown {props, state} event =>
       if (event##keyCode === enterKey) {
         event##preventDefault ();
         switch (String.trim state.newTodo) {
@@ -54,14 +54,14 @@ module Top = {
       } else {
         None
       };
-    let toggleAll event {state} => {
+    let toggleAll {state} event => {
       let checked = ReasonJs.Document.checked event##target;
       let todos =
         List.map (fun todo => {...todo, TodoItem.completed: Js.to_bool checked}) state.todos;
       saveLocally todos;
       Some {...state, todos}
     };
-    let toggle todoToToggle event {state} => {
+    let toggle todoToToggle {state} event => {
       let todos =
         List.map
           (
@@ -73,20 +73,20 @@ module Top = {
       saveLocally todos;
       Some {...state, todos}
     };
-    let destroy todo event {state} => {
+    let destroy todo {state} event => {
       let todos = List.filter (fun candidate => candidate !== todo) state.todos;
       saveLocally todos;
       Some {...state, todos}
     };
-    let edit todo event {state} => Some {...state, editing: Some TodoItem.(todo.id)};
-    let save todoToSave text {state} => {
+    let edit todo {state} event => Some {...state, editing: Some TodoItem.(todo.id)};
+    let save todoToSave {state} text => {
       let todos =
         List.map
           (fun todo => todo == todoToSave ? {...todo, TodoItem.title: text} : todo) state.todos;
       Some {...state, editing: None, todos}
     };
-    let cancel event {state} => Some {...state, editing: None};
-    let clearCompleted event {state} => {
+    let cancel {state} event => Some {...state, editing: None};
+    let clearCompleted {state} event => {
       let todos = List.filter (fun todo => not TodoItem.(todo.completed)) state.todos;
       saveLocally todos;
       Some {...state, todos}
