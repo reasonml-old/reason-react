@@ -22,15 +22,34 @@ The macro we provide currently resides [in the Reason repo itself](https://githu
 
 ## Bindings Usage
 
-See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS.
+See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions, like so:
 
-To declare a component, you do the usual React stuff, except now all your functions can be standalone and take in `state`, `props`, and the rest as arguments instead.*
+```reason
+module MyComponent = {
+  include ReactRe.Component.Stateful;
+  let name = "MyComponent";
+  /*...*/
+};
+```
+
+There are a few pre-declared definitions under `ReactRe.Component`:
+
+- nothing: the default. Stateless component.
+- Stateful: stateful component.
+- JsProps: component that can be called by existing JS components through the normal JS JSX: `<Foo myProp1="hi" />`.
+- InstanceVars: component that allows you to attach arbitrary instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`, etc. Note that there's no (aka no need for) instance methods; We only need regular functions.
+
+You can chain these like so:
+
+```reason
+module MyComponent = {
+  include ReactRe.Component.Stateful.InstanceVars.JsProps;
+  let name = "MyComponent";
+  /*...*/
+};
+```
 
 TODO: more docs.
-
-
-
-
 
 
 *This was the original React API envisioned three years ago; back then we had many other social challenged that prompted us to make tradeoffs in terms of API for the sake of familiarity; Now that React's commonplace, we can finally go back to the original plan =).
