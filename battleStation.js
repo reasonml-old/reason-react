@@ -46,6 +46,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
     'Coding in Reason/OCaml reveals to you more errors, not less. Think about it!',
     'If you see some type `Foo.t`, it\'s a convention that means "the Foo module\'s type. Whatever that means in context."',
     'Blocked by Adblock Plus',
+    'Upper-cased word in OCaml/Reason are usually reserved for modules & Variants.',
+    'Reserved keywords such as `end` can\'t be used as identifiers. To bind to such JS keywords: http://bloomberg.github.io/bucklescript/Manual.html#_object_label_translation_convention',
   ];
 
   function prettifyPath(p) {
