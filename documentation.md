@@ -43,7 +43,7 @@ Stays the same, with the `[@JSX]` part stripped.
 
 ### "component bag"
 
-Rehydrate's uses idiomatic Reason/OCaml modules to get rid of Reactjs' `this`, a common pain point for Reactjs newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, refSetter, instanceVars, setState}`. A render would look like:
+Rehydrate's uses idiomatic Reason/OCaml modules to get rid of ReactJS' `this`, a common pain point for ReactJS newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, refSetter, instanceVars, setState}`. A render would look like:
 
 ```reason
 /* normal record destructuring. Pick what you need! */
@@ -51,10 +51,10 @@ let render {props, state} => <div className=props.className>(ReactRe.stringToEle
 ```
 
 #### `props`, `state`
-Same as Reactjs'.
+Same as ReactJS'.
 
 #### `updater`
-The secret sauce function that wraps every callback handler. The Reactjs `<div onClick={this.handleClick} />` becomes `<div onClick=(updater handleClick) />`. `updater` takes in your familiar callback and returns a new (memoized) callback that'll give you the up-to-date props, state and other values when it's called. Example:
+The secret sauce function that wraps every callback handler. The ReactJS `<div onClick={this.handleClick} />` becomes `<div onClick=(updater handleClick) />`. `updater` takes in your familiar callback and returns a new (memoized) callback that'll give you the up-to-date props, state and other values when it's called. Example:
 
 ```reason
 /* `props` is up-to-date here, even though onClick is asynchronously triggered */
@@ -75,12 +75,12 @@ let getRef componentBag theRef => componentBag.instanceVars.divRef = Some theRef
 let render {props, refSetter} => <div ref=(refSetter getRef) />;
 ```
 
-Rehydrate ref only accept callbacks. The string `ref` from Reactjs is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
+Rehydrate ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
 
 TODO: ref-related helpers (in another section. Refer to that section here).
 
 #### `instanceVars`
-Occasionally, Reactjs components are used to store instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`. We support this pattern.
+Occasionally, ReactJS components are used to store instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`. We support this pattern.
 
 ```reason
 type instanceVars = {mutable intervalID: option int};
@@ -100,17 +100,17 @@ let componentWillUnmount {instanceVars} =>
 See also the use-case with the previous `refSetter`.
 
 #### `setState`
-Different use-cases than Reactjs' `setState`! Since lifecycle events (below) and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
+Different use-cases than ReactJS' `setState`! Since lifecycle events (below) and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
 
 ### Lifecycle events
-All lifecycle hooks from Reactjs exist, apart from `componentWillMount` (`componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount)) and `shouldComponentUpdate` (not implemented yet), e.g.
+All lifecycle hooks from ReactJS exist, apart from `componentWillMount` (`componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount)) and `shouldComponentUpdate` (not implemented yet), e.g.
 
 ```reason
 /* typical use-case: compare current & next props, then optionally set the state. */
 let componentWillReceiveProps {props, state} ::nextProps => nextProps.toggle === props.toggle ? None : Some {count: state.count + 1};
 ```
 
-(A common nit of Reactjs' lifecycle events is that folks can never remember prevState/prevProps/nextProps and their position in a lifecycle event. Note how we've used types and function labels to solve this.)
+(A common nit of ReactJS' lifecycle events is that folks can never remember prevState/prevProps/nextProps and their position in a lifecycle event. Note how we've used types and function labels to solve this.)
 
 Instead of imperatively calling `setState`, the lifecycle functions look for potential state update from their return value. `None` means no state update needed, `Some whateverNewState` means setting the state and trigger a re-render.
 
@@ -150,19 +150,7 @@ Including each of these definitions will allow you to provide the associated fun
 The default. Stateless component. You need to provide:
 - `name`, the string name of your component, for tooling purposes, e.g. [React devtools](https://github.com/facebook/react-devtools).
 - `props`, the type of the component's props, preferably a record, or `unit` if no props.
-- `render`, your render function! It takes in the `componentBag` record, of shape `{props, state, updater, refSetter, instanceVars, setState}`. In the case of the simple `React.Component`, only `props` and `updater` are relevant.
-  - `props`: the record you've defined, accessible through a parameter rather than through `this.props` like in Reactjs (we don't need `this` in our bindings!).
-  - `updater`: your callback handlers' wrapper! Instead of Reactjs' `<div onClick={handleClick} />`, we have `<div onClick=(updater handleClick) />`. Example:
-
-    ```reason
-    let handleClick componentBag event => {
-      Js.log componentBag.props.message;
-      None
-    };
-    let render {updater} => <div onClick=(updater handleClick) />;
-    ```
-
-    the callback receives the fresh `componentBag` (the whole point of `updater`) and the familiar onClick `event`, and needs to return `option state`. Since we're in the default stateless component, the return value is always `None`;
+- `render`, your render function! It takes in the `componentBag` record, described earlier. In the case of the simple `React.Component`, only `props` and `updater` are relevant.
 
 #### Stateful (`ReactRe.Component.Stateful`)
 In addition to the default component definitions, this one asks you to also provide:
@@ -194,9 +182,8 @@ var ReasonComponent = require('reasonComponent').comp;
 ```
 
 #### InstanceVars
-
-Allows allows you to attach arbitrary instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`, etc. Note that there's no (aka no need for) instance methods; We only need regular functions. Add:
-- `instanceVars`, the type that's usually of the following form:
+Add:
+- `instanceVars` (documented earlier), the type that's usually of the following form:
 
   ```reason
   type instanceVars = {
@@ -206,22 +193,20 @@ Allows allows you to attach arbitrary instance properties, e.g. `timeoutID`, `su
   ```
 
   The fields of the record don't have to be mutable, but in the context of the usages of instanceVars, e.g. setting up a timeOut in `componentDidMount`, your record's likely populated with mostly mutable fields.
+
 - `getInstanceVars`, a function of the type `unit => instanceVars`, which initiates your `instanceVars`:
 
   ```reason
   let getInstanceVars () => {foo: timeoutID, subscription1: None};
   ```
 
-### Departure From Reactjs
+### Miscellaneous
 
-Apart from the idiomatic OCaml-style module API described above, there are several Reactjs features that the bindings explicitly don't support:
-
-- No `componentWillMount`. `componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount) over this method.
 - No context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
-  - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
-  - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
-  - Since the mixins aren't provided by Rehydrate proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
+- For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
+- Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
+- Since the mixins aren't provided by Rehydrate proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
 
 
 TODO: doc on bind to js without converting
