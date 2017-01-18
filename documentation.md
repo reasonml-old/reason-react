@@ -35,6 +35,21 @@ The macro we provide currently resides [in the Reason repo itself](https://githu
 
 ## Bindings Usage
 
+### "component bag"
+
+This concept occurs several times later, so we'll explain it here. Rehydrate's bindings uses idiomatic Reason/OCaml modules and gets rid of Reactjs' `this`, a common pain point for newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record, containing of shape `{props, state, updater, refSetter, instanceVars, setState}`. So a render would look like:
+
+```reason
+/* normal record destructuring. Pick what you need! */
+let render {props, state} => <div className=props.className>(ReactRe.stringToElement state.message)</div>
+```
+
+- `props`, `state`: same as Reactjs'.
+- `updater`: a secret sauce function that wraps every callback handler. TODO: more info
+- `refSetter`: like `updater` but for ref. TODO: more info.
+- `instanceVars`: TODO more info.
+- `setState`: different use-cases than Reactjs' `setState`! Since lifecycle events and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
+
 See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions, like so:
 
 ```reason
@@ -124,3 +139,34 @@ Allows allows you to attach arbitrary instance properties, e.g. `timeoutID`, `su
   ```reason
   let getInstanceVars () => {foo: timeoutID, subscription1: None};
   ```
+
+## Lifecycle events
+All lifecycle hooks from Reactjs exist, apart from `componentWillMount` (`componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount)) and `shouldComponentUpdate` (not implemented yet), e.g.
+
+```reason
+/* check the next props ac */
+let componentWillReceiveProps {state} ::nextProps => nextProps.increment ? Some {count: state.count + 1} : None;
+```
+
+(A common nit of Reactjs' lifecycle events is that folks can never remember prevState/prevProps/nextProps and their position in a lifecycle event. Note how we've used types and function labels to solve this.)
+
+- `componentDidMount`: `componentBag => option state`
+- `componentWillReceiveProps`: `componentBag => nextProps::props => option state`
+- `componentWillUpdate`: `componentBag => nextProps::props => nextState::state => option state`
+- `componentDidUpdate`: `prevProps::props => prevState::state => componentBag => option state`
+- `componentWillUnmount`: `componentBag => unit`
+
+## Departure From Reactjs
+
+Apart from the idiomatic OCaml-style module API described above, there are several Reactjs features that the bindings explicitly don't support:
+
+- No string `ref`. This is a deprecated feature of Reactjs, which can't be easily removed due to the lack of types. Rehydrate refs all use the callback style previously described.
+- No `componentWillMount`. `componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount) over this method.
+- No context (yet).
+- No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
+  - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
+  - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
+  - Since the mixins aren't provided by Rehydrate proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
+
+
+TODO: doc on bind to js without converting
