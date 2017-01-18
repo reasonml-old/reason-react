@@ -3,7 +3,8 @@
 
 The macro we provide currently resides [in the Reason repo itself](https://github.com/facebook/reason/blob/77ede651424fa6d238d98a13142a888765537978/src/reactjs_jsx_ppx.ml). This transforms the agnostic JSX calls into something that works with the current ReactJS bindings.
 
-1.
+### Uncapitalized JSX
+
 ```reason
 div foo::bar children::[child1, child2] () [@JSX]
 /* with JSX: <div foo=bar>child1 child2</div> */
@@ -18,8 +19,7 @@ React.createElement('div', {foo: bar}, child1, child2)
 ```
 and
 ```reason
-div children::[] () [@JSX]
-/* with JSX: <div /> */
+div children::[] () [@JSX] /* with JSX: <div /> */
 ```
 becomes
 ```reason
@@ -30,24 +30,77 @@ Which compiles to
 React.createElement('div', undefined, child1, child2)
 ```
 
-2. `MyReasonComponent.createElement foo::bar [child1, child2][@JSX]` stays the same, with the `[@JSX]` part stripped.
+### Capitalized JSX
+
+```reason
+MyReasonComponent.createElement foo::bar [child1, child2][@JSX]
+/* with JSX: <MyReasonComponent foo=bar>child1 child2</MyReasonComponent> */
+```
+
+Stays the same, with the `[@JSX]` part stripped.
 
 ## Bindings Usage
 
 ### "component bag"
 
-This concept occurs several times later, so we'll explain it here. Rehydrate's bindings uses idiomatic Reason/OCaml modules and gets rid of Reactjs' `this`, a common pain point for newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record, containing of shape `{props, state, updater, refSetter, instanceVars, setState}`. So a render would look like:
+Rehydrate's uses idiomatic Reason/OCaml modules to get rid of Reactjs' `this`, a common pain point for Reactjs newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, refSetter, instanceVars, setState}`. A render would look like:
 
 ```reason
 /* normal record destructuring. Pick what you need! */
 let render {props, state} => <div className=props.className>(ReactRe.stringToElement state.message)</div>
 ```
 
-- `props`, `state`: same as Reactjs'.
-- `updater`: a secret sauce function that wraps every callback handler. TODO: more info
-- `refSetter`: like `updater` but for ref. TODO: more info.
-- `instanceVars`: TODO more info.
-- `setState`: different use-cases than Reactjs' `setState`! Since lifecycle events and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
+#### `props`, `state`
+Same as Reactjs'.
+
+#### `updater`
+The secret sauce function that wraps every callback handler. The Reactjs `<div onClick={this.handleClick} />` becomes `<div onClick=(updater handleClick) />`. `updater` takes in your familiar callback and returns a new (memoized) callback that'll give you the up-to-date props, state and other values when it's called. Example:
+
+```reason
+/* `props` is up-to-date here, even though onClick is asynchronously triggered */
+let handleClick {props} event => {Js.log "clicked!"; None};
+let render {props, updater} => <div onClick=(updater handleClick) />;
+```
+
+The return type is `option state`, where you indicate whether the handler needs to trigger a state update or not.
+
+#### `refSetter`
+Like `updater` but for ref:
+
+```reason
+/* this type will be explained later */
+type instanceVars = {mutable divRef: option ReactRe.reactRef};
+let getInstanceVars () => {divRef: None};
+let getRef componentBag theRef => componentBag.instanceVars.divRef = Some theRef;
+let render {props, refSetter} => <div ref=(refSetter getRef) />;
+```
+
+Rehydrate ref only accept callbacks. The string `ref` from Reactjs is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
+
+TODO: ref-related helpers (in another section. Refer to that section here).
+
+#### `instanceVars`
+Occasionally, Reactjs components are used to store instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`. We support this pattern.
+
+```reason
+type instanceVars = {mutable intervalID: option int};
+/* this method & the life cycle methods will be explained below */
+let getInstanceVars () => {intervalID: None};
+let componentDidMount {instanceVars} => {
+  instanceVars.intervalID = Some (someBindingsToSetInterval (fun () => Js.log "testing!") 1000);
+  None
+};
+let componentWillUnmount {instanceVars} =>
+  switch instanceVars.intervalID {
+  | None => ()
+  | Some id => someBindingsToClearInterval id
+  };
+```
+
+See also the use-case with the previous `refSetter`.
+
+#### `setState`
+Different use-cases than Reactjs' `setState`! Since lifecycle events (below) and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
 
 ### Lifecycle events
 All lifecycle hooks from Reactjs exist, apart from `componentWillMount` (`componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount)) and `shouldComponentUpdate` (not implemented yet), e.g.
@@ -163,7 +216,6 @@ Allows allows you to attach arbitrary instance properties, e.g. `timeoutID`, `su
 
 Apart from the idiomatic OCaml-style module API described above, there are several Reactjs features that the bindings explicitly don't support:
 
-- No string `ref`. This is a deprecated feature of Reactjs, which can't be easily removed due to the lack of types. Rehydrate refs all use the callback style previously described.
 - No `componentWillMount`. `componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount) over this method.
 - No context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
