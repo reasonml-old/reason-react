@@ -1,3 +1,5 @@
+__This documentation assumes relative familiarity with ReactJS.__
+
 ## JSX
 [Reason has JSX](http://facebook.github.io/reason/#diving-deeper-jsx)! There's a paragraph about the `[@JSX]` attribute there. These bindings take advantage of it.
 
@@ -152,7 +154,7 @@ The default. Stateless component. You need to provide:
 - `props`, the type of the component's props, preferably a record, or `unit` if no props.
 - `render`, your render function! It takes in the `componentBag` record, described earlier. In the case of the simple `React.Component`, only `props` and `updater` are relevant.
 
-#### Stateful (`ReactRe.Component.Stateful`)
+#### Stateful
 In addition to the default component definitions, this one asks you to also provide:
 - `state`, the type of your state, preferably a record.
 - `getInitialState`, a function that takes the initial `props` (which you can of course ignore) and returns the initial `state`.
@@ -200,6 +202,21 @@ Add:
   let getInstanceVars () => {foo: timeoutID, subscription1: None};
   ```
 
+### Interop With Existing JavaScript Components
+While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's great perf after static analysis, our toolchain's great editor integration, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed great hooks to make talking with the JS components easier.
+
+#### Reason -> JS
+TODO
+
+#### JS -> Reason
+TODO
+
+#### Converting a Component Over
+TODO
+
+#### Bind to a Component Without Convert It Over
+TODO
+
 ### Miscellaneous
 
 - No context (yet).
@@ -207,6 +224,3 @@ Add:
 - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
 - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
 - Since the mixins aren't provided by Rehydrate proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
-
-
-TODO: doc on bind to js without converting
