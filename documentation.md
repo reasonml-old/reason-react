@@ -53,11 +53,13 @@ let render {props, state} => <div className=props.className>(ReactRe.stringToEle
 All lifecycle hooks from Reactjs exist, apart from `componentWillMount` (`componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount)) and `shouldComponentUpdate` (not implemented yet), e.g.
 
 ```reason
-/* check the next props ac */
-let componentWillReceiveProps {state} ::nextProps => nextProps.increment ? Some {count: state.count + 1} : None;
+/* typical use-case: compare current & next props, then optionally set the state. */
+let componentWillReceiveProps {props, state} ::nextProps => nextProps.toggle === props.toggle ? None : Some {count: state.count + 1};
 ```
 
 (A common nit of Reactjs' lifecycle events is that folks can never remember prevState/prevProps/nextProps and their position in a lifecycle event. Note how we've used types and function labels to solve this.)
+
+Instead of imperatively calling `setState`, the lifecycle functions look for potential state update from their return value. `None` means no state update needed, `Some whateverNewState` means setting the state and trigger a re-render.
 
 - `componentDidMount`: `componentBag => option state`
 - `componentWillReceiveProps`: `componentBag => nextProps::props => option state`
