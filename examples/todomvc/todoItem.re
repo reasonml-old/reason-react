@@ -54,7 +54,7 @@ module TodoItem = {
    * For more info refer to notes at https://facebook.github.io/react/docs/component-api.html#setstate
    * and https://facebook.github.io/react/docs/component-specs.html#updating-componentdidupdate
    */
-  let componentDidUpdate prevProps prevState {props, instanceVars} =>
+  let componentDidUpdate ::prevProps ::prevState {props, instanceVars} =>
     switch (prevProps.editing, props.editing, instanceVars.editFieldRef) {
     | (false, true, Some field) =>
       let node = ReactDOMRe.domElementToObj (ReactDOMRe.findDOMNode field);

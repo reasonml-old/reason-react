@@ -137,8 +137,9 @@ type jsState 'state = Js.t {. mlState : 'state};
 
 module CommonLifecycle = {
   let componentDidMount _ => None;
-  let componentDidUpdate _ _ _ => None;
-  let componentWillReceiveProps _ _ => None;
+  let componentWillUpdate _ nextProps::_ nextState::_ => None;
+  let componentDidUpdate prevProps::_ prevState::_ _ => None;
+  let componentWillReceiveProps _ nextProps::_ => None;
   let componentWillUnmount _ => ();
 };
 
@@ -241,9 +242,17 @@ module type CompleteComponentSpec = {
    */
   let componentDidMount: Component.componentBag state props instanceVars => option state;
   let componentWillReceiveProps:
-    props => Component.componentBag state props instanceVars => option state;
+    Component.componentBag state props instanceVars => nextProps::props => option state;
+  let componentWillUpdate:
+    Component.componentBag state props instanceVars =>
+    nextProps::props =>
+    nextState::state =>
+    option state;
   let componentDidUpdate:
-    props => state => Component.componentBag state props instanceVars => option state;
+    prevProps::props =>
+    prevState::state =>
+    Component.componentBag state props instanceVars =>
+    option state;
   let componentWillUnmount: Component.componentBag state props instanceVars => unit;
   let jsPropsToReasonProps: option (jsProps => props);
   let render: Component.componentBag state props instanceVars => reactElement;
@@ -322,6 +331,32 @@ module CreateComponent
           | Some state => that##setState (fun _ _ => {"mlState": state})
           }
         };
+        pub componentWillUpdate nextProps nextState => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let instanceVars =
+            switch this##instanceVars {
+            | None =>
+              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
+            | Some s => s
+            };
+          let currState = that##state##mlState;
+          let newState =
+            CompleteComponentSpec.componentWillUpdate
+              {
+                props: convertPropsIfTheyreFromJs that##props,
+                state: currState,
+                instanceVars,
+                updater: Obj.magic this##updaterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
+              }
+              nextProps::(convertPropsIfTheyreFromJs nextProps)
+              nextState::nextState##mlState;
+          switch newState {
+          | None => ()
+          | Some state => that##setState (fun _ _ => {"mlState": state})
+          }
+        };
         pub componentDidUpdate prevProps prevState => {
           let that: jsComponentThis_ = [%bs.raw "this"];
           let instanceVars =
@@ -333,8 +368,8 @@ module CreateComponent
           let currState = that##state##mlState;
           let newState =
             CompleteComponentSpec.componentDidUpdate
-              (convertPropsIfTheyreFromJs prevProps)
-              prevState##mlState
+              prevProps::(convertPropsIfTheyreFromJs prevProps)
+              prevState::prevState##mlState
               {
                 props: convertPropsIfTheyreFromJs that##props,
                 state: currState,
@@ -359,7 +394,6 @@ module CreateComponent
           let currState = that##state##mlState;
           let newState =
             CompleteComponentSpec.componentWillReceiveProps
-              (convertPropsIfTheyreFromJs nextProps)
               {
                 props: convertPropsIfTheyreFromJs that##props,
                 state: currState,
@@ -367,7 +401,8 @@ module CreateComponent
                 updater: Obj.magic this##updaterMethod,
                 refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
                 setState: Js_unsafe.js_method_run1 this##setStateMethod
-              };
+              }
+              nextProps::(convertPropsIfTheyreFromJs nextProps);
           switch newState {
           | None => ()
           | Some state => that##setState (fun _ _ => {"mlState": state})
