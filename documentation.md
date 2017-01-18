@@ -66,6 +66,7 @@ The default. Stateless component. You need to provide:
 - `render`, your render function! It takes in the `componentBag` record, of shape `{props, state, updater, refSetter, instanceVars, setState}`. In the case of the simple `React.Component`, only `props` and `updater` are relevant.
   - `props`: the record you've defined, accessible through a parameter rather than through `this.props` like in Reactjs (we don't need `this` in our bindings!).
   - `updater`: your callback handlers' wrapper! Instead of Reactjs' `<div onClick={handleClick} />`, we have `<div onClick=(updater handleClick) />`. Example:
+
     ```reason
     let handleClick componentBag event => {
       Js.log componentBag.props.message;
@@ -73,6 +74,7 @@ The default. Stateless component. You need to provide:
     };
     let render {updater} => <div onClick=(updater handleClick) />;
     ```
+
     the callback receives the fresh `componentBag` (the whole point of `updater`) and the familiar onClick `event`, and needs to return `option state`. Since we're in the default stateless component, the return value is always `None`;
 
 ### Stateful (`ReactRe.Component.Stateful`)
@@ -83,13 +85,16 @@ In addition to the default component definitions, this one asks you to also prov
 ### JsProps
 In addition to the default component definitions, add:
 - `jsProps`, the type of the props passed to you from the JS side. The type should be `Js.t {. whatever: here}`, like so:
+
   ```reason
   type jsProps = Js.t {.
     message: string,
     count: Js.null_undefined int /* optional arg. Read below to see how all of this wires up */
   };
   ```
+
 - `jsPropsToReasonProps`, of the type `option (jsProps => props)`, which translates the JS props into the more idiomatic `props` type you've defined, like so:
+
   ```reason
   let jsPropsToReasonProps = Some (fun jsProps => {message: jsProps##message, count: Js.Null_undefined.to_opt jsProps##count});
   ```
@@ -105,14 +110,17 @@ var ReasonComponent = require('reasonComponent').comp;
 
 Allows allows you to attach arbitrary instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`, etc. Note that there's no (aka no need for) instance methods; We only need regular functions. Add:
 - `instanceVars`, the type that's usually of the following form:
+
   ```reason
   type instanceVars = {
     mutable timeoutID: option int,
     mutable subscription1: option whateverSubscriptionType
   };
   ```
+
   The fields of the record don't have to be mutable, but in the context of the usages of instanceVars, e.g. setting up a timeOut in `componentDidMount`, your record's likely populated with mostly mutable fields.
 - `getInstanceVars`, a function of the type `unit => instanceVars`, which initiates your `instanceVars`:
+
   ```reason
   let getInstanceVars () => {foo: timeoutID, subscription1: None};
   ```
