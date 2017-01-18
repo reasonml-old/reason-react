@@ -18,7 +18,10 @@
       "dir": "examples",
       "subdirs": [
         {
-          "dir": "pure",
+          "dir": "simple",
+        },
+        {
+          "dir": "logo",
         },
         {
           "dir": "todomvc",

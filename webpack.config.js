@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    pure: './lib/js/examples/pure/index.js',
+    simple: './lib/js/examples/simple/root.js',
+    logo: './lib/js/examples/logo/index.js',
     todomvc: './lib/js/examples/todomvc/app.js',
   },
   output: {

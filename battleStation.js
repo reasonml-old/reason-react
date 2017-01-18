@@ -32,7 +32,7 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
   });
   proc.on('exit', code => {
     procExited = true;
-    status.setContent('Bsb exited...? (Please restart this)')
+    status.setContent('Bsb exited...? (Please run `bsb -w -make-world` to diagnose)')
     status.style.bg = 'yellow';
   });
 
