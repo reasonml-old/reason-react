@@ -1,45 +1,8 @@
 __This documentation assumes relative familiarity with ReactJS.__
 
 ## JSX
-[Reason has JSX](http://facebook.github.io/reason/#diving-deeper-jsx)! There's a paragraph about the `[@JSX]` attribute there. These bindings take advantage of it.
 
-The macro we provide currently resides [in the Reason repo itself](https://github.com/facebook/reason/blob/77ede651424fa6d238d98a13142a888765537978/src/reactjs_jsx_ppx.ml). This transforms the agnostic JSX calls into something that works with the current ReactJS bindings.
-
-### Uncapitalized JSX
-
-```reason
-div foo::bar children::[child1, child2] () [@JSX]
-/* with JSX: <div foo=bar>child1 child2</div> */
-```
-becomes
-```reason
-ReactDOMRe.createElement "div" props::(ReactDOMRe.props foo::bar ()) [|child1, child2|];
-```
-Which compiles to the JS code:
-```js
-React.createElement('div', {foo: bar}, child1, child2)
-```
-and
-```reason
-div children::[] () [@JSX] /* with JSX: <div /> */
-```
-becomes
-```reason
-ReactDOMRe.createElement "div" [|child1, child2|];
-```
-Which compiles to
-```js
-React.createElement('div', undefined, child1, child2)
-```
-
-### Capitalized JSX
-
-```reason
-MyReasonComponent.createElement foo::bar [child1, child2][@JSX]
-/* with JSX: <MyReasonComponent foo=bar>child1 child2</MyReasonComponent> */
-```
-
-Stays the same, with the `[@JSX]` part stripped.
+The JSX ppx transform resides in the Reason repo itself. The documentation is [here](https://github.com/facebook/reason/tree/master/src#jsx-transform-for-reactjs).
 
 ## Bindings Usage
 
