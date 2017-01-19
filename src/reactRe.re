@@ -26,20 +26,15 @@ type reactRef;
 
 type reactChildren;
 
-external createElement : reactClass => props::Js.t {..}? => array reactElement => reactElement = "createElement" [@@bs.splice] [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ];
+external createElement : reactClass => props::Js.t {..}? => array reactElement => reactElement =
+  "createElement" [@@bs.splice] [@@bs.val] [@@bs.module "react"];
 
-external createClassInternalHack : Js.t 'classSpec => reactClass = "createClass" [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ];
+external createClassInternalHack : Js.t 'classSpec => reactClass =
+  "createClass" [@@bs.val] [@@bs.module "react"];
 
-external createCompositeElementInternalHack : reactClass =>
-                                              Js.t {.. reasonProps : 'props} =>
-                                              array reactElement =>
-                                              reactElement = "createElement" [@@bs.val] [@@bs.module
-                                                                    "react"
-                                                                    ] [@@bs.splice];
+external createCompositeElementInternalHack :
+  reactClass => Js.t {.. reasonProps : 'props} => array reactElement => reactElement =
+  "createElement" [@@bs.val] [@@bs.module "react"] [@@bs.splice];
 
 external nullElement : reactElement = "null" [@@bs.val];
 
@@ -111,9 +106,7 @@ let wrapPropsAndPutRefAndKey ::props ::ref ::key =>
   ReasonJs.Object.assign [%bs.raw "{}"] props {"ref": ref, "key": key};
 
 /* Array.isArray is es2015 */
-let isArrayPolyfill: (Obj.t => Js.boolean) [@bs] = [%bs.raw
-  "function(a) {return Object.prototype.toString.call(a) === '[object Array]'}"
-];
+let isArrayPolyfill: (Obj.t => Js.boolean) [@bs] = [%bs.raw "function(a) {return Object.prototype.toString.call(a) === '[object Array]'}"];
 
 let jsToReasonChildren (children: Js.null_undefined reactChildren) :list reactElement =>
   switch (Js.Null_undefined.to_opt children) {
