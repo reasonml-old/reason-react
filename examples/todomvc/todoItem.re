@@ -8,7 +8,7 @@ module TodoItem = {
   include ReactRe.Component.Stateful.InstanceVars;
   let name = "TodoItemRe";
   type props = {
-    todo: todo,
+    todo,
     editing: bool,
     onDestroy: ReactRe.event => unit,
     onSave: string => unit,

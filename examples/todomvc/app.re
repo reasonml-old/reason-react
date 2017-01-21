@@ -31,8 +31,7 @@ module Top = {
       let f1 {state} () => Some {...state, nowShowing: AllTodos};
       let f2 {state} () => Some {...state, nowShowing: ActiveTodos};
       let f3 {state} () => Some {...state, nowShowing: CompletedTodos};
-      let router =
-        routerMake {"/": updater f1, "/active": updater f2, "/completed": updater f3};
+      let router = routerMake {"/": updater f1, "/active": updater f2, "/completed": updater f3};
       router##init "/";
       None
     };
