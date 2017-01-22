@@ -32,7 +32,8 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
   });
   proc.on('exit', code => {
     procExited = true;
-    status.setContent('Bsb exited...? (Please run `bsb -w -make-world` to diagnose)')
+    const cmd = args.join(' ');
+    status.setContent('Bsb exited...? (Please run `' + cmd + '` to diagnose)')
     status.style.bg = 'yellow';
   });
 
