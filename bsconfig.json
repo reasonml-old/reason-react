@@ -13,9 +13,11 @@
   "sources": [
     {
       "dir": "src",
+      "public": "all",
     },
     {
       "dir": "examples",
+      "public": "all",
       "type" : "dev",
       "subdirs": [
         {
