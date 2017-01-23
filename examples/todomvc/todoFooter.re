@@ -12,7 +12,7 @@ module TodoFooter = {
     onClearCompleted: ReactRe.event => unit
   };
   let render {props} => {
-    let activeTodoWord = props.count === 1? "item" : "items";
+    let activeTodoWord = props.count === 1 ? "item" : "items";
     let clearButton =
       props.completedCount > 0 ?
         <button className="clear-completed" onClick=props.onClearCompleted>
@@ -35,7 +35,9 @@ module TodoFooter = {
         (ReactRe.stringToElement " ")
         <li> <a href="#/active" className=active> (ReactRe.stringToElement "Active") </a> </li>
         (ReactRe.stringToElement " ")
-        <li> <a href="#/completed" className=completed> (ReactRe.stringToElement "Completed") </a> </li>
+        <li>
+          <a href="#/completed" className=completed> (ReactRe.stringToElement "Completed") </a>
+        </li>
       </ul>
       clearButton
     </footer>

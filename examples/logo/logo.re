@@ -11,7 +11,7 @@ module Logo = {
    * Include Stateful Component Base!
    */
   include ReactRe.Component.Stateful;
-  type state = {degrees: float, velocity: float, drag: float, lastMs: int};
+  type state = {degrees: float, velocity: float, drag: float, lastMs: float};
   type props = {message: string};
   let getInitialState props => {
     drag: mouseUpDrag,
@@ -24,9 +24,8 @@ module Logo = {
       let stateSetter {props, state} => {
         let now = ReasonJs.Date.now ();
         /* How many 16ms virtual frames elapsed, even if clock runs at 30hz */
-        let idealFramesSinceLast = 1 + (now - state.lastMs) / 16;
-        let nextDegrees =
-          state.degrees +. (baseVel +. state.velocity) *. float_of_int idealFramesSinceLast;
+        let idealFramesSinceLast = 1. +. (now -. state.lastMs) /. 16.;
+        let nextDegrees = state.degrees +. (baseVel +. state.velocity) *. idealFramesSinceLast;
         let nextVelocity = state.velocity *. state.drag;
         {...state, degrees: nextDegrees, velocity: nextVelocity, lastMs: now}
       };
