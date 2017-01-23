@@ -1,0 +1,316 @@
+type reactClass;
+
+type reactElement;
+
+type event =
+  Js.t {
+    .
+    charCode : int,
+    currentTarget : ReasonJs.Document.element,
+    keyCode : int,
+    preventDefault : Js.meth [ | `Arity_0] unit,
+    relatedTarget : ReasonJs.Document.element,
+    stopPropagation : Js.meth [ | `Arity_0] unit,
+    target : ReasonJs.Document.element,
+    which : int
+  };
+
+type reactRef;
+
+type reactChildren;
+
+external createElement : reactClass => props::Js.t {..}? => array reactElement => reactElement =
+  "createElement" [@@bs.splice] [@@bs.val] [@@bs.module "react"];
+
+external nullElement : reactElement = "null" [@@bs.val];
+
+external stringToElement : string => reactElement = "%identity";
+
+external arrayToElement : array reactElement => reactElement = "%identity";
+
+external refToJsObj : reactRef => Js.t {..} = "%identity";
+
+let jsToReasonChildren: Js.null_undefined reactChildren => list reactElement;
+
+module ComponentBase: {
+  type componentBag 'state 'props 'instanceVars = {
+    state: 'state,
+    props: 'props,
+    updater:
+      'dataPassedToHandler .
+      (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
+      'dataPassedToHandler =>
+      unit,
+
+    refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+    instanceVars: 'instanceVars,
+    setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+  };
+};
+
+module Component: {
+  type componentBag 'state 'props 'instanceVars =
+    ComponentBase.componentBag 'state 'props 'instanceVars =
+      {
+        state: 'state,
+        props: 'props,
+        updater:
+          'dataPassedToHandler .
+          (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
+          'dataPassedToHandler =>
+          unit,
+
+        refSetter:
+          (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+        instanceVars: 'instanceVars,
+        setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+      };
+  let componentDidMount: 'a => option 'b;
+  let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+  let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+  let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+  let componentWillUnmount: 'a => unit;
+  type jsProps = unit;
+  type instanceVars = unit;
+  type state = unit;
+  let getInstanceVars: unit => unit;
+  let jsPropsToReasonProps: option 'a;
+  let getInitialState: 'a => unit;
+  module Stateful: {
+    type componentBag 'state 'props 'instanceVars =
+      ComponentBase.componentBag 'state 'props 'instanceVars =
+        {
+          state: 'state,
+          props: 'props,
+          updater:
+            'dataPassedToHandler .
+            (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
+            'dataPassedToHandler =>
+            unit,
+
+          refSetter:
+            (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+          instanceVars: 'instanceVars,
+          setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+        };
+    let componentDidMount: 'a => option 'b;
+    let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+    let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+    let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+    let componentWillUnmount: 'a => unit;
+    type jsProps = unit;
+    type instanceVars = unit;
+    let getInstanceVars: unit => unit;
+    let jsPropsToReasonProps: option 'a;
+    module JsProps: {
+      type componentBag 'state 'props 'instanceVars =
+        ComponentBase.componentBag 'state 'props 'instanceVars =
+          {
+            state: 'state,
+            props: 'props,
+            updater:
+              'dataPassedToHandler .
+              (
+                componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state
+              ) =>
+              'dataPassedToHandler =>
+              unit,
+
+            refSetter:
+              (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+            instanceVars: 'instanceVars,
+            setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+          };
+      let componentDidMount: 'a => option 'b;
+      let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+      let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+      let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+      let componentWillUnmount: 'a => unit;
+      type instanceVars = unit;
+      let getInstanceVars: unit => unit;
+      let jsPropsToReasonProps: option 'a;
+    };
+    module InstanceVars: {
+      type componentBag 'state 'props 'instanceVars =
+        ComponentBase.componentBag 'state 'props 'instanceVars =
+          {
+            state: 'state,
+            props: 'props,
+            updater:
+              'dataPassedToHandler .
+              (
+                componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state
+              ) =>
+              'dataPassedToHandler =>
+              unit,
+
+            refSetter:
+              (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+            instanceVars: 'instanceVars,
+            setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+          };
+      let componentDidMount: 'a => option 'b;
+      let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+      let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+      let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+      let componentWillUnmount: 'a => unit;
+      type jsProps = unit;
+      let jsPropsToReasonProps: option 'a;
+      module JsProps: {
+        type componentBag 'state 'props 'instanceVars =
+          ComponentBase.componentBag 'state 'props 'instanceVars =
+            {
+              state: 'state,
+              props: 'props,
+              updater:
+                'dataPassedToHandler .
+                (
+                  componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state
+                ) =>
+                'dataPassedToHandler =>
+                unit,
+
+              refSetter:
+                (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+              instanceVars: 'instanceVars,
+              setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+            };
+        let componentDidMount: 'a => option 'b;
+        let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+        let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+        let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+        let componentWillUnmount: 'a => unit;
+      };
+    };
+  };
+  module JsProps: {
+    type componentBag 'state 'props 'instanceVars =
+      ComponentBase.componentBag 'state 'props 'instanceVars =
+        {
+          state: 'state,
+          props: 'props,
+          updater:
+            'dataPassedToHandler .
+            (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
+            'dataPassedToHandler =>
+            unit,
+
+          refSetter:
+            (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+          instanceVars: 'instanceVars,
+          setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+        };
+    let componentDidMount: 'a => option 'b;
+    let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+    let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+    let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+    let componentWillUnmount: 'a => unit;
+    type instanceVars = unit;
+    type state = unit;
+    let getInstanceVars: unit => unit;
+    let getInitialState: 'a => unit;
+  };
+  module InstanceVars: {
+    type componentBag 'state 'props 'instanceVars =
+      ComponentBase.componentBag 'state 'props 'instanceVars =
+        {
+          state: 'state,
+          props: 'props,
+          updater:
+            'dataPassedToHandler .
+            (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
+            'dataPassedToHandler =>
+            unit,
+
+          refSetter:
+            (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+          instanceVars: 'instanceVars,
+          setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+        };
+    let componentDidMount: 'a => option 'b;
+    let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+    let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+    let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+    let componentWillUnmount: 'a => unit;
+    type jsProps = unit;
+    type state = unit;
+    let getInitialState: 'a => unit;
+    let jsPropsToReasonProps: option 'a;
+    module JsProps: {
+      type componentBag 'state 'props 'instanceVars =
+        ComponentBase.componentBag 'state 'props 'instanceVars =
+          {
+            state: 'state,
+            props: 'props,
+            updater:
+              'dataPassedToHandler .
+              (
+                componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state
+              ) =>
+              'dataPassedToHandler =>
+              unit,
+
+            refSetter:
+              (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+            instanceVars: 'instanceVars,
+            setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
+          };
+      let componentDidMount: 'a => option 'b;
+      let componentWillUpdate: 'a => nextProps::'b => nextState::'c => option 'd;
+      let componentDidUpdate: prevProps::'a => prevState::'b => 'c => option 'd;
+      let componentWillReceiveProps: 'a => nextProps::'b => option 'c;
+      let componentWillUnmount: 'a => unit;
+      type state = unit;
+      let getInitialState: 'a => unit;
+    };
+  };
+};
+
+module type CompleteComponentSpec = {
+  let name: string;
+  type props;
+  type state;
+  type instanceVars;
+  type jsProps;
+  let getInstanceVars: unit => instanceVars;
+  let getInitialState: props => state;
+  let componentDidMount: Component.componentBag state props instanceVars => option state;
+  let componentWillReceiveProps:
+    Component.componentBag state props instanceVars => nextProps::props => option state;
+  let componentWillUpdate:
+    Component.componentBag state props instanceVars =>
+    nextProps::props =>
+    nextState::state =>
+    option state;
+  let componentDidUpdate:
+    prevProps::props =>
+    prevState::state =>
+    Component.componentBag state props instanceVars =>
+    option state;
+  let componentWillUnmount: Component.componentBag state props instanceVars => unit;
+  let jsPropsToReasonProps: option (jsProps => props);
+  let render: Component.componentBag state props instanceVars => reactElement;
+};
+
+module CreateComponent:
+  (CompleteComponentSpec: CompleteComponentSpec) =>
+  {
+    type props_ = CompleteComponentSpec.props;
+    let comp: reactClass;
+    let wrapProps:
+      props_ =>
+      children::list reactElement =>
+      ref::(reactRef => unit)? =>
+      key::string? =>
+      unit =>
+      reactElement;
+  };
+
+let wrapPropsShamelessly:
+  reactClass =>
+  Js.t {..} =>
+  children::list reactElement =>
+  ref::(reactRef => unit)? =>
+  key::string? =>
+  unit =>
+  reactElement;
