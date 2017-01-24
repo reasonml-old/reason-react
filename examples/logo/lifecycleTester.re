@@ -1,8 +1,3 @@
-/**
- * Page component.
- * vim: set ft=rust:
- * vim: set ft=reason:
- */
 module StandardTesterImpl = {
   include ReactRe.Component.Stateful;
   type props = {incrOnDidMount: bool, initialCount: int, incr: int};

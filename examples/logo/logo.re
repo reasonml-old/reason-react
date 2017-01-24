@@ -1,8 +1,3 @@
-/**
- * Logo component.
- * vim: set ft=rust:
- * vim: set ft=reason:
- */
 open Constants;
 
 module Logo = {
