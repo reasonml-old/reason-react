@@ -11,9 +11,9 @@ git clone https://github.com/reasonml/rehydrate.git
 cd rehydrate
 npm install
 npm start
-# in another window
-npm run build
 ```
+
+Then open `finalOutput/*.html` (might need to start a server if you're on Chrome).
 
 ## Usage
 See the `examples/` folder.

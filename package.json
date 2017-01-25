@@ -6,25 +6,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node battleStation.js -- bsb -make-world -w",
-    "build": "webpack -w",
     "clean": "bsb -clean-world && rm -f finalOutput/*.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "director": "^1.2.0",
-    "todomvc-app-css": "^2.0.0",
-    "todomvc-common": "^1.0.1",
+    "blessed": "*",
     "bs-platform": "^1.4.1",
-    "reason": "https://github.com/facebook/Reason.git",
-    "webpack": "^1.14.0",
+    "dependency-env": "*",
+    "director": "^1.2.0",
+    "nopam": "*",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "nopam": "*",
-    "dependency-env": "*",
-    "blessed": "*",
-    "split": "*"
+    "reason": "https://github.com/facebook/Reason.git",
+    "split": "*",
+    "todomvc-app-css": "^2.0.0",
+    "todomvc-common": "^1.0.1"
   },
   "peerDependencies": {
     "react": "^15.0.0",

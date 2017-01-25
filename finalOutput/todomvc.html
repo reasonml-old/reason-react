@@ -16,7 +16,9 @@
 
 		<script src="../node_modules/todomvc-common/base.js"></script>
 		<script src="../node_modules/director/build/director.js"></script>
-		<script src="./todomvc.js"></script>
+		<!-- <script src="./todomvc.js"></script> -->
+		<!-- doesn't work, needs to polyfill node modules, e.g. path and util -->
+	  <script src="../requirejk.js" data-main="../lib/js/examples/todomvc/app.js" data-root="../"></script>
 
 	</body>
 </html>
