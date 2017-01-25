@@ -96,6 +96,8 @@ let wrapPropsShamelessly:
   unit =>
   reactElement;
 
+/* Don't be scared off by this signature's size! Notice that you will only ever use one of the modules or
+submodule in a component. */
 module Component: {
   type componentBag 'state 'props 'instanceVars =
     ComponentBase.componentBag 'state 'props 'instanceVars =

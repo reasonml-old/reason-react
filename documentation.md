@@ -143,8 +143,11 @@ On the JS side, you'd need to require your component like so:
 
 ```js
 var ReasonComponent = require('reasonComponent').comp;
-<ReasonComponent message="helli" />
+// make sure you're passing the correct data types!
+<ReasonComponent message="hello" />
 ```
+
+(Every Rehydrate component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`.)
 
 #### InstanceVars
 Add:
@@ -168,17 +171,43 @@ Add:
 ### Interop With Existing JavaScript Components
 While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's great perf after static analysis, our toolchain's great editor integration, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed great hooks to make talking with the JS components easier.
 
-#### Reason -> JS
-TODO
+#### Rehydrate -> ReactJs
+We only need a single hook, `wrapPropsShamelessly` to make calling a JS component work! Assuming we have `Banner.js`, here's how we'd use it in Reason:
 
-#### JS -> Reason
-TODO
+```reason
+/* bannerRe.re */
+external foo : ReactRe.reactClass = "Banner" [@@bs.module];
 
-#### Converting a Component Over
-TODO
+/* this is the call that takes in Reason data and converts it to JS data. Make sure you get the conversion right! JS won't warn you of type errors... */
+let createElement
+    className::(className: option string)=?
+    show::(show: bool)
+    onClick::(onClick: ReactRe.event => unit) =>
+  ReactRe.wrapPropsShamelessly
+    foo
+    {
+      /* turn an option string into a js nullable string */
+      "className": Js.Null_undefined.from_opt className,
+      /* turn a mandatory bool into a js boolean */
+      "show": Js.Bool.to_js_boolean show,
+      /* this stays the same, in BuckleScript and in JS */
+      "onClick": onClick
+    };
+```
 
-#### Bind to a Component Without Convert It Over
-TODO
+Usage:
+
+```reason
+/* myApp.re */
+/* ... */
+<Foo show=true onClick=(updater handleClick) />
+<Foo className="hello" show=true onClick=(updater handleClick) />
+```
+
+That's pretty much it!
+
+#### ReactJS -> Rehydrate
+See [jsProps](#jsprops).
 
 ### Miscellaneous
 
