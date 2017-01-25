@@ -19,17 +19,10 @@ type event =
 
 type reactRef;
 
-type reactChildren;
+type reactJsChildren;
 
 external createElement : reactClass => props::Js.t {..}? => array reactElement => reactElement =
   "createElement" [@@bs.splice] [@@bs.val] [@@bs.module "react"];
-
-external createClassInternalHack : Js.t 'classSpec => reactClass =
-  "createClass" [@@bs.val] [@@bs.module "react"];
-
-external createCompositeElementInternalHack :
-  reactClass => Js.t {.. reasonProps : 'props} => array reactElement => reactElement =
-  "createElement" [@@bs.val] [@@bs.module "react"] [@@bs.splice];
 
 external nullElement : reactElement = "null" [@@bs.val];
 
@@ -41,6 +34,10 @@ external refToJsObj : reactRef => Js.t {..} = "%identity";
 
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
+external createCompositeElementInternalHack :
+  reactClass => Js.t {.. reasonProps : 'props} => array reactElement => reactElement =
+  "createElement" [@@bs.val] [@@bs.module "react"] [@@bs.splice];
+
 let wrapPropsInternal
     comp
     props
@@ -91,34 +88,15 @@ let wrapPropsInternal
   }
 };
 
-let wrapPropsAndPutIndicatorThatItComesFromReason ::props ::ref ::key => {
-  "reasonProps": props,
-  "ref": ref,
-  "key": key
-};
-
-let wrapPropsAndPutRefAndKey ::props ::ref ::key =>
-  ReasonJs.Object.assign [%bs.raw "{}"] props {"ref": ref, "key": key};
-
-/* Array.isArray is es2015 */
-let isArrayPolyfill: (Obj.t => Js.boolean) [@bs] = [%bs.raw "function(a) {return Object.prototype.toString.call(a) === '[object Array]'}"];
-
-let jsToReasonChildren (children: Js.null_undefined reactChildren) :list reactElement =>
+let jsChildrenToReason (children: Js.null_undefined reactJsChildren) :list reactElement =>
   switch (Js.Null_undefined.to_opt children) {
   | None => []
   | Some children =>
-    if (Js.to_bool (isArrayPolyfill (Obj.magic children) [@bs])) {
+    if (Js.to_bool (Js.Array.isArray children)) {
       Array.to_list (Obj.magic children)
     } else {
       [Obj.magic children]
     }
-  };
-
-let rec findFirstCallback callbacks callback =>
-  switch callbacks {
-  | [(cb, memorized), ...rest] when cb === callback => Some memorized
-  | [_, ...rest] => findFirstCallback rest callback
-  | [] => None
   };
 
 type jsState 'state = Js.t {. mlState : 'state};
@@ -164,6 +142,328 @@ module ComponentBase = {
     };
   include CommonLifecycle;
 };
+
+module type CompleteComponentSpec = {
+  let name: string;
+  type props;
+  type state;
+  type instanceVars;
+  type jsProps;
+  let getInstanceVars: unit => instanceVars;
+  let getInitialState: props => state;
+
+  /**
+   * TODO: Preallocate a "returnNone", and then at runtime check for reference
+   * equality to this function and avoid even invoking it.
+   */
+  let componentDidMount: ComponentBase.componentBag state props instanceVars => option state;
+  let componentWillReceiveProps:
+    ComponentBase.componentBag state props instanceVars => nextProps::props => option state;
+  let componentWillUpdate:
+    ComponentBase.componentBag state props instanceVars =>
+    nextProps::props =>
+    nextState::state =>
+    option state;
+  let componentDidUpdate:
+    prevProps::props =>
+    prevState::state =>
+    ComponentBase.componentBag state props instanceVars =>
+    option state;
+  let componentWillUnmount: ComponentBase.componentBag state props instanceVars => unit;
+  let jsPropsToReasonProps: option (jsProps => props);
+  let render: ComponentBase.componentBag state props instanceVars => reactElement;
+};
+
+module type ReactComponent = {
+  type props_;
+  let comp: reactClass;
+  let wrapProps:
+    props_ =>
+    children::list reactElement =>
+    ref::(reactRef => unit)? =>
+    key::string? =>
+    unit =>
+    reactElement;
+};
+
+/* writing this in full-stack bare-metal JS. OCaml for-loop doesn't have early return, and throwing exceptions &
+   catching isn't great perf */
+let findFirstCallback
+    (type a)
+    (type b)
+    (callbacks: array (Js.null (a, b)))
+    (callback: a)
+    :Js.null b =>
+  [%bs.raw
+    {|
+  function(callbacks, callback) {
+    for (var i = 0; i < callbacks.length; i++) {
+      // we fill the slots from left to right. If there's a null then we can early stop.
+      if (callbacks[i] == null) {
+        return null;
+      };
+      if (callbacks[i][0] === callback) {
+        return callbacks[i][1];
+      }
+    }
+    return null;
+  }
+|}
+  ]
+  callbacks
+  callback
+  [@bs];
+
+module CreateComponent
+       (CompleteComponentSpec: CompleteComponentSpec)
+       :(ReactComponent with type props_ = CompleteComponentSpec.props) => {
+  type props_ = CompleteComponentSpec.props;
+  /* This part is the secret sauce that briges to Reactjs. It's a bit verbose (but consistentt) right now; We'll
+     find a way to make it shorter in the future. */
+  let convertPropsIfTheyreFromJs props => {
+    let props = Obj.magic props;
+    switch (Js.Undefined.to_opt props##reasonProps, CompleteComponentSpec.jsPropsToReasonProps) {
+    | (Some props, _) => props
+    /* TODO: annotate with BS to avoid curry overhead */
+    | (None, Some toReasonProps) => toReasonProps props
+    | (None, None) =>
+      raise (
+        Invalid_argument (
+          "A JS component called the Reason component " ^
+          CompleteComponentSpec.name ^ " which didn't implement the JS->Reason React props conversion"
+        )
+      )
+    }
+  };
+  type jsComponentThis_ =
+    ComponentBase.jsComponentThis
+      CompleteComponentSpec.state CompleteComponentSpec.props CompleteComponentSpec.instanceVars;
+  external createClassInternalHack : Js.t 'classSpec => reactClass =
+    "createClass" [@@bs.val] [@@bs.module "react"];
+  let maxMemoizedCount = 30;
+  let comp =
+    createClassInternalHack (
+      {
+        val displayName = CompleteComponentSpec.name;
+        /* we dangerously initialize these as nulls but don't tell the system so; They're guaranteed not to be
+           null when being passed around, as long as we initialize them in getInitialState. We also can't
+           initialize them here because the values are only shallowly copied, so they'd be shared across
+           instances. */
+        val mutable instanceVars = [%bs.raw "null"];
+        val mutable memoizedUpdaterCallbacks = [%bs.raw "null"];
+        val mutable memoizedUpdaterCount = 0;
+        val mutable memoizedRefCallbacks = [%bs.raw "null"];
+        val mutable memoizedRefCount = 0;
+        pub getInitialState () :jsState CompleteComponentSpec.state => {
+          this##instanceVars#=(CompleteComponentSpec.getInstanceVars ());
+          this##memoizedUpdaterCallbacks#=(Array.make maxMemoizedCount Js.null);
+          this##memoizedRefCallbacks#=(Array.make maxMemoizedCount Js.null);
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let props = convertPropsIfTheyreFromJs that##props;
+          let state = CompleteComponentSpec.getInitialState props;
+          {"mlState": state}
+        };
+        pub componentDidMount () => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let currState = that##state##mlState;
+          let newState =
+            CompleteComponentSpec.componentDidMount {
+              props: convertPropsIfTheyreFromJs that##props,
+              state: currState,
+              instanceVars: this##instanceVars,
+              updater: Obj.magic this##updaterMethod,
+              refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+              setState: Js_unsafe.js_method_run1 this##setStateMethod
+            };
+          switch newState {
+          | None => ()
+          | Some state => that##setState (fun _ _ => {"mlState": state})
+          }
+        };
+        pub componentWillUpdate nextProps nextState => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let currState = that##state##mlState;
+          let newState =
+            CompleteComponentSpec.componentWillUpdate
+              {
+                props: convertPropsIfTheyreFromJs that##props,
+                state: currState,
+                instanceVars: this##instanceVars,
+                updater: Obj.magic this##updaterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
+              }
+              nextProps::(convertPropsIfTheyreFromJs nextProps)
+              nextState::nextState##mlState;
+          switch newState {
+          | None => ()
+          | Some state => that##setState (fun _ _ => {"mlState": state})
+          }
+        };
+        pub componentDidUpdate prevProps prevState => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let currState = that##state##mlState;
+          let newState =
+            CompleteComponentSpec.componentDidUpdate
+              prevProps::(convertPropsIfTheyreFromJs prevProps)
+              prevState::prevState##mlState
+              {
+                props: convertPropsIfTheyreFromJs that##props,
+                state: currState,
+                instanceVars: this##instanceVars,
+                updater: Obj.magic this##updaterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
+              };
+          switch newState {
+          | None => ()
+          | Some state => that##setState (fun _ _ => {"mlState": state})
+          }
+        };
+        pub componentWillReceiveProps nextProps => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let currState = that##state##mlState;
+          let newState =
+            CompleteComponentSpec.componentWillReceiveProps
+              {
+                props: convertPropsIfTheyreFromJs that##props,
+                state: currState,
+                instanceVars: this##instanceVars,
+                updater: Obj.magic this##updaterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
+              }
+              nextProps::(convertPropsIfTheyreFromJs nextProps);
+          switch newState {
+          | None => ()
+          | Some state => that##setState (fun _ _ => {"mlState": state})
+          }
+        };
+        pub componentWillUnmount () => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          let currState = that##state##mlState;
+          CompleteComponentSpec.componentWillUnmount {
+            props: convertPropsIfTheyreFromJs that##props,
+            state: currState,
+            instanceVars: this##instanceVars,
+            updater: Obj.magic this##updaterMethod,
+            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+            setState: Js_unsafe.js_method_run1 this##setStateMethod
+          }
+        };
+        pub refSetterMethod callback =>
+          switch (
+            this##memoizedRefCount,
+            Js.Null.to_opt (findFirstCallback this##memoizedRefCallbacks callback)
+          ) {
+          | (_, Some memoized) => memoized
+          | (count, None) =>
+            let that: jsComponentThis_ = [%bs.raw "this"];
+            let maybeMemoizedCallback theRef => {
+              let currState = that##state##mlState;
+              callback
+                {
+                  ComponentBase.props: convertPropsIfTheyreFromJs that##props,
+                  state: currState,
+                  instanceVars: this##instanceVars,
+                  updater: Obj.magic this##updaterMethod,
+                  refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                  setState: Js_unsafe.js_method_run1 this##setStateMethod
+                }
+                theRef
+            };
+            if (count < maxMemoizedCount) {
+              let memoizedRefCallbacks = this##memoizedRefCallbacks;
+              memoizedRefCallbacks.(count) = Js.Null.return (callback, maybeMemoizedCallback);
+              this##memoizedRefCount#=(this##memoizedRefCount + 1)
+            };
+            maybeMemoizedCallback
+          };
+        pub setStateMethod cb => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+
+          /**
+           * Makes sense to adapt the API to the Reason API where you are often
+           * passed the entire bag for every lifecycle/callback.
+           */
+          that##setState (
+            fun prevState props => {
+              let bag = {
+                ComponentBase.props: convertPropsIfTheyreFromJs props,
+                state: prevState##mlState,
+                instanceVars: this##instanceVars,
+                updater: Obj.magic this##updaterMethod,
+                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                setState: Js_unsafe.js_method_run1 this##setStateMethod
+              };
+              {"mlState": cb bag}
+            }
+          )
+        };
+        pub updaterMethod callback =>
+          switch (
+            this##memoizedUpdaterCount,
+            Js.Null.to_opt (findFirstCallback this##memoizedUpdaterCallbacks callback)
+          ) {
+          | (_, Some memoized) => memoized
+          | (count, None) =>
+            let that: jsComponentThis_ = [%bs.raw "this"];
+            let maybeMemoizedCallback callbackPayload => {
+              let currState = that##state##mlState;
+              let newState =
+                callback
+                  {
+                    ComponentBase.props: convertPropsIfTheyreFromJs that##props,
+                    state: currState,
+                    instanceVars: this##instanceVars,
+                    updater: Obj.magic this##updaterMethod,
+                    refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+                    setState: Js_unsafe.js_method_run1 this##setStateMethod
+                  }
+                  callbackPayload;
+              switch newState {
+              | None => ()
+              | Some state => that##setState (fun _ _ => {"mlState": state})
+              }
+            };
+            if (count < maxMemoizedCount) {
+              let memoizedUpdaterCallbacks = this##memoizedUpdaterCallbacks;
+              memoizedUpdaterCallbacks.(count) = Js.Null.return (callback, maybeMemoizedCallback);
+              this##memoizedUpdaterCount#=(this##memoizedUpdaterCount + 1)
+            };
+            maybeMemoizedCallback
+          };
+        pub render () => {
+          let that: jsComponentThis_ = [%bs.raw "this"];
+          CompleteComponentSpec.render {
+            props: convertPropsIfTheyreFromJs that##props,
+            state: that##state##mlState,
+            instanceVars: this##instanceVars,
+            updater: Obj.magic this##updaterMethod,
+            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
+            setState: Js_unsafe.js_method_run1 this##setStateMethod
+          }
+        }
+      }
+      [@bs]
+    );
+  let wrapPropsAndPutIndicatorThatItComesFromReason ::props ::ref ::key => {
+    "reasonProps": props,
+    "ref": ref,
+    "key": key
+  };
+  /* fully apply this to avoid currying overhead */
+  let wrapProps (props: props_) ::children ::ref=? ::key=? () =>
+    wrapPropsInternal
+      comp props wrapPropsAndPutIndicatorThatItComesFromReason ::children ::?key ::?ref ();
+};
+
+let wrapPropsAndPutRefAndKey ::props ::ref ::key =>
+  ReasonJs.Object.assign [%bs.raw "{}"] props {"ref": ref, "key": key};
+
+/* fully apply this to avoid currying overhead */
+let wrapPropsShamelessly comp props ::children ::ref=? ::key=? () =>
+  wrapPropsInternal comp props wrapPropsAndPutRefAndKey ::children ::?key ::?ref ();
 
 module Component = {
   include ComponentBase;
@@ -214,330 +514,3 @@ module Component = {
     };
   };
 };
-
-module type CompleteComponentSpec = {
-  let name: string;
-  type props;
-  type state;
-  type instanceVars;
-  type jsProps;
-  let getInstanceVars: unit => instanceVars;
-  let getInitialState: props => state;
-
-  /**
-   * TODO: Preallocate a "returnNone", and then at runtime check for reference
-   * equality to this function and avoid even invoking it.
-   */
-  let componentDidMount: Component.componentBag state props instanceVars => option state;
-  let componentWillReceiveProps:
-    Component.componentBag state props instanceVars => nextProps::props => option state;
-  let componentWillUpdate:
-    Component.componentBag state props instanceVars =>
-    nextProps::props =>
-    nextState::state =>
-    option state;
-  let componentDidUpdate:
-    prevProps::props =>
-    prevState::state =>
-    Component.componentBag state props instanceVars =>
-    option state;
-  let componentWillUnmount: Component.componentBag state props instanceVars => unit;
-  let jsPropsToReasonProps: option (jsProps => props);
-  let render: Component.componentBag state props instanceVars => reactElement;
-};
-
-module type ReactComponent = {
-  type props_;
-  let comp: reactClass;
-  let wrapProps:
-    props_ =>
-    children::list reactElement =>
-    ref::(reactRef => unit)? =>
-    key::string? =>
-    unit =>
-    reactElement;
-};
-
-module CreateComponent
-       (CompleteComponentSpec: CompleteComponentSpec)
-       :(ReactComponent with type props_ = CompleteComponentSpec.props) => {
-  type props_ = CompleteComponentSpec.props;
-  /* This part is the secret sauce that briges to Reactjs. It's a bit verbose (but consistentt) right now; We'll
-     find a way to make it shorter in the future. */
-  let convertPropsIfTheyreFromJs props => {
-    let props = Obj.magic props;
-    switch (Js.Undefined.to_opt props##reasonProps, CompleteComponentSpec.jsPropsToReasonProps) {
-    | (Some props, _) => props
-    /* TODO: annotate with BS to avoid curry overhead */
-    | (None, Some toReasonProps) => toReasonProps props
-    | (None, None) =>
-      raise (
-        Invalid_argument (
-          "A JS component called the Reason component " ^
-          CompleteComponentSpec.name ^ " which didn't implement the JS->Reason React props conversion"
-        )
-      )
-    }
-  };
-  type jsComponentThis_ =
-    ComponentBase.jsComponentThis
-      CompleteComponentSpec.state CompleteComponentSpec.props CompleteComponentSpec.instanceVars;
-  let comp =
-    createClassInternalHack (
-      {
-        val displayName = CompleteComponentSpec.name;
-        val mutable instanceVars = None;
-        val mutable memoizedUpdaterCallbacks = [];
-        val mutable memoizedRefCallbacks = [];
-        pub getInitialState () :jsState CompleteComponentSpec.state => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let props = convertPropsIfTheyreFromJs that##props;
-          let state = CompleteComponentSpec.getInitialState props;
-          this##instanceVars#=(Some (CompleteComponentSpec.getInstanceVars ()));
-          {"mlState": state}
-        };
-        pub componentDidMount () => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let instanceVars =
-            switch this##instanceVars {
-            | None =>
-              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
-            | Some s => s
-            };
-          let currState = that##state##mlState;
-          let newState =
-            CompleteComponentSpec.componentDidMount {
-              props: convertPropsIfTheyreFromJs that##props,
-              state: currState,
-              instanceVars,
-              updater: Obj.magic this##updaterMethod,
-              refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-              setState: Js_unsafe.js_method_run1 this##setStateMethod
-            };
-          switch newState {
-          | None => ()
-          | Some state => that##setState (fun _ _ => {"mlState": state})
-          }
-        };
-        pub componentWillUpdate nextProps nextState => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let instanceVars =
-            switch this##instanceVars {
-            | None =>
-              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
-            | Some s => s
-            };
-          let currState = that##state##mlState;
-          let newState =
-            CompleteComponentSpec.componentWillUpdate
-              {
-                props: convertPropsIfTheyreFromJs that##props,
-                state: currState,
-                instanceVars,
-                updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
-              }
-              nextProps::(convertPropsIfTheyreFromJs nextProps)
-              nextState::nextState##mlState;
-          switch newState {
-          | None => ()
-          | Some state => that##setState (fun _ _ => {"mlState": state})
-          }
-        };
-        pub componentDidUpdate prevProps prevState => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let instanceVars =
-            switch this##instanceVars {
-            | None =>
-              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
-            | Some s => s
-            };
-          let currState = that##state##mlState;
-          let newState =
-            CompleteComponentSpec.componentDidUpdate
-              prevProps::(convertPropsIfTheyreFromJs prevProps)
-              prevState::prevState##mlState
-              {
-                props: convertPropsIfTheyreFromJs that##props,
-                state: currState,
-                instanceVars,
-                updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
-              };
-          switch newState {
-          | None => ()
-          | Some state => that##setState (fun _ _ => {"mlState": state})
-          }
-        };
-        pub componentWillReceiveProps nextProps => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let instanceVars =
-            switch this##instanceVars {
-            | None =>
-              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
-            | Some s => s
-            };
-          let currState = that##state##mlState;
-          let newState =
-            CompleteComponentSpec.componentWillReceiveProps
-              {
-                props: convertPropsIfTheyreFromJs that##props,
-                state: currState,
-                instanceVars,
-                updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
-              }
-              nextProps::(convertPropsIfTheyreFromJs nextProps);
-          switch newState {
-          | None => ()
-          | Some state => that##setState (fun _ _ => {"mlState": state})
-          }
-        };
-        pub componentWillUnmount () => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let instanceVars =
-            switch this##instanceVars {
-            | None =>
-              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
-            | Some s => s
-            };
-          let currState = that##state##mlState;
-          CompleteComponentSpec.componentWillUnmount {
-            props: convertPropsIfTheyreFromJs that##props,
-            state: currState,
-            instanceVars,
-            updater: Obj.magic this##updaterMethod,
-            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-            setState: Js_unsafe.js_method_run1 this##setStateMethod
-          }
-        };
-        pub refSetterMethod callback =>
-          switch (findFirstCallback this##memoizedRefCallbacks callback) {
-          | Some memoized => memoized
-          | None =>
-            let that: jsComponentThis_ = [%bs.raw "this"];
-            let memoizedCallback (theRef: reactRef) => {
-              let instanceVars =
-                switch this##instanceVars {
-                | None =>
-                  raise (
-                    Invalid_argument "ReactRe component: instanceVars somehow isn't initialized."
-                  )
-                | Some s => s
-                };
-              let currState = that##state##mlState;
-              callback
-                {
-                  Component.props: convertPropsIfTheyreFromJs that##props,
-                  state: currState,
-                  instanceVars,
-                  updater: Obj.magic this##updaterMethod,
-                  refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                  setState: Js_unsafe.js_method_run1 this##setStateMethod
-                }
-                theRef
-            };
-            this##memoizedRefCallbacks#=[
-                                          (callback, memoizedCallback),
-                                          ...this##memoizedRefCallbacks
-                                        ];
-            memoizedCallback
-          };
-        pub setStateMethod cb => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-
-          /**
-           * Makes sense to adapt the API to the Reason API where you are often
-           * passed the entire bag for every lifecycle/callback.
-           */
-          that##setState (
-            fun prevState props => {
-              let instanceVars =
-                switch this##instanceVars {
-                | None =>
-                  raise (
-                    Invalid_argument "ReactRe component: instanceVars somehow isn't initialized."
-                  )
-                | Some s => s
-                };
-              let bag = {
-                Component.props: convertPropsIfTheyreFromJs props,
-                state: prevState##mlState,
-                instanceVars,
-                updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
-              };
-              {"mlState": cb bag}
-            }
-          )
-        };
-        pub updaterMethod callback =>
-          switch (findFirstCallback this##memoizedUpdaterCallbacks callback) {
-          | Some memoized => memoized
-          | None =>
-            let that: jsComponentThis_ = [%bs.raw "this"];
-            let memoizedCallback callbackPayload => {
-              let instanceVars =
-                switch this##instanceVars {
-                | None =>
-                  raise (
-                    Invalid_argument "ReactRe component: instanceVars somehow isn't initialized."
-                  )
-                | Some s => s
-                };
-              let currState = that##state##mlState;
-              let newState =
-                callback
-                  {
-                    Component.props: convertPropsIfTheyreFromJs that##props,
-                    state: currState,
-                    instanceVars,
-                    updater: Obj.magic this##updaterMethod,
-                    refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                    setState: Js_unsafe.js_method_run1 this##setStateMethod
-                  }
-                  callbackPayload;
-              switch newState {
-              | None => ()
-              | Some state => that##setState (fun _ _ => {"mlState": state})
-              }
-            };
-            this##memoizedUpdaterCallbacks#=[
-                                              (callback, memoizedCallback),
-                                              ...this##memoizedUpdaterCallbacks
-                                            ];
-            memoizedCallback
-          };
-        pub render () => {
-          let that: jsComponentThis_ = [%bs.raw "this"];
-          let instanceVars =
-            switch this##instanceVars {
-            | None =>
-              raise (Invalid_argument "ReactRe component: instanceVars somehow isn't initialized.")
-            | Some s => s
-            };
-          CompleteComponentSpec.render {
-            props: convertPropsIfTheyreFromJs that##props,
-            state: that##state##mlState,
-            instanceVars,
-            updater: Obj.magic this##updaterMethod,
-            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-            setState: Js_unsafe.js_method_run1 this##setStateMethod
-          }
-        }
-      }
-      [@bs]
-    );
-  /* fully apply this to avoid currying overhead */
-  let wrapProps (props: props_) ::children ::ref=? ::key=? () =>
-    wrapPropsInternal
-      comp props wrapPropsAndPutIndicatorThatItComesFromReason ::children ::?key ::?ref ();
-};
-
-/* fully apply this to avoid currying overhead */
-let wrapPropsShamelessly comp (props: Js.t {..}) ::children ::ref=? ::key=? () =>
-  wrapPropsInternal comp props wrapPropsAndPutRefAndKey ::children ::?ref ::?key ();

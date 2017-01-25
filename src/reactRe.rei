@@ -17,7 +17,7 @@ type event =
 
 type reactRef;
 
-type reactChildren;
+type reactJsChildren;
 
 external createElement : reactClass => props::Js.t {..}? => array reactElement => reactElement =
   "createElement" [@@bs.splice] [@@bs.val] [@@bs.module "react"];
@@ -30,7 +30,7 @@ external arrayToElement : array reactElement => reactElement = "%identity";
 
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 
-let jsToReasonChildren: Js.null_undefined reactChildren => list reactElement;
+let jsChildrenToReason: Js.null_undefined reactJsChildren => list reactElement;
 
 module ComponentBase: {
   type componentBag 'state 'props 'instanceVars = {
@@ -47,6 +47,54 @@ module ComponentBase: {
     setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
   };
 };
+
+module type CompleteComponentSpec = {
+  let name: string;
+  type props;
+  type state;
+  type instanceVars;
+  type jsProps;
+  let getInstanceVars: unit => instanceVars;
+  let getInitialState: props => state;
+  let componentDidMount: ComponentBase.componentBag state props instanceVars => option state;
+  let componentWillReceiveProps:
+    ComponentBase.componentBag state props instanceVars => nextProps::props => option state;
+  let componentWillUpdate:
+    ComponentBase.componentBag state props instanceVars =>
+    nextProps::props =>
+    nextState::state =>
+    option state;
+  let componentDidUpdate:
+    prevProps::props =>
+    prevState::state =>
+    ComponentBase.componentBag state props instanceVars =>
+    option state;
+  let componentWillUnmount: ComponentBase.componentBag state props instanceVars => unit;
+  let jsPropsToReasonProps: option (jsProps => props);
+  let render: ComponentBase.componentBag state props instanceVars => reactElement;
+};
+
+module CreateComponent:
+  (CompleteComponentSpec: CompleteComponentSpec) =>
+  {
+    let comp: reactClass;
+    let wrapProps:
+      CompleteComponentSpec.props =>
+      children::list reactElement =>
+      ref::(reactRef => unit)? =>
+      key::string? =>
+      unit =>
+      reactElement;
+  };
+
+let wrapPropsShamelessly:
+  reactClass =>
+  Js.t {..} =>
+  children::list reactElement =>
+  ref::(reactRef => unit)? =>
+  key::string? =>
+  unit =>
+  reactElement;
 
 module Component: {
   type componentBag 'state 'props 'instanceVars =
@@ -265,52 +313,3 @@ module Component: {
     };
   };
 };
-
-module type CompleteComponentSpec = {
-  let name: string;
-  type props;
-  type state;
-  type instanceVars;
-  type jsProps;
-  let getInstanceVars: unit => instanceVars;
-  let getInitialState: props => state;
-  let componentDidMount: Component.componentBag state props instanceVars => option state;
-  let componentWillReceiveProps:
-    Component.componentBag state props instanceVars => nextProps::props => option state;
-  let componentWillUpdate:
-    Component.componentBag state props instanceVars =>
-    nextProps::props =>
-    nextState::state =>
-    option state;
-  let componentDidUpdate:
-    prevProps::props =>
-    prevState::state =>
-    Component.componentBag state props instanceVars =>
-    option state;
-  let componentWillUnmount: Component.componentBag state props instanceVars => unit;
-  let jsPropsToReasonProps: option (jsProps => props);
-  let render: Component.componentBag state props instanceVars => reactElement;
-};
-
-module CreateComponent:
-  (CompleteComponentSpec: CompleteComponentSpec) =>
-  {
-    type props_ = CompleteComponentSpec.props;
-    let comp: reactClass;
-    let wrapProps:
-      props_ =>
-      children::list reactElement =>
-      ref::(reactRef => unit)? =>
-      key::string? =>
-      unit =>
-      reactElement;
-  };
-
-let wrapPropsShamelessly:
-  reactClass =>
-  Js.t {..} =>
-  children::list reactElement =>
-  ref::(reactRef => unit)? =>
-  key::string? =>
-  unit =>
-  reactElement;
