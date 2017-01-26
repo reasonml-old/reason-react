@@ -87,14 +87,23 @@ Instead of imperatively calling `setState`, the lifecycle functions look for pot
 
 ### The Module API
 
-See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions, like so:
+See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions. Here's the basic version:
 
 ```reason
 module MyComponent = {
   include ReactRe.Component.Stateful;
   let name = "MyComponent";
+  type props = {
+    foo: string,
+    bar: option int,
+  };
   /*...*/
 };
+
+/* this will be explained below */
+include ReactRe.CreateComponent MyComponent;
+
+let createElement ::foo ::bar=? ::children => wrapProps {foo, bar} ::children;
 ```
 
 There are a few pre-declared definitions under `ReactRe.Component`. You can include them by chaining them like so:
