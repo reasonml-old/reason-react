@@ -220,7 +220,7 @@ See [jsProps](#jsprops).
 
 ### Miscellaneous
 
-- No context (yet).
+- Rehydrate doesn't support context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
 - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
 - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
