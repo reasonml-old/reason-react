@@ -1,6 +1,6 @@
 type router = Js.t {. init : (string => unit) [@bs.meth]};
 
-external routerMake : _ => router = "Router" [@@bs.module "director"] [@@bs.new];
+external routerMake : Js.t {..} => router = "Router" [@@bs.module "director"] [@@bs.new];
 
 let enterKey = 13;
 
