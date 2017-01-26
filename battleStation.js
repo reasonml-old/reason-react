@@ -50,6 +50,7 @@ function run(blessed, child_process, fs, path, split, args, processOptions) {
     'Upper-cased word in OCaml/Reason are usually reserved for modules & Variants.',
     'Reserved keywords such as `end` can\'t be used as identifiers. To bind to such JS keywords: http://bloomberg.github.io/bucklescript/Manual.html#_object_label_translation_convention',
     'In this build system, make sure your file names doesn\'t start with an upper-case letter. It breaks the build for case-sensitive file systems.',
+    'Merlin works only if you compile your code and generate the artifacts at least once.',
   ];
 
   function prettifyPath(p) {
