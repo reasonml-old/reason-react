@@ -100,40 +100,61 @@ module MyComponent = {
   /*...*/
 };
 
-/* this will be explained below */
 include ReactRe.CreateComponent MyComponent;
 
 let createElement ::foo ::bar=? ::children => wrapProps {foo, bar} ::children;
 ```
 
-There are a few pre-declared definitions under `ReactRe.Component`. You can include them by chaining them like so:
+The before-last expression, `ReactRe.CreateComponent`, takes in the declared MyComponent and returns a new one containing `comp` (for JS interop, described later) and `wrapProps`. You need to expose these two by `include`-ing the returned module, aka "spread" the two definitions into the current file.
+
+The last expression, `createElement`, exposes the call used by the JSX sugar described at the beginning. `wrapProps` creates the bindings magic; it takes a props record that you've constructed from the arguments, and `children` (remember how Reason JSX desugars to?).
+
+For the `MyComponent` module, you'd mix in one of the pre-declared definitions under `ReactRe.Component.*`:
 
 ```reason
 module MyComponent = {
-  include ReactRe.Component.Stateful.InstanceVars.JsProps;
+  include ReactRe.Component.Stateful.JsProps;
   let name = "MyComponent";
   /*...*/
 };
 ```
 
-Including each of these definitions will allow you to provide the associated functions & types. Compiling without these mandatory definitions lets the type system tell you exactly which things you need to define, but we'll document them here anyway:
-
-(You need to chain them in that order; though you can omit anything in-between, e.g. if you don't need `Stateful`, use `include ReactRe.Component.InstanceVars.JsProps`).
+Including such definition allows you to provide the associated functions & types. As of today, the most fully-featured component spec is `Stateful.InstanceVars.JsProps` (a stateful component, that allows attaching instance properties, and that can be called as JSX from JS). You can omit any of the three, but the order should be kept, e.g. `include ReactRe.Component.Stateful.JsProps` works but `include ReactRe.Component.JsProps.Stateful` doesn't.
 
 #### Nothing (just `ReactRe.Component`)
 The default. Stateless component. You need to provide:
 - `name`, the string name of your component, for tooling purposes, e.g. [React devtools](https://github.com/facebook/react-devtools).
 - `props`, the type of the component's props, preferably a record, or `unit` if no props.
-- `render`, your render function! It takes in the `componentBag` record, described earlier. In the case of the simple `React.Component`, only `props` and `updater` are relevant.
+- `render`, your render function! It takes in the `componentBag` record, described earlier. In the case of the `React.Component`, only `props` and `updater` are relevant.
 
 #### Stateful
-In addition to the default component definitions, this one asks you to also provide:
+In addition to the default component definitions, this one also asks you to provide:
 - `state`, the type of your state, preferably a record.
-- `getInitialState`, a function that takes the initial `props` (which you can of course ignore) and returns the initial `state`.
+- `getInitialState`, a function that takes the initial `props` (which you can ignore) and returns the initial `state`.
+
+#### InstanceVars
+In addition to the default component definitions, add:
+- `instanceVars` (documented earlier), the type that's usually of the following form:
+
+  ```reason
+  type instanceVars = {
+    mutable timeoutID: option int,
+    mutable subscription1: option whateverSubscriptionType
+  };
+  ```
+
+  The fields of the record don't have to be mutable, but in the context of the usages of instanceVars, e.g. setting up a timeOut in `componentDidMount`, your record's likely populated with mostly mutable fields.
+
+- `getInstanceVars`, a function of the type `unit => instanceVars`, which initiates your `instanceVars`:
+
+  ```reason
+  let getInstanceVars () => {timeoutID: None, subscription1: None};
+  let componentDidMount componentBag => {componentBag.instanceVars.timeoutID = Some (setIntervalBinding bla); None}; /* lifecycle events need to return `option state` */
+  ```
 
 #### JsProps
-In addition to the default component definitions, add:
-- `jsProps`, the type of the props passed to you from the JS side. The type should be `Js.t {. whatever: here}`, like so:
+Add:
+- `jsProps`, the type of the props passed to you from the JS side, which should be `Js.t {. whatever: here}`, like so:
 
   ```reason
   type jsProps = Js.t {.
@@ -156,29 +177,10 @@ var ReasonComponent = require('reasonComponent').comp;
 <ReasonComponent message="hello" />
 ```
 
-(Every Rehydrate component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`.)
-
-#### InstanceVars
-Add:
-- `instanceVars` (documented earlier), the type that's usually of the following form:
-
-  ```reason
-  type instanceVars = {
-    mutable timeoutID: option int,
-    mutable subscription1: option whateverSubscriptionType
-  };
-  ```
-
-  The fields of the record don't have to be mutable, but in the context of the usages of instanceVars, e.g. setting up a timeOut in `componentDidMount`, your record's likely populated with mostly mutable fields.
-
-- `getInstanceVars`, a function of the type `unit => instanceVars`, which initiates your `instanceVars`:
-
-  ```reason
-  let getInstanceVars () => {foo: timeoutID, subscription1: None};
-  ```
+Every Rehydrate component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned at the beginning of this `Module API` section.
 
 ### Interop With Existing JavaScript Components
-While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's great perf after static analysis, our toolchain's great editor integration, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed great hooks to make talking with the JS components easier.
+While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's mind-blowing idiomatic output, our toolchain's superb static analysis, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed simple hooks to talk to the JS components.
 
 #### Rehydrate -> ReactJs
 We only need a single hook, `wrapPropsShamelessly` to make calling a JS component work! Assuming we have `Banner.js`, here's how we'd use it in Reason:
@@ -220,7 +222,7 @@ See [jsProps](#jsprops).
 
 ### Miscellaneous
 
-- Rehydrate doesn't support context (yet).
+- Rehydrate doesn't support ReactJS context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
 - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
 - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
