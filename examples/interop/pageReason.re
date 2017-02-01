@@ -1,21 +1,16 @@
 module PageReason = {
   include ReactRe.Component.JsProps;
-  type props = {message: string};
+  type props = {message: string, name: option string};
   let name = "PageReason";
-  let handleClick {props} event => {
-    Js.log "clicked!";
-    None
-  };
-  let render {props, updater} =>
-    <div onClick=(updater handleClick)> (ReactRe.stringToElement props.message) </div>;
-  type jsProps = Js.t {.
-    message: string
-  };
-  let jsPropsToReasonProps = Some (fun jsProps => {
-    message: jsProps##message
-  });
+  let render {props} => <div> (ReactRe.stringToElement props.message) </div>;
+  /* name is optional, which means the JS side might pass in a null or undefined */
+  type jsProps = Js.t {. message : string, name : Js.null_undefined string};
+  let jsPropsToReasonProps =
+    Some (
+      fun jsProps => {message: jsProps##message, name: Js.Null_undefined.to_opt jsProps##name}
+    );
 };
 
 include ReactRe.CreateComponent PageReason;
 
-let createElement ::message => wrapProps {message: message};
+let createElement ::message ::name=? => wrapProps {message, name};
