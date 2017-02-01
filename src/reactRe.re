@@ -57,6 +57,23 @@ let wrapPropsInternal
     | Some key => Js.Undefined.return key
     };
   let props = wrapPropsHow ::props ::ref ::key;
+  /* "ok chenglou explain this crap, what are you doing?"
+
+     React's runtime key warning (https://facebook.github.io/react/docs/lists-and-keys.html#keys) is
+     important. We'll convert them to static warnings one day, but right now we want to piggyback on it.
+     Unfortunately, the way React detects missing keys and warn, is by detecting that children's an array, and
+     that the array items are missing `key`. It rightfully skips the warning when people do `<div>{foo}
+     {bar}</div>` because that compiles to `React.createElement('div', null, foo, bar)`. See how children are
+     not an array, but passed to `createElement` variadic-ally.
+
+     From our side, if our bindings always pass an array as children, we'd always get the children key warning
+     for something like `<div>foo bar baz</div>` (Reason JSX syntax) that hypothetically would naively desugar
+     to `ReactRe.createElement "div" [|foo, bar, baz|]`. So, to skip the key warning from our side, we need to
+     compile to variadic children too. BS supports variadic js call if we use the `bs.splice` external and if
+     we pass the last argument as an array literal. Literal! Aka we can't just pass an array reference. So we
+     pattern match on all the possibilities of an array up til a dozen (this compiles to efficient code too).
+
+     */
   switch children {
   | [] => createCompositeElementInternalHack comp props [||]
   | [a] => createCompositeElementInternalHack comp props [|a|]
