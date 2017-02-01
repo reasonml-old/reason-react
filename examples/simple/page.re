@@ -12,4 +12,4 @@ module Page = {
 
 include ReactRe.CreateComponent Page;
 
-let createElement ::message ::children => wrapProps {message: message} ::children;
+let createElement ::message => wrapProps {message: message};

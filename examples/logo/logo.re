@@ -92,4 +92,4 @@ module Logo = {
 
 include ReactRe.CreateComponent Logo;
 
-let createElement ::message children => wrapProps {message: message} children;
+let createElement ::message => wrapProps {message: message};
