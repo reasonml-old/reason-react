@@ -97,11 +97,20 @@ let wrapPropsInternal
     createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h, i, j, k, l, m|]
   | [a, b, c, d, e, f, g, h, i, j, k, l, m, n] =>
     createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h, i, j, k, l, m, n|]
+  | [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o] =>
+    createCompositeElementInternalHack comp props [|a, b, c, d, e, f, g, h, i, j, k, l, m, n, o|]
+  | [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p] =>
+    createCompositeElementInternalHack
+      comp props [|a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p|]
+  | [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q] =>
+    createCompositeElementInternalHack
+      comp props [|a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q|]
   | _ =>
-    /* 14 is a good number because it fills the cache line. Just kidding, submit an issue if you want more */
-    raise (
-      Invalid_argument "Reason allows up to 14 static children (dynamic children can be unlimited in size); If you have more, please put them in an array and assign key to the elements. Sorry for the inconvenience!"
-    )
+    /* 16 is a good number because it fills the cache line. Just kidding, submit an issue if you want more */
+    let msg =
+      "Reason allows up to 17 static children (but dynamic children in an array can be unlimited in size); You have " ^
+      string_of_int (List.length children) ^ ", please put them in an array and assign key to the elements. Sorry for the inconvenience!";
+    raise (Invalid_argument msg)
   }
 };
 
