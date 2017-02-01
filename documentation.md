@@ -85,7 +85,7 @@ Instead of imperatively calling `setState`, the lifecycle functions look for pot
 - `componentDidUpdate`: `prevProps::props => prevState::state => componentBag => option state`
 - `componentWillUnmount`: `componentBag => unit`
 
-### The Module API
+### Component API
 
 See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions. Here's the basic version:
 
@@ -102,12 +102,40 @@ module MyComponent = {
 
 include ReactRe.CreateComponent MyComponent;
 
-let createElement ::foo ::bar=? ::children => wrapProps {foo, bar} ::children;
+let createElement ::foo ::bar=? => wrapProps {foo, bar};
 ```
 
-The before-last expression, `ReactRe.CreateComponent`, takes in the declared MyComponent and returns a new one containing `comp` (for JS interop, described later) and `wrapProps`. You need to expose these two by `include`-ing the returned module, aka "spread" the two definitions into the current file.
+#### Last Two Expressions
 
-The last expression, `createElement`, exposes the call used by the JSX sugar described at the beginning. `wrapProps` creates the bindings magic; it takes a props record that you've constructed from the arguments, and `children` (remember how Reason JSX desugars to?).
+##### `include ReactRe.CreateComponent MyComponent`
+
+`ReactRe.CreateComponent` takes in the declared MyComponent and returns a new module containing `comp` (for JS interop, described later) and `wrapProps`. You need to expose these two by `include`-ing this returned module, aka "spread" the two definitions into the current file.
+
+##### 'createElement'
+
+`createElement` exposes the call used by the JSX sugar described at the beginning. From another module, you'd be able to call `MyComponent.createElement ...` or use the JSX sugar (remember that Reason JSX desugars `<MyComponent foo="hi" />` to `MyComponent.createElement foo::"hi" children::[] ()`).
+
+`wrapProps` creates the bindings magic; it takes a props record that you've constructed from the arguments, and **curries `children`, `ref` and `key` for you**! So the whole call is actually:
+
+```reason
+let createElement ::foo ::bar=? ::children ::ref=? key=? () => wrapProps {foo, bar} ::children ::ref=? key=? ();
+```
+
+But since we have currying, this can simply to:
+
+```reason
+let createElement ::foo ::bar=? => wrapProps {foo, bar};
+```
+
+Now components don't have to worry about declaring `ref` and `key` in `createElement`! If their props actually need to read into `children`, then simply uncurry that:
+
+```reason
+let createElement ::foo ::bar=? ::children => wrapProps {foo, bar, children} ::children;
+```
+
+Note that Reason functions can have default values and be optional. This maps well to ReactJS' defaultProps and optional props. There's no (need for a) special Rehydrate API for these use-cases. `::bar=?` means `bar` is an `option whateverTypeBarIs`.
+
+#### The Module Itself
 
 For the `MyComponent` module, you'd mix in one of the pre-declared definitions under `ReactRe.Component.*`:
 
@@ -121,18 +149,18 @@ module MyComponent = {
 
 Including such definition allows you to provide the associated functions & types. As of today, the most fully-featured component spec is `Stateful.InstanceVars.JsProps` (a stateful component, that allows attaching instance properties, and that can be called as JSX from JS). You can omit any of the three, but the order should be kept, e.g. `include ReactRe.Component.Stateful.JsProps` works but `include ReactRe.Component.JsProps.Stateful` doesn't.
 
-#### Nothing (just `ReactRe.Component`)
+##### Nothing (just `ReactRe.Component`)
 The default. Stateless component. You need to provide:
 - `name`, the string name of your component, for tooling purposes, e.g. [React devtools](https://github.com/facebook/react-devtools).
 - `props`, the type of the component's props, preferably a record, or `unit` if no props.
 - `render`, your render function! It takes in the `componentBag` record, described earlier. In the case of the `React.Component`, only `props` and `updater` are relevant.
 
-#### Stateful
+##### Stateful
 In addition to the default component definitions, this one also asks you to provide:
 - `state`, the type of your state, preferably a record.
 - `getInitialState`, a function that takes the initial `props` (which you can ignore) and returns the initial `state`.
 
-#### InstanceVars
+##### InstanceVars
 In addition to the default component definitions, add:
 - `instanceVars` (documented earlier), the type that's usually of the following form:
 
@@ -152,7 +180,7 @@ In addition to the default component definitions, add:
   let componentDidMount componentBag => {componentBag.instanceVars.timeoutID = Some (setIntervalBinding bla); None}; /* lifecycle events need to return `option state` */
   ```
 
-#### JsProps
+##### JsProps
 Add:
 - `jsProps`, the type of the props passed to you from the JS side, which should be `Js.t {. whatever: here}`, like so:
 
