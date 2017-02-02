@@ -9,31 +9,14 @@
   "bsc-flags": ["-w", "-40"],
   "refmt": "reason/refmt_impl.native",
   "refmt-flags": ["--print", "binary"],
-  "generate-merlin": true,
   "bs-dependencies": ["reason-js"],
   "sources": [
-    {
-      "dir": "src",
-      "public": "all",
-    },
+    "src",
     {
       "dir": "examples",
       "public": "all",
       "type" : "dev",
-      "subdirs": [
-        {
-          "dir": "simple",
-        },
-        {
-          "dir": "logo",
-        },
-        {
-          "dir": "todomvc",
-        },
-        {
-          "dir": "interop",
-        },
-      ],
-    },
+      "subdirs": [ "simple", "log","todomovc","interop"]       
+    }
   ],
 }
