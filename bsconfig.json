@@ -8,14 +8,13 @@
   "ppx-flags": ["reason/reactjs_jsx_ppx.native"],
   "bsc-flags": ["-w", "-40"],
   "refmt": "reason/refmt_impl.native",
-  "refmt-flags": ["--print", "binary"],
   "bs-dependencies": ["reason-js"],
   "sources": [
     "src",
     {
       "dir": "examples",
       "type" : "dev",
-      "subdirs": ["simple", "logo", "todomvc", "interop"]       
+      "subdirs": ["simple", "logo", "todomvc", "interop"]
     }
   ],
 }
