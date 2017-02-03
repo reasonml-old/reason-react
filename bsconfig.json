@@ -14,9 +14,8 @@
     "src",
     {
       "dir": "examples",
-      "public": "all",
       "type" : "dev",
-      "subdirs": [ "simple", "logo","todomovc","interop"]       
+      "subdirs": ["simple", "logo", "todomvc", "interop"]       
     }
   ],
 }
