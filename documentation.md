@@ -2,11 +2,6 @@ __This documentation assumes relative familiarity with ReactJS.__
 
 ## JSX
 
-* As JSX is just syntax sugar for plain Reason code, it's also typechecked. This is mostly just awesome, but also means JSX elements requires their children to be proper elements, not `string`s or `null`s. rehydrate provides some helper functions to wrap these as elements:
- * `ReactRe.stringToElement` wraps a `string`
- * `ReactRe.arrayToElement` wrap an array of elements
- * `ReactRe.nullElement` pretends to be an element, but is actually just a placeholder for `null`
-
 The JSX ppx transform resides in the Reason repo itself. The documentation is [here](https://github.com/facebook/reason/tree/master/src#jsx-transform-for-reactjs).
 
 ## Bindings Usage
@@ -215,6 +210,9 @@ Every Rehydrate component expose a `comp` value, implicitly, when doing `include
 ### Interop With Existing JavaScript Components
 While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's mind-blowing idiomatic output, our toolchain's superb static analysis, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed simple hooks to talk to the JS components.
 
+#### ReactJS -> Rehydrate
+See [jsProps](#jsprops).
+
 #### Rehydrate -> ReactJs
 We only need a single hook, `wrapPropsShamelessly` to make calling a JS component work! Assuming we have `Banner.js`, here's how we'd use it in Reason:
 
@@ -250,8 +248,19 @@ Usage:
 
 That's pretty much it!
 
-#### ReactJS -> Rehydrate
-See [jsProps](#jsprops).
+### Working with Children
+
+ReactJS' children are a bit "loose" and don't type well. Rehydrate components `children` are always `list ReactRe.reactElement`. E.g. the JS code `<Foo>hello</Foo>` needs to be `<Foo>(ReactRe.stringToElement "hello")</Foo>` in Rehydrate.
+
+What can be a `reactElement`?
+
+- The DOM components from `ReactDOMRe.createElement` (JSX sugar: `<div />`, `<span />` and the rest).
+- The components from `ReactRe.createElement` (JSX sugar: `<Foo />`).
+- String, but only through `ReactRe.stringToElement myString`.
+- The null element, `ReactRe.nullElement` (BuckleScript's `Js.null` won't work).
+- `array ReactRe.reactElement`, but only through `ReactRe.arrayToElement myArray`.
+
+ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
 
 ### Miscellaneous
 
