@@ -16,7 +16,7 @@
       "dir": "examples",
       "public": "all",
       "type" : "dev",
-      "subdirs": [ "simple", "log","todomovc","interop"]       
+      "subdirs": [ "simple", "logo","todomovc","interop"]       
     }
   ],
 }
