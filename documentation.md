@@ -2,6 +2,16 @@ __This documentation assumes relative familiarity with ReactJS.__
 
 ## JSX
 
+JSX in Reason is very similar to the babel JSX transform, but there are some differences to be aware of:
+
+* Embedded expressions should not be surrounded by curly braces, although complex expressions will need to be surrounded by parentheses.
+ * E.g. `<button onClick=handleClick> buttonLabel </button>`
+ 
+* As JSX is just syntax sugar for plain Reason code, it's also typechecked. This is mostly just awesome, but also means JSX elements requires their children to be proper elements, not `string`s or `null`s. rehydrate provides some helper functions to wrap these as elements:
+ * `ReactRe.stringToElement` wraps a `string`
+ * `ReactRe.arrayToElement` wrap an array of elements
+ * `ReactRe.nullElement` pretends to be an element, but is actually just a placeholder for `null`
+
 The JSX ppx transform resides in the Reason repo itself. The documentation is [here](https://github.com/facebook/reason/tree/master/src#jsx-transform-for-reactjs).
 
 ## Bindings Usage
