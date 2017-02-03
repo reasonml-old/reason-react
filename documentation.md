@@ -42,7 +42,15 @@ let render {props, refSetter} => <div ref=(refSetter getRef) />;
 
 Rehydrate ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
 
-TODO: ref-related helpers (in another section. Refer to that section here).
+We also expose an escape hatch `ReactRe.refToJsObj` (type: `ReactRe.reactRef => Js.t {..}`) which turns your ref into a JS object you can freely use; **this is only used to access ReactJS component class methods**.
+
+```reason
+let callSomethingDangerous componentBag =>
+  switch componentBag.instanceVars.theRef {
+  | None => ()
+  | Some r => (ReactRe.refToJsObj r)##someMethod 1 2 3
+  };
+```
 
 #### `instanceVars`
 Occasionally, ReactJS components are used to store instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`. We support this pattern.
@@ -261,6 +269,17 @@ What can be a `reactElement`?
 - `array ReactRe.reactElement`, but only through `ReactRe.arrayToElement myArray`.
 
 ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
+
+### Working with Events
+
+React events should be typed as ReactRe.event. The [interface file](https://github.com/reasonml/rehydrate/blob/master/src/reactRe.rei) has the event's shape.
+
+```reason
+let handleMouseDown componentBag event => {
+  event##stopPropagation ();
+  doSomethingElse ()
+};
+```
 
 ### Miscellaneous
 

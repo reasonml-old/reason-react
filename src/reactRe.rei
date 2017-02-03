@@ -6,13 +6,13 @@ type event =
   Js.t {
     .
     charCode : int,
-    currentTarget : ReasonJs.Document.element,
     keyCode : int,
-    preventDefault : Js.meth [ | `Arity_0] unit,
+    which : int,
+    stopPropagation : (unit => unit) [@bs.meth],
+    preventDefault : (unit => unit) [@bs.meth],
+    currentTarget : ReasonJs.Document.element,
     relatedTarget : ReasonJs.Document.element,
-    stopPropagation : Js.meth [ | `Arity_0] unit,
-    target : ReasonJs.Document.element,
-    which : int
+    target : ReasonJs.Document.element
   };
 
 type reactRef;
