@@ -73,7 +73,7 @@ let componentWillUnmount {instanceVars} =>
 See also the use-case with the previous `refSetter`.
 
 #### `setState`
-Different use-cases than ReactJS' `setState`! Since lifecycle events (below) and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
+**Different use-cases than ReactJS' `setState`**! Since lifecycle events (below) and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
 
 ### Lifecycle events
 All lifecycle hooks from ReactJS exist, apart from `componentWillMount` (`componentDidMount` is [recommended](https://facebook.github.io/react/docs/react-component.html#componentwillmount)) and `shouldComponentUpdate` (not implemented yet), e.g.
@@ -142,6 +142,15 @@ let createElement ::foo ::bar=? ::children => wrapProps {foo, bar, children} ::c
 ```
 
 Note that Reason functions can have default values and be optional. This maps well to ReactJS' defaultProps and optional props. There's no (need for a) special Rehydrate API for these use-cases. `::bar=?` means `bar` is an `option whateverTypeBarIs`.
+
+Tips: if your component doesn't accept any prop:
+
+```reason
+/*...*/
+type props = unit;
+/*...*/
+let createElement = wrapProps ()
+```
 
 #### The Module Itself
 
