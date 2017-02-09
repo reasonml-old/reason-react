@@ -1,13 +1,13 @@
-external render : ReactRe.reactElement => ReasonJs.Document.element => unit =
+external render : ReactRe.reactElement => ReasonJs.Element.t => unit =
   "render" [@@bs.val] [@@bs.module "react-dom"];
 
-external unmountComponentAtNode : ReasonJs.Document.element => unit =
+external unmountComponentAtNode : ReasonJs.Element.t => unit =
   "unmountComponentAtNode" [@@bs.val] [@@bs.module "react-dom"];
 
-external findDOMNode : ReactRe.reactRef => ReasonJs.Document.element =
+external findDOMNode : ReactRe.reactRef => ReasonJs.Element.t =
   "findDOMNode" [@@bs.val] [@@bs.module "react-dom"];
 
-external domElementToObj : ReasonJs.Document.element => Js.t {..} = "%identity";
+external domElementToObj : ReasonJs.Element.t => Js.t {..} = "%identity";
 
 type reactDOMProps;
 

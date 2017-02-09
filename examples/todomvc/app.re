@@ -1,3 +1,5 @@
+open ReasonJs;
+
 type router = Js.t {. init : (string => unit) [@bs.meth]};
 
 external routerMake : Js.t {..} => router = "Router" [@@bs.module "director"] [@@bs.new];
@@ -6,7 +8,7 @@ let enterKey = 13;
 
 let namespace = "reason-react-todos";
 
-let saveLocally todos => ReasonJs.LocalStorage.setItem namespace (ReasonJs.JSON.stringify todos);
+let saveLocally todos => ReasonJs.LocalStorage.setItem namespace (ReasonJs.Json.stringify todos);
 
 module Top = {
   module TodoApp = {
@@ -21,9 +23,9 @@ module Top = {
     };
     let getInitialState props => {
       let todos =
-        switch (Js.Null.to_opt (ReasonJs.LocalStorage.getItem namespace)) {
+        switch (ReasonJs.LocalStorage.getItem namespace) {
         | None => []
-        | Some todos => ReasonJs.JSON.parse todos
+        | Some todos => ReasonJs.Json.parse todos
         };
       {nowShowing: AllTodos, editing: None, newTodo: "", todos}
     };
@@ -36,7 +38,10 @@ module Top = {
       None
     };
     let handleChange {state} event =>
-      Some {...state, newTodo: ReasonJs.Document.value event##target};
+      switch (event##target |> Element.asHtmlElement) {
+        | Some input => Some { ...state, newTodo: input |> HtmlElement.value }
+        | None => None
+      };
     let handleNewTodoKeyDown {props, state} event =>
       if (event##keyCode === enterKey) {
         event##preventDefault ();
@@ -54,9 +59,12 @@ module Top = {
         None
       };
     let toggleAll {state} event => {
-      let checked = ReasonJs.Document.checked event##target;
+      let checked = switch (event##target |> Element.asHtmlElement) {
+        | Some el => el |> HtmlElement.checked
+        | None => false
+      };
       let todos =
-        List.map (fun todo => {...todo, TodoItem.completed: Js.to_bool checked}) state.todos;
+        List.map (fun todo => {...todo, TodoItem.completed: checked}) state.todos;
       saveLocally todos;
       Some {...state, todos}
     };
@@ -171,4 +179,4 @@ module Top = {
   let createElement = wrapProps ();
 };
 
-ReactDOMRe.render <Top /> (ReasonJs.Document.getElementsByClassName "todoapp").(0);
+ReactDOMRe.render <Top /> (document |> Document.getElementsByClassName "todoapp" |> HtmlCollection.toArray).(0);

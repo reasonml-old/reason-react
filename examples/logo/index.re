@@ -1,1 +1,6 @@
-ReactDOMRe.render <Logo message="REASON REACT" /> (ReasonJs.Document.getElementById "index");
+open ReasonJs;
+
+switch (document |> Document.getElementById "index") {
+| Some root => ReactDOMRe.render <Logo message="REASON REACT" /> root;
+| None => assert false;
+};
