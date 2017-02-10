@@ -143,7 +143,7 @@ let createElement ::foo ::bar=? ::children => wrapProps {foo, bar, children} ::c
 
 Note that Reason functions can have default values and be optional. This maps well to ReactJS' defaultProps and optional props. There's no (need for a) special Rehydrate API for these use-cases. `::bar=?` means `bar` is an `option whateverTypeBarIs`.
 
-Tips: if your component doesn't accept any prop:
+**Tips: if your component doesn't accept any prop**:
 
 ```reason
 /*...*/
