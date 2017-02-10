@@ -1,5 +1,3 @@
-open ReasonJs;
-
 let escapeKey = 27;
 
 let enterKey = 13;
@@ -47,11 +45,7 @@ module TodoItem = {
       None
     };
   let handleChange {props} event =>
-    props.editing ?
-      switch (event##target |> Element.asHtmlElement) {
-        | Some input => Some { editText: input |> HtmlElement.value }
-        | None => None
-      } : None;
+    props.editing ? Some {editText: ReasonJs.Document.value event##target} : None;
   let setEditFieldRef {instanceVars} r => instanceVars.editFieldRef = Some r;
 
   /**
