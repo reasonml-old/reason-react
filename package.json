@@ -16,9 +16,10 @@
     "director": "^1.2.0",
     "todomvc-app-css": "^2.0.0",
     "todomvc-common": "^1.0.1",
-    "bs-platform": "esy-ocaml/bucklescript#esy",
-    "reason": "facebook/reason#esy",
-    "ocaml": "esy-ocaml/ocaml#esy",
+    "bs-platform": "esy-ocaml/bucklescript.git#esy",
+    "reason": "facebook/reason.git#esy",
+    "ocaml": "esy-ocaml/ocaml.git#esy",
+    "ninja-build-system": "reasonml/ninja.git#v1.7.2-esy",
     "webpack": "^1.14.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
@@ -30,11 +31,12 @@
   "peerDependencies": {
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "bs-platform": "esy-ocaml/bucklescript#esy",
-    "reason": "facebook/reason#esy",
-    "ocaml": "esy-ocaml/ocaml#esy"
+    "bs-platform": "esy-ocaml/bucklescript.git#esy",
+    "reason": "facebook/reason.git#esy",
+    "ocaml": "esy-ocaml/ocaml.git#esy",
+    "ninja-build-system": "reasonml/ninja.git#v1.7.2-esy"
   },
   "dependencies": {
-    "reason-js": "BuckleTypes/reason-js#esy"
+    "reason-js": "BuckleTypes/reason-js.git#esy"
   }
 }
