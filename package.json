@@ -33,7 +33,6 @@
     "react-dom": "^15.0.0",
     "bs-platform": "esy-ocaml/bucklescript.git#esy",
     "reason": "facebook/reason.git#esy",
-    "ocaml": "esy-ocaml/ocaml.git#esy",
     "ninja-build-system": "reasonml/ninja.git#v1.7.2-esy"
   },
   "dependencies": {
