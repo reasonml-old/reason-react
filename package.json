@@ -17,12 +17,9 @@
     "todomvc-app-css": "^2.0.0",
     "todomvc-common": "^1.0.1",
     "bs-platform": "https://github.com/bloomberg/bucklescript.git",
-    "reason": "https://github.com/facebook/reason.git",
     "webpack": "^1.14.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "nopam": "*",
-    "dependency-env": "*",
     "blessed": "*",
     "split": "*"
   },

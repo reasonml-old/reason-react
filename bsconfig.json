@@ -4,9 +4,7 @@
   an issue! */
 {
   "name" : "rehydrate",
-  "version": "0.0.0",
-  "ppx-flags": ["reason/reactjs_jsx_ppx.native"],
-  "refmt": "reason/refmt_impl.native",
+  "ppx-flags": ["reactjs_jsx_ppx"],
   "bs-dependencies": ["reason-js"],
   "sources": [
     "src",
