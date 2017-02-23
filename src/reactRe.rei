@@ -10,9 +10,9 @@ type event =
     which : int,
     stopPropagation : (unit => unit) [@bs.meth],
     preventDefault : (unit => unit) [@bs.meth],
-    currentTarget : ReasonJs.Document.element,
-    relatedTarget : ReasonJs.Document.element,
-    target : ReasonJs.Document.element
+    currentTarget : ReasonJs.Dom.element,
+    relatedTarget : ReasonJs.Dom.element,
+    target : ReasonJs.Dom.element
   };
 
 type reactRef;
