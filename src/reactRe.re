@@ -244,7 +244,7 @@ module CreateComponent
        (CompleteComponentSpec: CompleteComponentSpec)
        :(ReactComponent with type props_ = CompleteComponentSpec.props) => {
   type props_ = CompleteComponentSpec.props;
-  /* This part is the secret sauce that briges to Reactjs. It's a bit verbose (but consistentt) right now; We'll
+  /* This part is the secret sauce that bridges to Reactjs. It's a bit verbose (but consistent) right now; We'll
      find a way to make it shorter in the future. */
   let convertPropsIfTheyreFromJs props => {
     let props = Obj.magic props;
