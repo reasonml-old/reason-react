@@ -282,6 +282,8 @@ What can be a `reactElement`?
 
 ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
 
+See also the section on [createElement](#createelement).
+
 ### Working with Events
 
 React events should be typed as ReactRe.event. The [interface file](https://github.com/reasonml/rehydrate/blob/master/src/reactRe.rei) has the event's shape.
