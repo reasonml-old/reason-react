@@ -138,7 +138,7 @@ But since we have currying, this can simply to:
 let createElement ::foo ::bar=? => wrapProps {foo, bar};
 ```
 
-Now components don't have to worry about declaring `ref` and `key` in `createElement`! If their props actually need to read into `children`, then simply uncurry that:
+Now components don't have to worry about declaring `ref` and `key` in `createElement`! If their props actually need to read into `children`, then simply uncurry that (aka, add `::children` to **both** sides of the expression!):
 
 ```reason
 let createElement ::foo ::bar=? ::children => wrapProps {foo, bar, children} ::children;
