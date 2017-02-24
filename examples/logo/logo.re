@@ -8,15 +8,15 @@ module Logo = {
   include ReactRe.Component.Stateful;
   type state = {degrees: float, velocity: float, drag: float, lastMs: float};
   type props = {message: string};
-  let getInitialState props => {
+  let getInitialState _ /* props */ => {
     drag: mouseUpDrag,
     degrees: 0.0,
     velocity: 0.1,
     lastMs: ReasonJs.Date.now ()
   };
-  let componentDidMount {props, state, updater, setState} => {
+  let componentDidMount {setState} => {
     let rec onAnimationFrame () => {
-      let stateSetter {props, state} => {
+      let stateSetter {state} => {
         let now = ReasonJs.Date.now ();
         /* How many 16ms virtual frames elapsed, even if clock runs at 30hz */
         let idealFramesSinceLast = 1. +. (now -. state.lastMs) /. 16.;
@@ -52,7 +52,7 @@ module Logo = {
   /**
    * On Mouse Up.
    */
-  let handleMouseUp {props, state, updater} event => {
+  let handleMouseUp {state} _ /* event */ => {
     let withAccel = state.velocity +. clickAccel;
     let nextVelocity = withAccel < maxVel ? withAccel : maxVel;
     Some {...state, velocity: nextVelocity, drag: mouseUpDrag}
@@ -61,7 +61,7 @@ module Logo = {
   /**
    * On Mouse Down.
    */
-  let handleMouseDown {props, state} event => Some {...state, drag: mouseDownDrag};
+  let handleMouseDown {state} _ /* event */ => Some {...state, drag: mouseDownDrag};
   let render {props, state, updater} => {
     let transform = Printf.sprintf "rotate(%fdeg)" state.degrees;
     /* To create JS Objects in Reason, */

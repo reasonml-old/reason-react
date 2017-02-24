@@ -19,7 +19,7 @@ module Top = {
       newTodo: string,
       todos: list TodoItem.todo
     };
-    let getInitialState props => {
+    let getInitialState _ /* props */ => {
       let todos =
         switch (Js.Null.to_opt (ReasonJs.LocalStorage.getItem namespace)) {
         | None => []
@@ -37,7 +37,7 @@ module Top = {
     };
     let handleChange {state} event =>
       Some {...state, newTodo: ReasonJs.Document.value event##target};
-    let handleNewTodoKeyDown {props, state} event =>
+    let handleNewTodoKeyDown {state} event =>
       if (event##keyCode === enterKey) {
         event##preventDefault ();
         switch (String.trim state.newTodo) {
@@ -60,7 +60,7 @@ module Top = {
       saveLocally todos;
       Some {...state, todos}
     };
-    let toggle todoToToggle {state} event => {
+    let toggle todoToToggle {state} _ => {
       let todos =
         List.map
           (
@@ -72,20 +72,20 @@ module Top = {
       saveLocally todos;
       Some {...state, todos}
     };
-    let destroy todo {state} event => {
+    let destroy todo {state} _ => {
       let todos = List.filter (fun candidate => candidate !== todo) state.todos;
       saveLocally todos;
       Some {...state, todos}
     };
-    let edit todo {state} event => Some {...state, editing: Some TodoItem.(todo.id)};
+    let edit todo {state} _ => Some {...state, editing: Some TodoItem.(todo.id)};
     let save todoToSave {state} text => {
       let todos =
         List.map
           (fun todo => todo == todoToSave ? {...todo, TodoItem.title: text} : todo) state.todos;
       Some {...state, editing: None, todos}
     };
-    let cancel {state} event => Some {...state, editing: None};
-    let clearCompleted {state} event => {
+    let cancel {state} _ => Some {...state, editing: None};
+    let clearCompleted {state} _ => {
       let todos = List.filter (fun todo => not TodoItem.(todo.completed)) state.todos;
       saveLocally todos;
       Some {...state, todos}

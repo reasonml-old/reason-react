@@ -2,7 +2,7 @@ module Page = {
   include ReactRe.Component;
   type props = {message: string};
   let name = "Page";
-  let handleClick {props} event => {
+  let handleClick _ _ => {
     Js.log "clicked!";
     None
   };
