@@ -256,7 +256,9 @@ module CreateComponent
       raise (
         Invalid_argument (
           "A JS component called the Reason component " ^
-          CompleteComponentSpec.name ^ " which didn't implement the JS->Reason React props conversion"
+          CompleteComponentSpec.name ^
+          " which didn't implement the JS->Reason React props conversion. Did you forget to add `JsProps` to " ^
+          CompleteComponentSpec.name ^ "'s `include ReactRe.Component.*`?"
         )
       )
     }
