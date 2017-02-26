@@ -129,40 +129,354 @@ external props :
   width::string? => /* in html5 this can only be a number, but in html4 it can ba a percentage as well */
   wrap::string? => /* "hard" or "soft" */
 
-  /* events */
-  onBlur::(ReactRe.event => unit)? =>
-  onChange::(ReactRe.event => unit)? =>
-  onClick::(ReactRe.event => unit)? =>
-  onDoubleClick::(ReactRe.event => unit)? =>
-  onDragEnter::(ReactRe.event => unit)? =>
-  onDragOver::(ReactRe.event => unit)? =>
-  onDrop::(ReactRe.event => unit)? =>
+  /* Clipboard events */
+  onCopy::(ReactRe.event => unit)? =>
+  onCut::(ReactRe.event => unit)? =>
+  onPaste::(ReactRe.event => unit)? =>
+
+  /* Composition events */
+  onCompositionEnd::(ReactRe.event => unit)? =>
+  onCompositionStart::(ReactRe.event => unit)? =>
+  onCompositionUpdate::(ReactRe.event => unit)? =>
+
+  /* Keyboard events */
   onKeyDown::(ReactRe.event => unit)? =>
   onKeyPress::(ReactRe.event => unit)? =>
+  onKeyUp::(ReactRe.event => unit)? =>
+
+  /* Focus events */
+  onFocus::(ReactRe.event => unit)? =>
+  onBlur::(ReactRe.event => unit)? =>
+
+  /* Form events */
+  onChange::(ReactRe.event => unit)? =>
+  onInput::(ReactRe.event => unit)? =>
+  onSubmit::(ReactRe.event => unit)? =>
+
+  /* Mouse events */
+  onClick::(ReactRe.event => unit)? =>
+  onContextMenu::(ReactRe.event => unit)? =>
+  onDoubleClick::(ReactRe.event => unit)? =>
+  onDrag::(ReactRe.event => unit)? =>
+  onDragEnd::(ReactRe.event => unit)? =>
+  onDragEnter::(ReactRe.event => unit)? =>
+  onDragExit::(ReactRe.event => unit)? =>
+  onDragLeave::(ReactRe.event => unit)? =>
+  onDragOver::(ReactRe.event => unit)? =>
+  onDragStart::(ReactRe.event => unit)? =>
+  onDrop::(ReactRe.event => unit)? =>
   onMouseDown::(ReactRe.event => unit)? =>
+  onMouseEnter::(ReactRe.event => unit)? =>
+  onMouseLeave::(ReactRe.event => unit)? =>
+  onMouseMove::(ReactRe.event => unit)? =>
+  onMouseOut::(ReactRe.event => unit)? =>
+  onMouseOver::(ReactRe.event => unit)? =>
   onMouseUp::(ReactRe.event => unit)? =>
+
+  /* Selection events */
+  onSelect::(ReactRe.event => unit)? =>
+
+  /* Touch events */
+  onTouchCancel::(ReactRe.event => unit)? =>
+  onTouchEnd::(ReactRe.event => unit)? =>
+  onTouchMove::(ReactRe.event => unit)? =>
+  onTouchStart::(ReactRe.event => unit)? =>
+
+  /* UI events */
   onScroll::(ReactRe.event => unit)? =>
 
+  /* Wheel events */
+  onWheel::(ReactRe.event => unit)? =>
+
+  /* Media events */
+  onAbort::(ReactRe.event => unit)? =>
+  onCanPlay::(ReactRe.event => unit)? =>
+  onCanPlayThrough::(ReactRe.event => unit)? =>
+  onDurationChange::(ReactRe.event => unit)? =>
+  onEmptied::(ReactRe.event => unit)? =>
+  onEncrypetd::(ReactRe.event => unit)? =>
+  onEnded::(ReactRe.event => unit)? =>
+  onError::(ReactRe.event => unit)? =>
+  onLoadedData::(ReactRe.event => unit)? =>
+  onLoadedMetadata::(ReactRe.event => unit)? =>
+  onLoadStart::(ReactRe.event => unit)? =>
+  onPause::(ReactRe.event => unit)? =>
+  onPlay::(ReactRe.event => unit)? =>
+  onPlaying::(ReactRe.event => unit)? =>
+  onProgress::(ReactRe.event => unit)? =>
+  onRateChange::(ReactRe.event => unit)? =>
+  onSeeked::(ReactRe.event => unit)? =>
+  onSeeking::(ReactRe.event => unit)? =>
+  onStalled::(ReactRe.event => unit)? =>
+  onSuspend::(ReactRe.event => unit)? =>
+  onTimeUpdate::(ReactRe.event => unit)? =>
+  onVolumeChange::(ReactRe.event => unit)? =>
+  onWaiting::(ReactRe.event => unit)? =>
+
+  /* Image events */
+  onLoad::(ReactRe.event => unit)? =>
+  /*onError::(ReactRe.event => unit)? =>*/
+
+  /* Animation events */
+  onAnimationStart::(ReactRe.event => unit)? =>
+  onAnimationEnd::(ReactRe.event => unit)? =>
+  onAnimationIteration::(ReactRe.event => unit)? =>
+
+  /* Transition events */
+  onTransitionEnd::(ReactRe.event => unit)? =>
+
   /* svg */
+  accentHeight::string? =>
+  accumulate::string? =>
+  additive::string? =>
+  alignmentBaseline::string? =>
+  allowReorder::string? =>
+  alphabetic::string? =>
+  amplitude::string? =>
+  arabicForm::string? =>
+  ascent::string? =>
+  attributeName::string? =>
+  attributeType::string? =>
+  autoReverse::string? =>
+  azimuth::string? =>
+  baseFrequency::string? =>
+  baseProfile::string? =>
+  baselineShift::string? =>
+  bbox::string? =>
+  begin::string? =>
+  bias::string? =>
+  by::string? =>
+  calcMode::string? =>
+  capHeight::string? =>
+  clip::string? =>
+  clipPath::string? =>
+  clipPathUnits::string? =>
   clipRule::string? =>
+  colorInterpolation::string? =>
+  colorInterpolationFilters::string? =>
+  colorProfile::string? =>
+  colorRendering::string? =>
+  contentScriptType::string? =>
+  contentStyleType::string? =>
+  cursor::string? =>
   cx::string? =>
   cy::string? =>
   d::string? =>
+  decelerate::string? =>
+  descent::string? =>
+  diffuseConstant::string? =>
+  direction::string? =>
+  display::string? =>
+  divisor::string? =>
+  dominantBaseline::string? =>
+  dur::string? =>
+  dx::string? =>
+  dy::string? =>
+  edgeMode::string? =>
+  elevation::string? =>
+  enableBackground::string? =>
+  end::string? =>
+  exponent::string? =>
+  externalResourcesRequired::string? =>
   fill::string? =>
+  fillOpacity::string? =>
   fillRule::string? =>
+  filter::string? =>
+  filterRes::string? =>
+  filterUnits::string? =>
+  floodColor::string? =>
+  floodOpacity::string? =>
+  focusable::string? =>
+  fontFamily::string? =>
+  fontSize::string? =>
+  fontSizeAdjust::string? =>
+  fontStretch::string? =>
+  fotStyle::string? =>
+  fontVariant::string? =>
+  fontWeight::string? =>
+  fomat::string? =>
+  from::string? =>
+  fx::string? =>
+  fy::string? =>
+  g1::string? =>
+  g2::string? =>
+  glyphName::string? =>
+  glyphOrientationHorizontal::string? =>
+  glyphOrientationVertical::string? =>
+  glyphRef::string? =>
+  gradientTransform::string? =>
+  gradientUnits::string? =>
+  hanging::string? =>
+  horizAdvX::string? =>
+  horizOriginX::string? =>
+  ideographic::string? =>
+  imageRendering::string? =>
+  in::string? =>
+  in2::string? =>
+  intercept::string? =>
+  k::string? =>
+  k1::string? =>
+  k2::string? =>
+  k3::string? =>
+  k4::string? =>
+  kernelMatrix::string? =>
+  kernelUnitLength::string? =>
+  kerning::string? =>
+  keyPoints::string? =>
+  keySplines::string? =>
+  keyTimes::string? =>
+  lengthAdjust::string? =>
+  letterSpacing::string? =>
+  lightingColor::string? =>
+  limitingConeAngle::string? =>
+  local::string? =>
+  markerEnd::string? =>
+  markerHeight::string? =>
+  markerMid::string? =>
+  markerStart::string? =>
+  markerUnits::string? =>
+  markerWidth::string? =>
+  mask::string? =>
+  maskContentUnits::string? =>
+  maskUnits::string? =>
+  mathematical::string? =>
+  mode::string? =>
+  numOctaves::string? =>
+  offset::string? =>
+  opacity::string? =>
+  operator::string? =>
+  order::string? =>
+  orient::string? =>
+  orientation::string? =>
+  origin::string? =>
+  overflow::string? =>
+  overlinePosition::string? =>
+  overlineThickness::string? =>
+  paintOrder::string? =>
+  panose1::string? =>
+  pathLength::string? =>
+  patternContentUnits::string? =>
+  patternTransform::string? =>
+  patternUnits::string? =>
+  pointerEvents::string? =>
   points::string? =>
+  pointsAtX::string? =>
+  pointsAtY::string? =>
+  pointsAtZ::string? =>
+  preserveAlpha::string? =>
+  preserveAspectRatio::string? =>
+  primitiveUnits::string? =>
   r::string? =>
+  radius::string? =>
+  refX::string? =>
+  refY::string? =>
+  renderingIntent::string? =>
+  repeatCount::string? =>
+  repeatDur::string? =>
+  requiredExtensions::string? =>
+  requiredFeatures::string? =>
+  restart::string? =>
+  result::string? =>
+  rotate::string? =>
+  rx::string? =>
+  ry::string? =>
+  scale::string? =>
+  seed::string? =>
+  shapeRendering::string? =>
+  slope::string? =>
+  spacing::string? =>
+  specularConstant::string? =>
+  specularExponent::string? =>
+  speed::string? =>
+  spreadMethod::string? =>
+  startOffset::string? =>
+  stdDeviation::string? =>
+  stemh::string? =>
+  stemv::string? =>
+  stitchTiles::string? =>
+  stopColor::string? =>
+  stopOpacity::string? =>
+  strikethroughPosition::string? =>
+  strikethroughThickness::string? =>
+  string::string? =>
   stroke::string? =>
+  strokeDasharray::string? =>
+  strokeDashoffset::string? =>
   strokeLinecap::string? =>
   strokeLinejoin::string? =>
   strokeMiterlimit::string? =>
+  strokeOpacity::string? =>
   strokeWidth::string? =>
+  surfaceScale::string? =>
+  systemLanguage::string? =>
+  tableValues::string? =>
+  targetX::string? =>
+  targetY::string? =>
+  textAnchor::string? =>
+  textDecoration::string? =>
+  textLength::string? =>
+  textRendering::string? =>
+  _to::string? =>
   transform::string? =>
+  u1::string? =>
+  u2::string? =>
+  underlinePosition::string? =>
+  underlineThickness::string? =>
+  unicode::string? =>
+  unicodeBidi::string? =>
+  unicodeRange::string? =>
+  unitsPerEm::string? =>
+  vAlphabetic::string? =>
+  vHanging::string? =>
+  vIdeographic::string? =>
+  vMathematical::string? =>
+  values::string? =>
+  vectorEffect::string? =>
   version::string? =>
+  vertAdvX::string? =>
+  vertAdvY::string? =>
+  vertOriginX::string? =>
+  vertOriginY::string? =>
   viewBox::string? =>
-  width::string? =>
+  viewTarget::string? =>
+  visibility::string? =>
+  /*width::string? =>*/
+  widths::string? =>
+  wordSpacing::string? =>
+  writingMode::string? =>
+  x::string? =>
+  x1::string? =>
+  x2::string? =>
+  xChannelSelector::string? =>
+  xHeight::string? =>
+  xlinkActuate::string? =>
+  xlinkArcrole::string? =>
+  xlinkHref::string? =>
+  xlinkRole::string? =>
+  xlinkShow::string? =>
+  xlinkTitle::string? =>
+  xlinkType::string? =>
+  xmlns::string? =>
+  xmlnsXlink::string? =>
+  xmlBase::string? =>
+  xmlLang::string? =>
+  xmlSpace::string? =>
+  y::string? =>
+  y1::string? =>
+  y2::string? =>
+  yChannelSelector::string? =>
+  z::string? =>
+  zoomAndPan::string? =>
 
-  /* RDFa? */
+  /* RDFa */
+  about::string? =>
+  datatype::string? =>
+  inlist::string? =>
+  prefix::string? =>
+  property::string? =>
+  resource::string? =>
+  typeof::string? =>
+  vocab::string? =>
 
   /* react-specific */
   dangerouslySetInnerHTML::string? =>
