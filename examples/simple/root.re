@@ -4,5 +4,5 @@ open ReasonJs;
 
 switch (document |> Document.getElementById "index") {
   | Some element => ReactDOMRe.render <Page message="Hello!" /> element
-  | None => raise Not_found
+  | None => raise (Invalid_argument "#index not found")
 }

@@ -1,5 +1,3 @@
-open ReasonJs;
-
 let escapeKey = 27;
 
 let enterKey = 13;

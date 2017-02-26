@@ -23,9 +23,9 @@ module Top = {
     };
     let getInitialState _ /* props */ => {
       let todos =
-        switch (ReasonJs.LocalStorage.getItem namespace) {
+        switch (LocalStorage.getItem namespace) {
         | None => []
-        | Some todos => ReasonJs.Json.parse todos
+        | Some todos => Json.parse todos
         };
       {nowShowing: AllTodos, editing: None, newTodo: "", todos}
     };
@@ -50,7 +50,7 @@ module Top = {
         | nonEmptyValue =>
           let todos =
             state.todos @ [
-              {id: string_of_float (Date.now ()), title: nonEmptyValue, completed: false}
+              {id: string_of_float (Js.Date.now ()), title: nonEmptyValue, completed: false}
             ];
           saveLocally todos;
           Some {...state, newTodo: "", todos}
