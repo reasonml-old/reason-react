@@ -217,7 +217,7 @@ Add:
   let jsPropsToReasonProps = Some (fun jsProps => {message: jsProps##message, count: Js.Null_undefined.to_opt jsProps##count});
   ```
 
-On the JS side, you'd need to require your component like so:
+On the JS side, you can require your component like so:
 
 ```js
 var ReasonComponent = require('reasonComponent').comp;
@@ -225,15 +225,15 @@ var ReasonComponent = require('reasonComponent').comp;
 <ReasonComponent message="hello" />
 ```
 
-Every Rehydrate component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned at the beginning of this `Module API` section.
+Every Rehydrate component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned [here](#include-reactrecreatecomponent-mycomponent).
 
 ### Interop With Existing JavaScript Components
 While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's mind-blowing idiomatic output, our toolchain's superb static analysis, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed simple hooks to talk to the JS components.
 
-#### ReactJS -> Rehydrate
+#### ReactJS Using Rehydrate
 See [jsProps](#jsprops).
 
-#### Rehydrate -> ReactJs
+#### Rehydrate Using ReactJs
 We only need a single hook, `wrapPropsShamelessly` to make calling a JS component work! Assuming we have `Banner.js`, here's how we'd use it in Reason:
 
 ```reason
