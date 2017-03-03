@@ -144,7 +144,7 @@ module Top = {
           <section className="main">
             <input
               className="toggle-all"
-              type_="checkbox"
+              _type="checkbox"
               onChange=(updater toggleAll)
               checked=(Js.Boolean.to_js_boolean (activeTodoCount === 0))
             />

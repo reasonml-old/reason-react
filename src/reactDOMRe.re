@@ -123,7 +123,7 @@ external props :
   step::int? =>
   summary::string? => /* deprecated */
   target::string? =>
-  type_::string? => /* has a fixed but large-ish set of possible values */
+  _type::string? => /* has a fixed but large-ish set of possible values */
   useMap::string? =>
   value::string? =>
   width::string? => /* in html5 this can only be a number, but in html4 it can ba a percentage as well */

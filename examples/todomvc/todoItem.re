@@ -71,7 +71,7 @@ module TodoItem = {
       <div className="view">
         <input
           className="toggle"
-          type_="checkbox"
+          _type="checkbox"
           checked=(Js.Boolean.to_js_boolean todo.completed)
           onChange=onToggle
         />
