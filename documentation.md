@@ -19,10 +19,10 @@ let render {props, state} => <div className=props.className>(ReactRe.stringToEle
 Same as ReactJS'.
 
 #### `updater`
-The secret sauce function that wraps every callback handler. The ReactJS `<div onClick={this.handleClick} />` becomes `<div onClick=(updater handleClick) />`. `updater` takes in your familiar callback and returns a new (memoized) callback that'll give you the up-to-date props, state and other values when it's called. Example:
+The secret sauce function that wraps every callback handler. The ReactJS `<div onClick={this.handleClick} />` becomes `<div onClick=(updater handleClick) />`. `updater` takes in your familiar callback and returns a new (memoized) callback that'll give you the up-to-date "component bag" (props, state and other values) when the callback is called, and ensures that the component state is appropriately updated after the callback. Example:
 
 ```reason
-/* `props` is up-to-date here, even though onClick is asynchronously triggered */
+/* `props` is up-to-date here, even though onClick is asynchronously triggered. The same goes for other component bag values */
 let handleClick {props} event => {Js.log "clicked!"; None};
 let render {props, updater} => <div onClick=(updater handleClick) />;
 ```
