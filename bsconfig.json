@@ -4,7 +4,7 @@
   an issue! */
 {
   "name" : "rehydrate",
-   "reason" : {"react-jsx" : true},
+  "reason" : {"react-jsx" : true},
   "bs-dependencies": ["reason-js"],
   "sources": [
     "src",
