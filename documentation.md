@@ -95,6 +95,8 @@ Instead of imperatively calling `setState`, the lifecycle functions look for pot
 
 ### Component API
 
+The component API uses OCaml's module system rather than our own `createClass`-like API (less APIs!). **All you need to know about modules is [here](http://facebook.github.io/reason/modules.html)**. 
+
 See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions. Here's the basic version:
 
 ```reason
