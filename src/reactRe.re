@@ -118,7 +118,7 @@ let jsChildrenToReason (children: Js.null_undefined reactJsChildren) :list react
   switch (Js.Null_undefined.to_opt children) {
   | None => []
   | Some children =>
-    if (Js.to_bool (Js.Array.isArray children)) {
+    if (Js.Array.isArray children) {
       Array.to_list (Obj.magic children)
     } else {
       [Obj.magic children]
