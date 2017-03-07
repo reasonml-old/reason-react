@@ -13,15 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "director": "^1.2.0",
-    "todomvc-app-css": "^2.0.0",
-    "todomvc-common": "^1.0.1",
-    "bs-platform": "https://github.com/bloomberg/bucklescript.git",
-    "webpack": "^1.14.0",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0",
-    "blessed": "*",
-    "split": "*"
+    "bs-platform": "https://github.com/bloomberg/bucklescript.git"
   },
   "peerDependencies": {
     "react": "^15.0.0",
