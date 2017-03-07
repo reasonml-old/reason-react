@@ -95,7 +95,7 @@ Instead of imperatively calling `setState`, the lifecycle functions look for pot
 
 ### Component API
 
-The component API uses OCaml's module system rather than our own `createClass`-like API (less APIs!). **All you need to know about modules is [here](http://facebook.github.io/reason/modules.html)**. 
+The component API uses OCaml's module system rather than our own `createClass`-like API (less APIs!). **All you need to know about modules is [here](http://facebook.github.io/reason/modules.html)**.
 
 See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions. Here's the basic version:
 
@@ -283,6 +283,8 @@ What can be a `reactElement`?
 - `array ReactRe.reactElement`, but only through `ReactRe.arrayToElement myArray`.
 
 ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
+
+To pass Rehydrate children to the JS side, do a conversion, e.g. `<div> (ReactRe.arrayToElement (Array.of_list props.children)) </div>`
 
 See also the section on [createElement](#createelement).
 
