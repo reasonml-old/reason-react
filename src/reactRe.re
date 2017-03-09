@@ -300,8 +300,8 @@ module CreateComponent
               state: currState,
               instanceVars: this##instanceVars,
               updater: Obj.magic this##updaterMethod,
-              refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-              setState: Js_unsafe.js_method_run1 this##setStateMethod
+              refSetter: Obj.magic this##refSetterMethod,
+              setState: Obj.magic this##setStateMethod
             };
           switch newState {
           | None => ()
@@ -318,8 +318,8 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               }
               nextProps::(convertPropsIfTheyreFromJs nextProps)
               nextState::nextState##mlState;
@@ -340,8 +340,8 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               };
           switch newState {
           | None => ()
@@ -358,8 +358,8 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               }
               nextProps::(convertPropsIfTheyreFromJs nextProps);
           switch newState {
@@ -375,8 +375,8 @@ module CreateComponent
             state: currState,
             instanceVars: this##instanceVars,
             updater: Obj.magic this##updaterMethod,
-            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-            setState: Js_unsafe.js_method_run1 this##setStateMethod
+            refSetter: Obj.magic this##refSetterMethod,
+            setState: Obj.magic this##setStateMethod
           }
         };
         pub refSetterMethod callback =>
@@ -395,8 +395,8 @@ module CreateComponent
                   state: currState,
                   instanceVars: this##instanceVars,
                   updater: Obj.magic this##updaterMethod,
-                  refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                  setState: Js_unsafe.js_method_run1 this##setStateMethod
+                  refSetter: Obj.magic this##refSetterMethod,
+                  setState: Obj.magic this##setStateMethod
                 }
                 theRef
             };
@@ -421,8 +421,8 @@ module CreateComponent
                 state: prevState##mlState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                setState: Js_unsafe.js_method_run1 this##setStateMethod
+                refSetter: Obj.magic this##refSetterMethod,
+                setState: Obj.magic this##setStateMethod
               };
               {"mlState": cb bag}
             }
@@ -445,8 +445,8 @@ module CreateComponent
                     state: currState,
                     instanceVars: this##instanceVars,
                     updater: Obj.magic this##updaterMethod,
-                    refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-                    setState: Js_unsafe.js_method_run1 this##setStateMethod
+                    refSetter: Obj.magic this##refSetterMethod,
+                    setState: Obj.magic this##setStateMethod
                   }
                   callbackPayload;
               switch newState {
@@ -468,8 +468,8 @@ module CreateComponent
             state: that##state##mlState,
             instanceVars: this##instanceVars,
             updater: Obj.magic this##updaterMethod,
-            refSetter: Js_unsafe.js_method_run1 this##refSetterMethod,
-            setState: Js_unsafe.js_method_run1 this##setStateMethod
+            refSetter: Obj.magic this##refSetterMethod,
+            setState: Obj.magic this##setStateMethod
           }
         }
       }
