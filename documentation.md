@@ -29,6 +29,8 @@ let render {props, updater} => <div onClick=(updater handleClick) />;
 
 The return type is `option state`, where you indicate whether the handler needs to trigger a state update or not.
 
+**Note**: `updater` memoize up to 30 callbacks. When you do `updater handleClick`, it's _usually_ returning the same reference as the previous call. This is important, as it doesn't break that child component's `shouldComponentUpdate`.
+
 #### `refSetter`
 Like `updater` but for ref:
 
