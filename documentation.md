@@ -8,7 +8,7 @@ The JSX ppx transform resides in the Reason repo itself. The documentation is [h
 
 ### "component bag"
 
-Rehydrate's uses idiomatic Reason/OCaml modules to get rid of ReactJS' `this`, a common pain point for ReactJS newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, refSetter, instanceVars, setState}`. A render would look like:
+Reason-React's uses idiomatic Reason/OCaml modules to get rid of ReactJS' `this`, a common pain point for ReactJS newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, refSetter, instanceVars, setState}`. A render would look like:
 
 ```reason
 /* normal record destructuring. Pick what you need! */
@@ -42,7 +42,7 @@ let getRef componentBag theRef => componentBag.instanceVars.divRef = Some theRef
 let render {props, refSetter} => <div ref=(refSetter getRef) />;
 ```
 
-Rehydrate ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
+Reason-React ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
 
 We also expose an escape hatch `ReactRe.refToJsObj` (type: `ReactRe.reactRef => Js.t {..}`) which turns your ref into a JS object you can freely use; **this is only used to access ReactJS component class methods**.
 
@@ -148,7 +148,7 @@ Now components don't have to worry about declaring `ref` and `key` in `createEle
 let createElement ::foo ::bar=? ::children => wrapProps {foo, bar, children} ::children;
 ```
 
-Note that Reason functions can have default values and be optional. This maps well to ReactJS' defaultProps and optional props. There's no (need for a) special Rehydrate API for these use-cases. `::bar=?` means `bar` is an `option whateverTypeBarIs`.
+Note that Reason functions can have default values and be optional. This maps well to ReactJS' defaultProps and optional props. There's no (need for a) special Reason-React API for these use-cases. `::bar=?` means `bar` is an `option whateverTypeBarIs`.
 
 **Tips: if your component doesn't accept any prop**:
 
@@ -229,15 +229,15 @@ var ReasonComponent = require('reasonComponent').comp;
 <ReasonComponent message="hello" />
 ```
 
-Every Rehydrate component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned [here](#include-reactrecreatecomponent-mycomponent).
+Every Reason-React component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned [here](#include-reactrecreatecomponent-mycomponent).
 
 ### Interop With Existing JavaScript Components
-While it's nice to marvel at OCaml's great type system, Rehydrate's slick API, BuckleScript's mind-blowing idiomatic output, our toolchain's superb static analysis, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed simple hooks to talk to the JS components.
+While it's nice to marvel at OCaml's great type system, Reason-React's slick API, BuckleScript's mind-blowing idiomatic output, our toolchain's superb static analysis, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed simple hooks to talk to the JS components.
 
-#### ReactJS Using Rehydrate
+#### ReactJS Using Reason-React
 See [jsProps](#jsprops).
 
-#### Rehydrate Using ReactJs
+#### Reason-React Using ReactJs
 We only need a single hook, `wrapPropsShamelessly` to make calling a JS component work! Assuming we have `Banner.js`, here's how we'd use it in Reason:
 
 ```reason
@@ -274,7 +274,7 @@ That's pretty much it!
 
 ### Working with Children
 
-ReactJS' children are a bit "loose" and don't type well. Rehydrate components `children` are always `list ReactRe.reactElement`. E.g. the JS code `<Foo>hello</Foo>` needs to be `<Foo>(ReactRe.stringToElement "hello")</Foo>` in Rehydrate.
+ReactJS' children are a bit "loose" and don't type well. Reason-React components `children` are always `list ReactRe.reactElement`. E.g. the JS code `<Foo>hello</Foo>` needs to be `<Foo>(ReactRe.stringToElement "hello")</Foo>` in Reason-React.
 
 What can be a `reactElement`?
 
@@ -286,7 +286,7 @@ What can be a `reactElement`?
 
 ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
 
-To pass Rehydrate children to the JS side, do a conversion, e.g. `<div> (ReactRe.arrayToElement (Array.of_list props.children)) </div>`
+To pass Reason-React children to the JS side, do a conversion, e.g. `<div> (ReactRe.arrayToElement (Array.of_list props.children)) </div>`
 
 See also the section on [createElement](#createelement).
 
@@ -303,8 +303,8 @@ let handleMouseDown componentBag event => {
 
 ### Miscellaneous
 
-- Rehydrate doesn't support ReactJS context (yet).
+- Reason-React doesn't support ReactJS context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
 - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
 - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
-- Since the mixins aren't provided by Rehydrate proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
+- Since the mixins aren't provided by Reason-React proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).

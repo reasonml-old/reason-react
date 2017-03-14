@@ -3,7 +3,7 @@
   comma. If this screws with your editor highlighting, please tell us by filing
   an issue! */
 {
-  "name" : "rehydrate",
+  "name" : "reason-react",
   "bs-dependencies": ["reason-js"],
   "sources": [
     "src",
