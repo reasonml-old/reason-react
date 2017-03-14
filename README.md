@@ -1,4 +1,4 @@
-# Rehydrate
+# Reason-React
 
 Come join us in [Discord](https://discord.gg/reasonml)!
 

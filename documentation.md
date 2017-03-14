@@ -292,7 +292,7 @@ See also the section on [createElement](#createelement).
 
 ### Working with Events
 
-React events should be typed as ReactRe.event. The [interface file](https://github.com/reasonml/rehydrate/blob/master/src/reactRe.rei) has the event's shape.
+React events should be typed as ReactRe.event. The [interface file](https://github.com/reasonml/reason-react/blob/master/src/reactRe.rei) has the event's shape.
 
 ```reason
 let handleMouseDown componentBag event => {
