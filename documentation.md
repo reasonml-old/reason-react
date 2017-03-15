@@ -29,7 +29,13 @@ let render {props, updater} => <div onClick=(updater handleClick) />;
 
 The return type is `option state`, where you indicate whether the handler needs to trigger a state update or not.
 
-**Note**: `updater` memoize up to 30 callbacks. When you do `updater handleClick`, it's _usually_ returning the same reference as the previous call. This is important, as it doesn't break that child component's `shouldComponentUpdate`.
+##### Note
+
+`updater` memoize up to 30 callbacks.
+
+In Reason-React, and likewise in ReactJS, when you do `<Foo onClick=(fun () => 1) />` inside `render`, you're creating a new, inline function each time and passing it down to `Foo`'s `onClick`. If `Foo` implemented [shouldComponentUpdate](https://facebook.github.io/react/docs/react-component.html#shouldcomponentupdate), you'd accidentally cause its `shouldComponentUpdate` to return `true` every time (since `props.onClick !== nextProps.onClick`). This has been avoided largely because in ReactJS, people did `<Foo onClick={this.handleClick} />`, which keeps pointing to the same reference (thus `props.onClick === nextProps.onClick` in `Foo`).
+
+But in Reason-React, since you need to wrap your handler in `updater`, we need to make sure that for each `myHandlerReference`, we return the same reference if `(updater myHandlerReference)` has been called before (in other words: `updater myHandlerReference === updater myHandlerReference`). We achieve this by storing `myHandlerReference` in a collection internally, and finding it the next time it's passed to us. To avoid memory leaks (in case people mistakenly inline the handler through `updater (fun () => ...)` and the `render`'s called again and again).
 
 #### `refSetter`
 Like `updater` but for ref:
