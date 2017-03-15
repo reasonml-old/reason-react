@@ -30,6 +30,8 @@ external stringToElement : string => reactElement = "%identity";
 
 external arrayToElement : array reactElement => reactElement = "%identity";
 
+let listToElement list => arrayToElement (Array.of_list list);
+
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
