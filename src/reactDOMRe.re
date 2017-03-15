@@ -1,3 +1,12 @@
+/* First time reading an OCaml/Reason/BuckleScript file? */
+/* `external` is the foreign function call in OCaml. */
+
+/* here we're saying `I guarantee that on the JS side, we have a `render` function in the module "react-dom"
+   that takes in a reactElement, a dom element, and returns unit (nothing) */
+
+/* It's like `let`, except you're pointing the implementation to the JS side. The compiler will inline these
+   calls and add the appropriate `require("react-dom")` in the file calling this `render` */
+
 external render : ReactRe.reactElement => ReasonJs.Document.element => unit =
   "render" [@@bs.val] [@@bs.module "react-dom"];
 
