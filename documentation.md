@@ -283,7 +283,7 @@ What can be a `reactElement`?
 - String, but only through `ReactRe.stringToElement myString`.
 - The null element, `ReactRe.nullElement` (BuckleScript's `Js.null` won't work).
 - `array ReactRe.reactElement`, but only through `ReactRe.arrayToElement myArray`.
-- `list ReactRe.reactElement`, but only through `ReactRe.listToElement myList`.
+- `list ReactRe.reactElement`, a helper implemented as `ReactRe.arrayToElement (Array.of_list myList)`
 
 ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
 
