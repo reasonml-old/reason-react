@@ -146,6 +146,11 @@ module ComponentBase = {
       (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
       'dataPassedToHandler =>
       unit,
+    handler:
+      'dataPassedToHandler .
+      (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+      'dataPassedToHandler =>
+      unit,
 
     refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
     instanceVars: 'instanceVars,
@@ -284,10 +289,13 @@ module CreateComponent
         val mutable memoizedUpdaterCount = 0;
         val mutable memoizedRefCallbacks = [%bs.raw "null"];
         val mutable memoizedRefCount = 0;
+        val mutable memoizedHandlerCallbacks = [%bs.raw "null"];
+        val mutable memoizedHandlerCount = 0;
         pub getInitialState () :jsState CompleteComponentSpec.state => {
           this##instanceVars#=(CompleteComponentSpec.getInstanceVars ());
           this##memoizedUpdaterCallbacks#=(Array.make maxMemoizedCount Js.null);
           this##memoizedRefCallbacks#=(Array.make maxMemoizedCount Js.null);
+          this##memoizedHandlerCallbacks#=(Array.make maxMemoizedCount Js.null);
           let that: jsComponentThis_ = [%bs.raw "this"];
           let props = convertPropsIfTheyreFromJs that##props;
           let state = CompleteComponentSpec.getInitialState props;
@@ -302,6 +310,7 @@ module CreateComponent
               state: currState,
               instanceVars: this##instanceVars,
               updater: Obj.magic this##updaterMethod,
+              handler: Obj.magic this##handlerMethod,
               refSetter: Obj.magic this##refSetterMethod,
               setState: Obj.magic this##setStateMethod
             };
@@ -320,6 +329,7 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
+                handler: Obj.magic this##handlerMethod,
                 refSetter: Obj.magic this##refSetterMethod,
                 setState: Obj.magic this##setStateMethod
               }
@@ -342,6 +352,7 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
+                handler: Obj.magic this##handlerMethod,
                 refSetter: Obj.magic this##refSetterMethod,
                 setState: Obj.magic this##setStateMethod
               };
@@ -360,6 +371,7 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
+                handler: Obj.magic this##handlerMethod,
                 refSetter: Obj.magic this##refSetterMethod,
                 setState: Obj.magic this##setStateMethod
               }
@@ -377,6 +389,7 @@ module CreateComponent
             state: currState,
             instanceVars: this##instanceVars,
             updater: Obj.magic this##updaterMethod,
+            handler: Obj.magic this##handlerMethod,
             refSetter: Obj.magic this##refSetterMethod,
             setState: Obj.magic this##setStateMethod
           }
@@ -397,6 +410,7 @@ module CreateComponent
                   state: currState,
                   instanceVars: this##instanceVars,
                   updater: Obj.magic this##updaterMethod,
+                  handler: Obj.magic this##handlerMethod,
                   refSetter: Obj.magic this##refSetterMethod,
                   setState: Obj.magic this##setStateMethod
                 }
@@ -423,6 +437,7 @@ module CreateComponent
                 state: prevState##mlState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
+                handler: Obj.magic this##handlerMethod,
                 refSetter: Obj.magic this##refSetterMethod,
                 setState: Obj.magic this##setStateMethod
               };
@@ -447,6 +462,7 @@ module CreateComponent
                     state: currState,
                     instanceVars: this##instanceVars,
                     updater: Obj.magic this##updaterMethod,
+                    handler: Obj.magic this##handlerMethod,
                     refSetter: Obj.magic this##refSetterMethod,
                     setState: Obj.magic this##setStateMethod
                   }
@@ -463,6 +479,35 @@ module CreateComponent
             };
             maybeMemoizedCallback
           };
+        pub handlerMethod callback =>
+          switch (
+            this##memoizedHandlerCount,
+            Js.Null.to_opt (findFirstCallback this##memoizedHandlerCallbacks callback)
+          ) {
+          | (_, Some memoized) => memoized
+          | (count, None) =>
+            let that: jsComponentThis_ = [%bs.raw "this"];
+            let maybeMemoizedCallback callbackPayload => {
+              let currState = that##state##mlState;
+              callback
+                {
+                  ComponentBase.props: convertPropsIfTheyreFromJs that##props,
+                  state: currState,
+                  instanceVars: this##instanceVars,
+                  updater: Obj.magic this##updaterMethod,
+                  handler: Obj.magic this##handlerMethod,
+                  refSetter: Obj.magic this##refSetterMethod,
+                  setState: Obj.magic this##setStateMethod
+                }
+                callbackPayload
+            };
+            if (count < maxMemoizedCount) {
+              let memoizedHandlerCallbacks = this##memoizedHandlerCallbacks;
+              memoizedHandlerCallbacks.(count) = Js.Null.return (callback, maybeMemoizedCallback);
+              this##memoizedHandlerCount#=(this##memoizedHandlerCount + 1)
+            };
+            maybeMemoizedCallback
+          };
         pub render () => {
           let that: jsComponentThis_ = [%bs.raw "this"];
           CompleteComponentSpec.render {
@@ -470,6 +515,7 @@ module CreateComponent
             state: that##state##mlState,
             instanceVars: this##instanceVars,
             updater: Obj.magic this##updaterMethod,
+            handler: Obj.magic this##handlerMethod,
             refSetter: Obj.magic this##refSetterMethod,
             setState: Obj.magic this##setStateMethod
           }
