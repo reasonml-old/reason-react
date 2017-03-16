@@ -32,6 +32,8 @@ external stringToElement : string => reactElement = "%identity";
 
 external arrayToElement : array reactElement => reactElement = "%identity";
 
+let listToElement : list reactElement => reactElement;
+
 external refToJsObj : reactRef => Js.t {..} = "%identity";
 
 let jsChildrenToReason: Js.null_undefined reactJsChildren => list reactElement;
