@@ -1,5 +1,7 @@
 __This documentation assumes relative familiarity with ReactJS.__
 
+If reading a linear doc bores you, try this [alternative tutorial](https://github.com/glennsl/reason-react-quick-start/blob/master/quick-start.md)!
+
 ## JSX
 
 The JSX ppx transform resides in the Reason repo itself. The documentation is [here](https://github.com/facebook/reason/tree/master/src#jsx-transform-for-reactjs).
