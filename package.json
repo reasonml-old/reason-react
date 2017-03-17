@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "bs-platform": "^1.5.2"
+    "bs-platform": "https://github.com/bloomberg/bucklescript.git"
   },
   "peerDependencies": {
     "react": "^15.0.0",
