@@ -876,6 +876,12 @@ module Style = {
     rotation::string? =>
     rotationPoint::string? =>
 
+    /* svg */
+    fill::string? =>
+    stroke::string? =>
+    strokeWidth::string? =>
+    strokeMiterlimit::string? =>
+
     /* Not added yet
      * -------------
      * Generated Content for Paged Media - WD
