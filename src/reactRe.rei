@@ -8,11 +8,15 @@ type event =
     charCode : int,
     keyCode : int,
     which : int,
+    altKey : bool,
+    ctrlKey : bool,
+    metaKey : bool,
+    shiftKey : bool,
     stopPropagation : (unit => unit) [@bs.meth],
     preventDefault : (unit => unit) [@bs.meth],
-    currentTarget : ReasonJs.Document.element,
-    relatedTarget : ReasonJs.Document.element,
-    target : ReasonJs.Document.element
+    currentTarget : ReasonJs.Dom.element,
+    relatedTarget : ReasonJs.Dom.element,
+    target : ReasonJs.Dom.element
   };
 
 type reactRef;

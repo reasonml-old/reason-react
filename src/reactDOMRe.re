@@ -7,16 +7,16 @@
 /* It's like `let`, except you're pointing the implementation to the JS side. The compiler will inline these
    calls and add the appropriate `require("react-dom")` in the file calling this `render` */
 
-external render : ReactRe.reactElement => ReasonJs.Document.element => unit =
+external render : ReactRe.reactElement => ReasonJs.Dom.element => unit =
   "render" [@@bs.val] [@@bs.module "react-dom"];
 
-external unmountComponentAtNode : ReasonJs.Document.element => unit =
+external unmountComponentAtNode : ReasonJs.Dom.element => unit =
   "unmountComponentAtNode" [@@bs.val] [@@bs.module "react-dom"];
 
-external findDOMNode : ReactRe.reactRef => ReasonJs.Document.element =
+external findDOMNode : ReactRe.reactRef => ReasonJs.Dom.element =
   "findDOMNode" [@@bs.val] [@@bs.module "react-dom"];
 
-external domElementToObj : ReasonJs.Document.element => Js.t {..} = "%identity";
+external domElementToObj : ReasonJs.Dom.element_like _ => Js.t {..} = "%identity";
 
 type reactDOMProps;
 
@@ -55,6 +55,7 @@ external props :
   accept::string? =>
   acceptCharset::string? =>
   action::string? => /* uri */
+  allowFullScreen::Js.boolean? =>
   alt::string? =>
   async::Js.boolean? =>
   autoComplete::string? => /* has a fixed, but large-ish, set of possible values */
