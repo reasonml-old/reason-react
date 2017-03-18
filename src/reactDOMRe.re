@@ -141,100 +141,100 @@ external props :
   wrap::string? => /* "hard" or "soft" */
 
   /* Clipboard events */
-  onCopy::(ReactRe.clipboardEvent => unit)? =>
-  onCut::(ReactRe.clipboardEvent => unit)? =>
-  onPaste::(ReactRe.clipboardEvent => unit)? =>
+  onCopy::(ReactEventRe.Clipboard.t => unit)? =>
+  onCut::(ReactEventRe.Clipboard.t => unit)? =>
+  onPaste::(ReactEventRe.Clipboard.t => unit)? =>
 
   /* Composition events */
-  onCompositionEnd::(ReactRe.compositionEvent => unit)? =>
-  onCompositionStart::(ReactRe.compositionEvent => unit)? =>
-  onCompositionUpdate::(ReactRe.compositionEvent => unit)? =>
+  onCompositionEnd::(ReactEventRe.Composition.t => unit)? =>
+  onCompositionStart::(ReactEventRe.Composition.t => unit)? =>
+  onCompositionUpdate::(ReactEventRe.Composition.t => unit)? =>
 
   /* Keyboard events */
-  onKeyDown::(ReactRe.keyboardEvent => unit)? =>
-  onKeyPress::(ReactRe.keyboardEvent => unit)? =>
-  onKeyUp::(ReactRe.keyboardEvent => unit)? =>
+  onKeyDown::(ReactEventRe.Keyboard.t => unit)? =>
+  onKeyPress::(ReactEventRe.Keyboard.t => unit)? =>
+  onKeyUp::(ReactEventRe.Keyboard.t => unit)? =>
 
   /* Focus events */
-  onFocus::(ReactRe.focusEvent => unit)? =>
-  onBlur::(ReactRe.focusEvent => unit)? =>
+  onFocus::(ReactEventRe.Focus.t => unit)? =>
+  onBlur::(ReactEventRe.Focus.t => unit)? =>
 
   /* Form events */
-  onChange::(ReactRe.formEvent => unit)? =>
-  onInput::(ReactRe.formEvent => unit)? =>
-  onSubmit::(ReactRe.formEvent => unit)? =>
+  onChange::(ReactEventRe.Form.t => unit)? =>
+  onInput::(ReactEventRe.Form.t => unit)? =>
+  onSubmit::(ReactEventRe.Form.t => unit)? =>
 
   /* Mouse events */
-  onClick::(ReactRe.mouseEvent => unit)? =>
-  onContextMenu::(ReactRe.mouseEvent => unit)? =>
-  onDoubleClick::(ReactRe.mouseEvent => unit)? =>
-  onDrag::(ReactRe.mouseEvent => unit)? =>
-  onDragEnd::(ReactRe.mouseEvent => unit)? =>
-  onDragEnter::(ReactRe.mouseEvent => unit)? =>
-  onDragExit::(ReactRe.mouseEvent => unit)? =>
-  onDragLeave::(ReactRe.mouseEvent => unit)? =>
-  onDragOver::(ReactRe.mouseEvent => unit)? =>
-  onDragStart::(ReactRe.mouseEvent => unit)? =>
-  onDrop::(ReactRe.mouseEvent => unit)? =>
-  onMouseDown::(ReactRe.mouseEvent => unit)? =>
-  onMouseEnter::(ReactRe.mouseEvent => unit)? =>
-  onMouseLeave::(ReactRe.mouseEvent => unit)? =>
-  onMouseMove::(ReactRe.mouseEvent => unit)? =>
-  onMouseOut::(ReactRe.mouseEvent => unit)? =>
-  onMouseOver::(ReactRe.mouseEvent => unit)? =>
-  onMouseUp::(ReactRe.mouseEvent => unit)? =>
+  onClick::(ReactEventRe.Mouse.t => unit)? =>
+  onContextMenu::(ReactEventRe.Mouse.t => unit)? =>
+  onDoubleClick::(ReactEventRe.Mouse.t => unit)? =>
+  onDrag::(ReactEventRe.Mouse.t => unit)? =>
+  onDragEnd::(ReactEventRe.Mouse.t => unit)? =>
+  onDragEnter::(ReactEventRe.Mouse.t => unit)? =>
+  onDragExit::(ReactEventRe.Mouse.t => unit)? =>
+  onDragLeave::(ReactEventRe.Mouse.t => unit)? =>
+  onDragOver::(ReactEventRe.Mouse.t => unit)? =>
+  onDragStart::(ReactEventRe.Mouse.t => unit)? =>
+  onDrop::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseDown::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseEnter::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseLeave::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseMove::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseOut::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseOver::(ReactEventRe.Mouse.t => unit)? =>
+  onMouseUp::(ReactEventRe.Mouse.t => unit)? =>
 
   /* Selection events */
-  onSelect::(ReactRe.selectionEvent => unit)? =>
+  onSelect::(ReactEventRe.Selection.t => unit)? =>
 
   /* Touch events */
-  onTouchCancel::(ReactRe.touchEvent => unit)? =>
-  onTouchEnd::(ReactRe.touchEvent => unit)? =>
-  onTouchMove::(ReactRe.touchEvent => unit)? =>
-  onTouchStart::(ReactRe.touchEvent => unit)? =>
+  onTouchCancel::(ReactEventRe.Touch.t => unit)? =>
+  onTouchEnd::(ReactEventRe.Touch.t => unit)? =>
+  onTouchMove::(ReactEventRe.Touch.t => unit)? =>
+  onTouchStart::(ReactEventRe.Touch.t => unit)? =>
 
   /* UI events */
-  onScroll::(ReactRe.uiEvent => unit)? =>
+  onScroll::(ReactEventRe.UI.t => unit)? =>
 
   /* Wheel events */
-  onWheel::(ReactRe.wheelEvent => unit)? =>
+  onWheel::(ReactEventRe.Wheel.t => unit)? =>
 
   /* Media events */
-  onAbort::(ReactRe.mediaEvent => unit)? =>
-  onCanPlay::(ReactRe.mediaEvent => unit)? =>
-  onCanPlayThrough::(ReactRe.mediaEvent => unit)? =>
-  onDurationChange::(ReactRe.mediaEvent => unit)? =>
-  onEmptied::(ReactRe.mediaEvent => unit)? =>
-  onEncrypetd::(ReactRe.mediaEvent => unit)? =>
-  onEnded::(ReactRe.mediaEvent => unit)? =>
-  onError::(ReactRe.mediaEvent => unit)? =>
-  onLoadedData::(ReactRe.mediaEvent => unit)? =>
-  onLoadedMetadata::(ReactRe.mediaEvent => unit)? =>
-  onLoadStart::(ReactRe.mediaEvent => unit)? =>
-  onPause::(ReactRe.mediaEvent => unit)? =>
-  onPlay::(ReactRe.mediaEvent => unit)? =>
-  onPlaying::(ReactRe.mediaEvent => unit)? =>
-  onProgress::(ReactRe.mediaEvent => unit)? =>
-  onRateChange::(ReactRe.mediaEvent => unit)? =>
-  onSeeked::(ReactRe.mediaEvent => unit)? =>
-  onSeeking::(ReactRe.mediaEvent => unit)? =>
-  onStalled::(ReactRe.mediaEvent => unit)? =>
-  onSuspend::(ReactRe.mediaEvent => unit)? =>
-  onTimeUpdate::(ReactRe.mediaEvent => unit)? =>
-  onVolumeChange::(ReactRe.mediaEvent => unit)? =>
-  onWaiting::(ReactRe.mediaEvent => unit)? =>
+  onAbort::(ReactEventRe.Media.t => unit)? =>
+  onCanPlay::(ReactEventRe.Media.t => unit)? =>
+  onCanPlayThrough::(ReactEventRe.Media.t => unit)? =>
+  onDurationChange::(ReactEventRe.Media.t => unit)? =>
+  onEmptied::(ReactEventRe.Media.t => unit)? =>
+  onEncrypetd::(ReactEventRe.Media.t => unit)? =>
+  onEnded::(ReactEventRe.Media.t => unit)? =>
+  onError::(ReactEventRe.Media.t => unit)? =>
+  onLoadedData::(ReactEventRe.Media.t => unit)? =>
+  onLoadedMetadata::(ReactEventRe.Media.t => unit)? =>
+  onLoadStart::(ReactEventRe.Media.t => unit)? =>
+  onPause::(ReactEventRe.Media.t => unit)? =>
+  onPlay::(ReactEventRe.Media.t => unit)? =>
+  onPlaying::(ReactEventRe.Media.t => unit)? =>
+  onProgress::(ReactEventRe.Media.t => unit)? =>
+  onRateChange::(ReactEventRe.Media.t => unit)? =>
+  onSeeked::(ReactEventRe.Media.t => unit)? =>
+  onSeeking::(ReactEventRe.Media.t => unit)? =>
+  onStalled::(ReactEventRe.Media.t => unit)? =>
+  onSuspend::(ReactEventRe.Media.t => unit)? =>
+  onTimeUpdate::(ReactEventRe.Media.t => unit)? =>
+  onVolumeChange::(ReactEventRe.Media.t => unit)? =>
+  onWaiting::(ReactEventRe.Media.t => unit)? =>
 
   /* Image events */
-  onLoad::(ReactRe.imageEvent => unit)? =>
-  /*onError::(ReactRe.imageEvent => unit)? =>*/ /* duplicate */
+  onLoad::(ReactEventRe.Image.t => unit)? =>
+  /*onError::(ReactEventRe.Image.t => unit)? =>*/ /* duplicate */
 
   /* Animation events */
-  onAnimationStart::(ReactRe.animationEvent => unit)? =>
-  onAnimationEnd::(ReactRe.animationEvent => unit)? =>
-  onAnimationIteration::(ReactRe.animationEvent => unit)? =>
+  onAnimationStart::(ReactEventRe.Animation.t => unit)? =>
+  onAnimationEnd::(ReactEventRe.Animation.t => unit)? =>
+  onAnimationIteration::(ReactEventRe.Animation.t => unit)? =>
 
   /* Transition events */
-  onTransitionEnd::(ReactRe.transitionEvent => unit)? =>
+  onTransitionEnd::(ReactEventRe.Transition.t => unit)? =>
 
   /* svg */
   accentHeight::string? =>
