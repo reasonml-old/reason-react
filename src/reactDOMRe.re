@@ -909,10 +909,20 @@ module Style = {
     unit =>
     style = "" [@@bs.obj];
 
-    let combine : style => style => style = [%bs.raw {|
-      function (a, b) {
-        return Object.assign({}, a, b);
-      }
-    |}];
+    let combine : style => style => style =
+      fun a b => {
+        let a: Js.t {..} = Obj.magic a;
+        let b: Js.t {..} = Obj.magic b;
+        Obj.magic @@ ReasonJs.Object.assign (Js.Obj.empty ()) a b
+      };
 
-}
+    let unsafeWithProp : style => string => string => style =
+      fun style property value => {
+        let propStyle = {
+          let dict = Js.Dict.empty ();
+          Js.Dict.set dict property value;
+          (Obj.magic dict: style)
+        };
+        combine style propStyle
+      };
+};
