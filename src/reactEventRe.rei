@@ -1,3 +1,42 @@
+/* This is the whole synthetic event system of ReactJS/Reason-React. The first module `Synthetic` represents
+   the generic synthetic event. The rest are the specific ones.
+
+   In each module, the type `t` commonly means "the type of that module" (OCaml convention). In our case, e.g.
+   `ReactEventRe.Mouse.t` represents a ReactJS synthetic mouse event. You'd use it to type your props:
+
+   ```
+   type props = {
+     onClick: ReactEventRe.Mouse.t => unit
+   };
+   ```
+
+   All the methods and properties of a type of event are in the module, as seen below.
+
+   Each module also has a `tag` type. You can ignore it; they're only needed by their `t` type. This way, we
+   get to allow a base `Synthetic` event module with generic methods. So e.g. even a mouse event (`Mouse.t`)
+   get to be passed to a generic handler:
+
+   ```
+   let handleClick {state, props} event => {
+     ReactEventRe.Mouse.preventDefault event;
+     ...
+   };
+   let handleSubmit {state, props} event => {
+     /* this handler can be triggered by either a Keyboard or a Mouse event; conveniently use the generic
+        preventDefault */
+     ReactEventRe.Synthetic.preventDefault event;
+     ...
+   };
+
+   let render _ => <Foo onSubmit=handleSubmit onEnter=handleSubmit .../>;
+   ```
+
+   How to translate idioms from ReactJS:
+
+   1. myMouseEvent.preventDefault() -> ReactEventRe.Mouse.preventDefault myMouseEvent
+   2. myKeyboardEvent.which -> ReactEventRe.Keyboard.which myMouseEvent
+   */
+
 type synthetic 'a;
 
 module Synthetic: {

@@ -301,14 +301,7 @@ See also the section on [createElement](#createelement).
 
 ### Working with Events
 
-React events should be typed as ReactRe.event. The [interface file](https://github.com/reasonml/reason-react/blob/master/src/reactRe.rei) has the event's shape.
-
-```reason
-let handleMouseDown componentBag event => {
-  event##stopPropagation ();
-  doSomethingElse ()
-};
-```
+Reason-React events map cleanly to ReactJS [synthetic events](https://facebook.github.io/react/docs/events.html). More info in the [inline docs].
 
 ### Miscellaneous
 
