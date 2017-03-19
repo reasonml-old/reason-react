@@ -2,7 +2,9 @@ type reactClass;
 
 type reactElement;
 
-type reactRef;
+type componentRef;
+type reactRef 'a;
+/* let refToReactElement : reactRef componentRef -> reactElement = "%identity"; ?? */
 
 type reactJsChildren;
 
@@ -17,7 +19,7 @@ external arrayToElement : array reactElement => reactElement = "%identity";
 
 let listToElement : list reactElement => reactElement;
 
-external refToJsObj : reactRef => Js.t {..} = "%identity";
+external refToJsObj : reactRef 'a => Js.t {..} = "%identity";
 
 let jsChildrenToReason: Js.null_undefined reactJsChildren => list reactElement;
 
@@ -31,7 +33,7 @@ module ComponentBase: {
       'dataPassedToHandler =>
       unit,
 
-    refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+    refSetter: (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
     instanceVars: 'instanceVars,
     setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
   };
@@ -70,7 +72,7 @@ module CreateComponent:
     let wrapProps:
       CompleteComponentSpec.props =>
       children::list reactElement =>
-      ref::(reactRef => unit)? =>
+      ref::(reactRef componentRef => unit)? =>
       key::string? =>
       unit =>
       reactElement;
@@ -80,7 +82,7 @@ let wrapPropsShamelessly:
   reactClass =>
   Js.t {..} =>
   children::list reactElement =>
-  ref::(reactRef => unit)? =>
+  ref::(reactRef componentRef => unit)? =>
   key::string? =>
   unit =>
   reactElement;
@@ -100,7 +102,7 @@ module Component: {
           unit,
 
         refSetter:
-          (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+          (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
         instanceVars: 'instanceVars,
         setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
       };
@@ -128,7 +130,7 @@ module Component: {
             unit,
 
           refSetter:
-            (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+            (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
           instanceVars: 'instanceVars,
           setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
         };
@@ -156,7 +158,7 @@ module Component: {
               unit,
 
             refSetter:
-              (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+              (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
             instanceVars: 'instanceVars,
             setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
           };
@@ -184,7 +186,7 @@ module Component: {
               unit,
 
             refSetter:
-              (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+              (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
             instanceVars: 'instanceVars,
             setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
           };
@@ -210,7 +212,7 @@ module Component: {
                 unit,
 
               refSetter:
-                (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+                (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
               instanceVars: 'instanceVars,
               setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
             };
@@ -235,7 +237,7 @@ module Component: {
             unit,
 
           refSetter:
-            (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+            (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
           instanceVars: 'instanceVars,
           setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
         };
@@ -262,7 +264,7 @@ module Component: {
             unit,
 
           refSetter:
-            (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+            (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
           instanceVars: 'instanceVars,
           setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
         };
@@ -290,7 +292,7 @@ module Component: {
               unit,
 
             refSetter:
-              (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+              (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
             instanceVars: 'instanceVars,
             setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
           };
