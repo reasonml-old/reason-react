@@ -5,7 +5,5 @@
 {
   "name" : "reason-react",
   "bs-dependencies": ["reason-js"],
-  "sources": [
-    "src",
-  ],
+  "sources": "src",
 }
