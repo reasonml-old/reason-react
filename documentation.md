@@ -301,7 +301,7 @@ See also the section on [createElement](#createelement).
 
 ### Working with Events
 
-Reason-React events map cleanly to ReactJS [synthetic events](https://facebook.github.io/react/docs/events.html). More info in the [inline docs].
+Reason-React events map cleanly to ReactJS [synthetic events](https://facebook.github.io/react/docs/events.html). More info in the [inline docs](https://github.com/reasonml/reason-react/blob/94b22c3ecad4374d00266727250694fb193b63e2/src/reactEventRe.rei#L1).
 
 ### Miscellaneous
 
