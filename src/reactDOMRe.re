@@ -55,6 +55,7 @@ external props :
   accept::string? =>
   acceptCharset::string? =>
   action::string? => /* uri */
+  allowFullScreen::Js.boolean? =>
   alt::string? =>
   async::Js.boolean? =>
   autoComplete::string? => /* has a fixed, but large-ish, set of possible values */
