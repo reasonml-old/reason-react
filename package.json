@@ -12,6 +12,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reasonml/reason-react.git"
+  },
   "devDependencies": {
     "bs-platform": "https://github.com/bloomberg/bucklescript.git"
   },
