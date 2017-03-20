@@ -31,6 +31,12 @@ module ComponentBase: {
       'dataPassedToHandler =>
       unit,
 
+    handler:
+      'dataPassedToHandler .
+      (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+      'dataPassedToHandler =>
+      unit,
+
     refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
     instanceVars: 'instanceVars,
     setState: (componentBag 'state 'props 'instanceVars => 'state) => unit
@@ -98,6 +104,11 @@ module Component: {
           (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
           'dataPassedToHandler =>
           unit,
+        handler:
+          'dataPassedToHandler .
+          (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+          'dataPassedToHandler =>
+          unit,
 
         refSetter:
           (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
@@ -126,6 +137,11 @@ module Component: {
             (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
             'dataPassedToHandler =>
             unit,
+          handler:
+            'dataPassedToHandler .
+            (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+            'dataPassedToHandler =>
+            unit,
 
           refSetter:
             (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
@@ -152,6 +168,11 @@ module Component: {
               (
                 componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state
               ) =>
+              'dataPassedToHandler =>
+              unit,
+            handler:
+              'dataPassedToHandler .
+              (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
               'dataPassedToHandler =>
               unit,
 
@@ -182,6 +203,11 @@ module Component: {
               ) =>
               'dataPassedToHandler =>
               unit,
+            handler:
+              'dataPassedToHandler .
+              (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+              'dataPassedToHandler =>
+              unit,
 
             refSetter:
               (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
@@ -208,7 +234,11 @@ module Component: {
                 ) =>
                 'dataPassedToHandler =>
                 unit,
-
+              handler:
+                'dataPassedToHandler .
+                (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+                'dataPassedToHandler =>
+                unit,
               refSetter:
                 (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
               instanceVars: 'instanceVars,
@@ -231,6 +261,11 @@ module Component: {
           updater:
             'dataPassedToHandler .
             (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
+            'dataPassedToHandler =>
+            unit,
+          handler:
+            'dataPassedToHandler .
+            (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
             'dataPassedToHandler =>
             unit,
 
@@ -260,6 +295,11 @@ module Component: {
             (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state) =>
             'dataPassedToHandler =>
             unit,
+          handler:
+            'dataPassedToHandler .
+            (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+            'dataPassedToHandler =>
+            unit,
 
           refSetter:
             (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
@@ -286,6 +326,11 @@ module Component: {
               (
                 componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => option 'state
               ) =>
+              'dataPassedToHandler =>
+              unit,
+            handler:
+              'dataPassedToHandler .
+              (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
               'dataPassedToHandler =>
               unit,
 
