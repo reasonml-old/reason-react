@@ -3,7 +3,8 @@ type reactClass;
 
 type reactElement;
 
-type reactRef;
+type componentRef;
+type reactRef 'a;
 
 type reactJsChildren;
 
@@ -18,7 +19,7 @@ external arrayToElement : array reactElement => reactElement = "%identity";
 
 let listToElement list => arrayToElement (Array.of_list list);
 
-external refToJsObj : reactRef => Js.t {..} = "%identity";
+external refToJsObj : reactRef 'a => Js.t {..} = "%identity";
 
 /* We wrap the props for reason->reason components, as a marker that "these props were passed from another
    reason component" */
@@ -31,7 +32,7 @@ let wrapPropsInternal
     props
     wrapPropsHow
     ::children
-    ref::(ref: option (reactRef => unit))=?
+    ref::(ref: option (reactRef 'a => unit))=?
     key::(key: option string)=?
     () => {
   let ref =
@@ -133,7 +134,7 @@ module ComponentBase = {
       'dataPassedToHandler =>
       unit,
 
-    refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+    refSetter: (componentBag 'state 'props 'instanceVars => reactRef componentRef => unit) => reactRef componentRef => unit,
     instanceVars: 'instanceVars,
     /**
      * Work in progress / prototype API for setState. This isn't sufficient for
@@ -194,7 +195,7 @@ module type ReactComponent = {
   let wrapProps:
     props_ =>
     children::list reactElement =>
-    ref::(reactRef => unit)? =>
+    ref::(reactRef componentRef => unit)? =>
     key::string? =>
     unit =>
     reactElement;
