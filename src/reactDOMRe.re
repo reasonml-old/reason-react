@@ -25,7 +25,7 @@ type style;
 /* This list isn't exhaustive. We'll add more as we go. */
 external props :
   key::string? =>
-  ref::(ReactRe.reactRef => unit)? =>
+  ref::(ReasonJs.Document.element => unit)? =>
 
   /* global html attributes */
   accessKey::string? =>

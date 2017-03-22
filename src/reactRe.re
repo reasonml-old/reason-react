@@ -133,7 +133,10 @@ module ComponentBase = {
       'dataPassedToHandler =>
       unit,
 
-    refSetter: (componentBag 'state 'props 'instanceVars => reactRef => unit) => reactRef => unit,
+    handler: 'dataPassedToHandler .
+      (componentBag 'state 'props 'instanceVars => 'dataPassedToHandler => unit) =>
+      'dataPassedToHandler =>
+      unit,
     instanceVars: 'instanceVars,
     /**
      * Work in progress / prototype API for setState. This isn't sufficient for
@@ -288,7 +291,7 @@ module CreateComponent
               state: currState,
               instanceVars: this##instanceVars,
               updater: Obj.magic this##updaterMethod,
-              refSetter: Obj.magic this##refSetterMethod,
+              handler: Obj.magic this##handlerMethod,
               setState: Obj.magic this##setStateMethod
             };
           switch newState {
@@ -306,7 +309,7 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                handler: Obj.magic this##handlerMethod,
                 setState: Obj.magic this##setStateMethod
               }
               nextProps::(convertPropsIfTheyreFromJs nextProps)
@@ -328,7 +331,7 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                handler: Obj.magic this##handlerMethod,
                 setState: Obj.magic this##setStateMethod
               };
           switch newState {
@@ -346,7 +349,7 @@ module CreateComponent
                 state: currState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                handler: Obj.magic this##handlerMethod,
                 setState: Obj.magic this##setStateMethod
               }
               nextProps::(convertPropsIfTheyreFromJs nextProps);
@@ -363,11 +366,11 @@ module CreateComponent
             state: currState,
             instanceVars: this##instanceVars,
             updater: Obj.magic this##updaterMethod,
-            refSetter: Obj.magic this##refSetterMethod,
+            handler: Obj.magic this##handlerMethod,
             setState: Obj.magic this##setStateMethod
           }
         };
-        pub refSetterMethod callback =>
+        pub handlerMethod callback =>
           switch (
             this##memoizedRefCount,
             Js.Null.to_opt (findFirstCallback this##memoizedRefCallbacks callback)
@@ -375,7 +378,7 @@ module CreateComponent
           | (_, Some memoized) => memoized
           | (count, None) =>
             let that: jsComponentThis_ = [%bs.raw "this"];
-            let maybeMemoizedCallback theRef => {
+            let maybeMemoizedCallback callbackPayload => {
               let currState = that##state##mlState;
               callback
                 {
@@ -383,10 +386,10 @@ module CreateComponent
                   state: currState,
                   instanceVars: this##instanceVars,
                   updater: Obj.magic this##updaterMethod,
-                  refSetter: Obj.magic this##refSetterMethod,
+                  handler: Obj.magic this##handlerMethod,
                   setState: Obj.magic this##setStateMethod
                 }
-                theRef
+                callbackPayload
             };
             if (count < maxMemoizedCount) {
               let memoizedRefCallbacks = this##memoizedRefCallbacks;
@@ -409,7 +412,7 @@ module CreateComponent
                 state: prevState##mlState,
                 instanceVars: this##instanceVars,
                 updater: Obj.magic this##updaterMethod,
-                refSetter: Obj.magic this##refSetterMethod,
+                handler: Obj.magic this##handlerMethod,
                 setState: Obj.magic this##setStateMethod
               };
               {"mlState": cb bag}
@@ -433,7 +436,7 @@ module CreateComponent
                     state: currState,
                     instanceVars: this##instanceVars,
                     updater: Obj.magic this##updaterMethod,
-                    refSetter: Obj.magic this##refSetterMethod,
+                    handler: Obj.magic this##handlerMethod,
                     setState: Obj.magic this##setStateMethod
                   }
                   callbackPayload;
@@ -456,7 +459,7 @@ module CreateComponent
             state: that##state##mlState,
             instanceVars: this##instanceVars,
             updater: Obj.magic this##updaterMethod,
-            refSetter: Obj.magic this##refSetterMethod,
+            handler: Obj.magic this##handlerMethod,
             setState: Obj.magic this##setStateMethod
           }
         }
