@@ -10,7 +10,7 @@ The JSX ppx transform resides in the Reason repo itself. The documentation is [h
 
 ### "component bag"
 
-Reason-React's uses idiomatic Reason/OCaml modules to get rid of ReactJS' `this`, a common pain point for ReactJS newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, refSetter, instanceVars, setState}`. A render would look like:
+Reason-React's uses idiomatic Reason/OCaml modules to get rid of ReactJS' `this`, a common pain point for ReactJS newcomers. To fulfill the same role, relevant functions (they're not methods; just regular functions!) accept as argument a `componentBag` record of shape `{props, state, updater, handler, instanceVars, setState}`. A render would look like:
 
 ```reason
 /* normal record destructuring. Pick what you need! */
@@ -39,28 +39,8 @@ In Reason-React, and likewise in ReactJS, when you do `<Foo onClick=(fun () => 1
 
 But in Reason-React, since you need to wrap your handler in `updater`, we need to make sure that for each `myHandlerReference`, we return the same reference if `(updater myHandlerReference)` has been called before (in other words: `updater myHandlerReference === updater myHandlerReference`). We achieve this by storing `myHandlerReference` in a collection internally, and finding it the next time it's passed to us. To avoid memory leaks (in case people mistakenly inline the handler through `updater (fun () => ...)` and the `render`'s called again and again).
 
-#### `refSetter`
-Like `updater` but for ref:
-
-```reason
-/* this type will be explained later */
-type instanceVars = {mutable divRef: option ReactRe.reactRef};
-let getInstanceVars () => {divRef: None};
-let getRef componentBag theRef => componentBag.instanceVars.divRef = Some theRef;
-let render {props, refSetter} => <div ref=(refSetter getRef) />;
-```
-
-Reason-React ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
-
-We also expose an escape hatch `ReactRe.refToJsObj` (type: `ReactRe.reactRef => Js.t {..}`) which turns your ref into a JS object you can freely use; **this is only used to access ReactJS component class methods**.
-
-```reason
-let callSomethingDangerous componentBag =>
-  switch componentBag.instanceVars.theRef {
-  | None => ()
-  | Some r => (ReactRe.refToJsObj r)##someMethod 1 2 3
-  };
-```
+#### `handler`
+Like `updater`, but a convenient subset in terms of functionality: it doesn't update the component, so doesn't ask you for a `option state` return type (just unit).
 
 #### `instanceVars`
 Occasionally, ReactJS components are used to store instance properties, e.g. `timeoutID`, `subscriptions`, `isMounted`. We support this pattern.
@@ -80,7 +60,7 @@ let componentWillUnmount {instanceVars} =>
   };
 ```
 
-See also the use-case with the previous `refSetter`.
+See also the use-case with the previous `handler`.
 
 #### `setState`
 **Different use-cases than ReactJS' `setState`**! Since lifecycle events (below) and handlers return an `option state`, this `setState` API is rarely used and only serves as an escape hatch when you know what you're doing.
@@ -138,7 +118,7 @@ let createElement ::foo ::bar=? => wrapProps {foo, bar};
 
 `createElement` exposes the call used by the JSX sugar described at the beginning. From another module, you'd be able to call `MyComponent.createElement ...` or use the JSX sugar (remember that Reason JSX desugars `<MyComponent foo="hi" />` to `MyComponent.createElement foo::"hi" children::[] ()`).
 
-`wrapProps` creates the bindings magic; it takes a props record that you've constructed from the arguments, and **curries `children`, `ref` and `key` for you**! So the whole call is actually:
+`wrapProps` creates the bindings magic; it takes a props record that you've constructed from the arguments, and **curries `children`, `ref` and `key` for you** (see below for details on working with `ref` and `children`)! So the whole call is actually:
 
 ```reason
 let createElement ::foo ::bar=? ::children ::ref=? key=? () => wrapProps {foo, bar} ::children ::ref=? key=? ();
@@ -302,6 +282,36 @@ See also the section on [createElement](#createelement).
 ### Working with Events
 
 Reason-React events map cleanly to ReactJS [synthetic events](https://facebook.github.io/react/docs/events.html). More info in the [inline docs](https://github.com/reasonml/reason-react/blob/94b22c3ecad4374d00266727250694fb193b63e2/src/reactEventRe.rei#L1).
+
+### Working with Refs
+
+There's no ref-specific API! Just a type: `ReactRe.reactRef`. Through the combination of `handler` and `instanceVars`, we can get ref support:
+
+```reason
+type instanceVars = {
+  mutable divRef: option ReasonJs.Document.element, /* dom refs directly return the element, no need for the `reactRef` type */
+  mutable componentRef: option ReactRe.reactRef
+};
+let getInstanceVars () => {divRef: None, componentRef: None};
+let getDivRef componentBag theRef => componentBag.instanceVars.divRef = Some theRef;
+let getComponentRef componentBag theRef => componentBag.instanceVars.componentRef = Some theRef;
+let render {props, handler} =>
+  <MyComp ref=(handler getComponentRef)>
+    <div ref=(handler getDivRef) />
+  </MyComp>
+```
+
+Reason-React ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
+
+We also expose an escape hatch `ReactRe.refToJsObj` (type: `ReactRe.reactRef => Js.t {..}`) which turns your ref into a JS object you can freely use; **this is only used to access ReactJS component class methods**.
+
+```reason
+let callSomethingDangerous componentBag =>
+  switch componentBag.instanceVars.theRef {
+  | None => ()
+  | Some r => (ReactRe.refToJsObj r)##someMethod 1 2 3 /* I solemnly swear that I am up to no good */
+  };
+```
 
 ### Miscellaneous
 
