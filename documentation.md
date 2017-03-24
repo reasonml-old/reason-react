@@ -344,6 +344,8 @@ And two helpers:
 
 - `renderToNodeWithClassName : ReactRe.reactElement => string => unit`: convenience. Finds the (first) element of the provided class name and `render` to it.
 
+- `renderToNodeWithId : ReactRe.reactElement => string => unit`: convenience. Finds the element of the provided id and `render` to it.
+
 ## ReactDOMServer
 
 Reason-React's equivalent `ReactDOMServerRe` exposes:
