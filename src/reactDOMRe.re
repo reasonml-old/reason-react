@@ -12,6 +12,8 @@ external render : ReactRe.reactElement => Dom.element => unit =
 
 external _getElementsByClassName : string => array Dom.element =
   "document.getElementsByClassName" [@@bs.val];
+external _getElementById : string => option Dom.element =
+  "document.getElementById" [@@bs.val] [@@bs.return null_to_opt];
 
 let renderToNodeWithClassName reactElement className => {
   let elements = _getElementsByClassName className;
@@ -26,6 +28,17 @@ let renderToNodeWithClassName reactElement className => {
     render reactElement elements.(0)
   }
 };
+
+let renderToNodeWithId reactElement id =>
+  switch (_getElementById id) {
+  | None =>
+    raise (
+      Invalid_argument (
+        "ReactDOMRE.renderToNodeWithId : no element of id " ^ id ^ " found in the HTML."
+      )
+    )
+  | Some element => render reactElement element
+  };
 
 external unmountComponentAtNode : Dom.element => unit =
   "unmountComponentAtNode" [@@bs.val] [@@bs.module "react-dom"];
