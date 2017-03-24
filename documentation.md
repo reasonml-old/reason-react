@@ -328,7 +328,31 @@ let callSomethingDangerous componentBag =>
   };
 ```
 
-### Miscellaneous
+## ReactDOM
+
+Reason-React's equivalent `ReactDOMRe` exposes:
+
+- `render : ReactRe.reactElement => Dom.element => unit`
+
+- `unmountComponentAtNode : Dom.element => unit`
+
+- `findDOMNode : ReactRe.reactRef => Dom.element`
+
+And two helpers:
+
+- `domElementToObj : Dom.element => Js.t {..}`: turns a dom element into a Js object whose fields that you can dangerously access: `(ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value`.
+
+- `renderToNodeWithClassName : ReactRe.reactElement => string => unit`: convenience. Finds the (first) element of the provided class name and `render` to it.
+
+## ReactDOMServer
+
+Reason-React's equivalent `ReactDOMServerRe` exposes:
+
+- `renderToString : ReactRe.reactElement => string`
+
+- `renderToStaticMarkup : ReactRe.reactElement => string`
+
+## Miscellaneous
 
 - Reason-React doesn't support ReactJS context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
