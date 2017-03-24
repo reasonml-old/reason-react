@@ -10,6 +10,23 @@
 external render : ReactRe.reactElement => Dom.element => unit =
   "render" [@@bs.val] [@@bs.module "react-dom"];
 
+external _getElementsByClassName : string => array Dom.element =
+  "document.getElementsByClassName" [@@bs.val];
+
+let renderToNodeWithClassName reactElement className => {
+  let elements = _getElementsByClassName className;
+  if (Array.length elements == 0) {
+    raise (
+      Invalid_argument (
+        "ReactDOMRE.renderToNodeWithClassName: no element of class " ^
+        className ^ " found in the HTML."
+      )
+    )
+  } else {
+    render reactElement elements.(0)
+  }
+};
+
 external unmountComponentAtNode : Dom.element => unit =
   "unmountComponentAtNode" [@@bs.val] [@@bs.module "react-dom"];
 
