@@ -4,6 +4,5 @@
   an issue! */
 {
   "name" : "reason-react",
-  "bs-dependencies": ["reason-js"],
   "sources": "src",
 }

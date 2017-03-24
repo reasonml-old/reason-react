@@ -478,7 +478,7 @@ module CreateComponent
 };
 
 let wrapPropsAndPutRefAndKey ::props ::ref ::key =>
-  ReasonJs.Object.assign [%bs.raw "{}"] props {"ref": ref, "key": key};
+  Js.Obj.assign (Js.Obj.assign [%bs.raw "{}"] props) {"ref": ref, "key": key};
 
 /* fully apply this to avoid currying overhead */
 let wrapPropsShamelessly comp props ::children ::ref=? ::key=? () =>

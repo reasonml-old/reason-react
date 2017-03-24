@@ -45,7 +45,7 @@ module Synthetic: {
 
   external bubbles : synthetic 'a => bool = "" [@@bs.get];
   external cancelable : synthetic 'a => bool = "" [@@bs.get];
-  external currentTarget : synthetic 'a => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : synthetic 'a => Dom.element = "" [@@bs.get];
   external defaultPrevented : synthetic 'a => bool = "" [@@bs.get];
   external eventPhase : synthetic 'a => int = "" [@@bs.get];
   external isTrusted : synthetic 'a => bool = "" [@@bs.get];
@@ -55,7 +55,7 @@ module Synthetic: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: synthetic 'a];
   external stopPropagation : unit = "" [@@bs.send.pipe: synthetic 'a];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: synthetic 'a];
-  external target : synthetic 'a => ReasonJs.Document.element = "" [@@bs.get];
+  external target : synthetic 'a => Dom.element = "" [@@bs.get];
 
   external timeStamp : synthetic 'a => float = "" [@@bs.get];
   external _type : synthetic 'a => string = "type" [@@bs.get];
@@ -69,7 +69,7 @@ module Clipboard: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -79,7 +79,7 @@ module Clipboard: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -95,7 +95,7 @@ module Composition: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -105,7 +105,7 @@ module Composition: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -121,7 +121,7 @@ module Keyboard: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -131,7 +131,7 @@ module Keyboard: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -158,7 +158,7 @@ module Focus: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -168,14 +168,14 @@ module Focus: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
 
   external persist : unit = "" [@@bs.send.pipe: t];
 
-  external relatedTarget : t => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
+  external relatedTarget : t => Dom.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
 };
 
 module Form: {
@@ -184,7 +184,7 @@ module Form: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -194,7 +194,7 @@ module Form: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -208,7 +208,7 @@ module Mouse: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -218,7 +218,7 @@ module Mouse: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -235,7 +235,7 @@ module Mouse: {
   external metaKey : t => bool = "" [@@bs.get];
   external pageX : t => int = "" [@@bs.get];
   external pageY : t => int = "" [@@bs.get];
-  external relatedTarget : t => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
+  external relatedTarget : t => Dom.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
   external screenX : t => int = "" [@@bs.get];
   external screenY : t => int = "" [@@bs.get];
   external shiftKey : t => bool = "" [@@bs.get];
@@ -247,7 +247,7 @@ module Selection: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -257,7 +257,7 @@ module Selection: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -271,7 +271,7 @@ module Touch: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -281,7 +281,7 @@ module Touch: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -304,7 +304,7 @@ module UI: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -314,7 +314,7 @@ module UI: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -322,7 +322,7 @@ module UI: {
   external persist : unit = "" [@@bs.send.pipe: t];
 
   external detail : t => int = "" [@@bs.get];
-  external view : t => ReasonJs.Window.t = "" [@@bs.get]; /* Should return DOMAbstractView/WindowProxy */
+  external view : t => Dom.window = "" [@@bs.get]; /* Should return DOMAbstractView/WindowProxy */
 };
 
 module Wheel: {
@@ -331,7 +331,7 @@ module Wheel: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -341,7 +341,7 @@ module Wheel: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -360,7 +360,7 @@ module Media: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -370,7 +370,7 @@ module Media: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -384,7 +384,7 @@ module Image: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -394,7 +394,7 @@ module Image: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -408,7 +408,7 @@ module Animation: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -418,7 +418,7 @@ module Animation: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];
@@ -436,7 +436,7 @@ module Transition: {
 
   external bubbles : t => bool = "" [@@bs.get];
   external cancelable : t => bool = "" [@@bs.get];
-  external currentTarget : t => ReasonJs.Document.element = "" [@@bs.get];
+  external currentTarget : t => Dom.element = "" [@@bs.get];
   external defaultPrevented : t => bool = "" [@@bs.get];
   external eventPhase : t => int = "" [@@bs.get];
   external isTrusted : t => bool = "" [@@bs.get];
@@ -446,7 +446,7 @@ module Transition: {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: t];
   external stopPropagation : unit = "" [@@bs.send.pipe: t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: t];
-  external target : t => ReasonJs.Document.element = "" [@@bs.get];
+  external target : t => Dom.element = "" [@@bs.get];
 
   external timeStamp : t => float = "" [@@bs.get];
   external _type : t => string = "type" [@@bs.get];

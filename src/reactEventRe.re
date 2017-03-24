@@ -3,7 +3,7 @@ type synthetic 'a;
 module MakeSyntheticWrapper (Type : {type t;}) => {
   external bubbles : Type.t => bool = "" [@@bs.get];
   external cancelable : Type.t => bool = "" [@@bs.get];
-  external currentTarget : Type.t => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
+  external currentTarget : Type.t => Dom.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
   external defaultPrevented : Type.t => bool = "" [@@bs.get];
   external eventPhase : Type.t => int = "" [@@bs.get];
   external isTrusted : Type.t => bool = "" [@@bs.get];
@@ -13,7 +13,7 @@ module MakeSyntheticWrapper (Type : {type t;}) => {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: Type.t];
   external stopPropagation : unit = "" [@@bs.send.pipe: Type.t];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: Type.t];
-  external target : Type.t => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
+  external target : Type.t => Dom.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
 
   external timeStamp : Type.t => float = "" [@@bs.get];
   external _type : Type.t => string = "type" [@@bs.get];
@@ -27,7 +27,7 @@ module Synthetic = {
 
   external bubbles : synthetic 'a => bool = "" [@@bs.get];
   external cancelable : synthetic 'a => bool = "" [@@bs.get];
-  external currentTarget : synthetic 'a => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
+  external currentTarget : synthetic 'a => Dom.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
   external defaultPrevented : synthetic 'a => bool = "" [@@bs.get];
   external eventPhase : synthetic 'a => int = "" [@@bs.get];
   external isTrusted : synthetic 'a => bool = "" [@@bs.get];
@@ -37,7 +37,7 @@ module Synthetic = {
   external isDefaultPrevented : bool = "" [@@bs.send.pipe: synthetic 'a];
   external stopPropagation : unit = "" [@@bs.send.pipe: synthetic 'a];
   external isPropagationStopped : bool = "" [@@bs.send.pipe: synthetic 'a];
-  external target : synthetic 'a => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
+  external target : synthetic 'a => Dom.element = "" [@@bs.get]; /* Should return Dom.evetTarget */
 
   external timeStamp : synthetic 'a => float = "" [@@bs.get];
   external _type : synthetic 'a => string = "type" [@@bs.get];
@@ -89,7 +89,7 @@ module Focus = {
 
   include MakeSyntheticWrapper { type nonrec t = t };
 
-  external relatedTarget : t => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
+  external relatedTarget : t => Dom.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
 };
 
 module Form = {
@@ -115,7 +115,7 @@ module Mouse = {
   external metaKey : t => bool = "" [@@bs.get];
   external pageX : t => int = "" [@@bs.get];
   external pageY : t => int = "" [@@bs.get];
-  external relatedTarget : t => ReasonJs.Document.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
+  external relatedTarget : t => Dom.element = "" [@@bs.get]; /* Should return Dom.eventTarget */
   external screenX : t => int = "" [@@bs.get];
   external screenY : t => int = "" [@@bs.get];
   external shiftKey : t => bool = "" [@@bs.get];
@@ -151,7 +151,7 @@ module UI = {
   include MakeSyntheticWrapper { type nonrec t = t };
 
   external detail : t => int = "" [@@bs.get];
-  external view : t => ReasonJs.Window.t = "" [@@bs.get]; /* Should return DOMAbstractView/WindowProxy */
+  external view : t => Dom.window = "" [@@bs.get]; /* Should return DOMAbstractView/WindowProxy */
 };
 
 module Wheel = {
