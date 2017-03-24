@@ -283,6 +283,21 @@ See also the section on [createElement](#createelement).
 
 Reason-React events map cleanly to ReactJS [synthetic events](https://facebook.github.io/react/docs/events.html). More info in the [inline docs](https://github.com/reasonml/reason-react/blob/94b22c3ecad4374d00266727250694fb193b63e2/src/reactEventRe.rei#L1).
 
+### Working with Styles
+
+Since CSS-in-JS is all the rage right now, we'll recommend our official pick soon. In the meantime, for inline styles, there's the `ReactDOMRe.Style.make` API:
+
+```reason
+<div style=(
+  ReactDOMRe.Style.make
+    color::"#444444"
+    fontSize::"68px"
+    ()
+)/>
+```
+
+It's a labelled (typed!) function call that maps to the familiar style object `{color: '#444444', fontSize: '68px'}`. **Note** that `make` returns an opaque `ReactDOMRe.style` type that you can't read into. We also expose a `ReactDOMRe.Style.combine` that takes in two `style`s and combine them.
+
 ### Working with Refs
 
 There's no ref-specific API! Just a type: `ReactRe.reactRef`. Through the combination of `handler` and `instanceVars`, we can get ref support:
