@@ -342,9 +342,9 @@ And two helpers:
 
 - `domElementToObj : Dom.element => Js.t {..}`: turns a dom element into a Js object whose fields that you can dangerously access: `(ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value`.
 
-- `renderToNodeWithClassName : ReactRe.reactElement => string => unit`: convenience. Finds the (first) element of the provided class name and `render` to it.
+- `renderToElementWithClassName : ReactRe.reactElement => string => unit`: convenience. Finds the (first) element of the provided class name and `render` to it.
 
-- `renderToNodeWithId : ReactRe.reactElement => string => unit`: convenience. Finds the element of the provided id and `render` to it.
+- `renderToElementWithId : ReactRe.reactElement => string => unit`: convenience. Finds the element of the provided id and `render` to it.
 
 ## ReactDOMServer
 

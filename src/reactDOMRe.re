@@ -15,12 +15,12 @@ external _getElementsByClassName : string => array Dom.element =
 external _getElementById : string => option Dom.element =
   "document.getElementById" [@@bs.val] [@@bs.return null_to_opt];
 
-let renderToNodeWithClassName reactElement className => {
+let renderToElementWithClassName reactElement className => {
   let elements = _getElementsByClassName className;
   if (Array.length elements == 0) {
     raise (
       Invalid_argument (
-        "ReactDOMRE.renderToNodeWithClassName: no element of class " ^
+        "ReactDOMRE.renderToElementWithClassName: no element of class " ^
         className ^ " found in the HTML."
       )
     )
@@ -29,12 +29,12 @@ let renderToNodeWithClassName reactElement className => {
   }
 };
 
-let renderToNodeWithId reactElement id =>
+let renderToElementWithId reactElement id =>
   switch (_getElementById id) {
   | None =>
     raise (
       Invalid_argument (
-        "ReactDOMRE.renderToNodeWithId : no element of id " ^ id ^ " found in the HTML."
+        "ReactDOMRE.renderToElementWithId : no element of id " ^ id ^ " found in the HTML."
       )
     )
   | Some element => render reactElement element
