@@ -194,7 +194,7 @@ In addition to the default component definitions, add:
 
 ##### JsProps
 Add:
-- `jsProps`, the type of the props passed to you from the JS side, which should be `Js.t {. whatever: here}`, like so:
+- `jsProps`, the type of the props passed to you from the JS side, which should be `Js.t {. myField: myType}`, like so:
 
   ```reason
   type jsProps = Js.t {.
@@ -209,21 +209,21 @@ Add:
   let jsPropsToReasonProps = Some (fun jsProps => {message: jsProps##message, count: Js.Null_undefined.to_opt jsProps##count});
   ```
 
-On the JS side, you can require your component like so:
-
-```js
-var ReasonComponent = require('reasonComponent').comp;
-// make sure you're passing the correct data types!
-<ReasonComponent message="hello" />
-```
-
-Every Reason-React component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned [here](#include-reactrecreatecomponent-mycomponent).
-
 ### Interop With Existing JavaScript Components
 While it's nice to marvel at OCaml's great type system, Reason-React's slick API, BuckleScript's mind-blowing idiomatic output, our toolchain's superb static analysis, etc., it's unpragmatic to suddenly convert over all existing JS components to Reason. We've exposed simple hooks to talk to the JS components.
 
 #### ReactJS Using Reason-React
-See [jsProps](#jsprops).
+(Also see [jsProps](#jsprops) for Reason <-> JS `props` conversion.)
+
+On the JS side, you can require your component like so:
+
+```js
+var MyReasonComponent = require('myReasonComponent').comp;
+// make sure you're passing the correct data types! See the jsProps section
+<MyReasonComponent message="hello" />
+```
+
+Every Reason-React component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned [here](#include-reactrecreatecomponent-mycomponent).
 
 #### Reason-React Using ReactJs
 We only need a single hook, `wrapPropsShamelessly` to make calling a JS component work! Assuming we have `Banner.js`, here's how we'd use it in Reason:
