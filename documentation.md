@@ -249,6 +249,16 @@ let createElement
     };
 ```
 
+In the rare case where the JS component doesn't accept any prop:
+
+```reason
+/* Note that here it's a binding =, not a function =>. We're currying. See the section on `createElement`.
+let createElement = 
+  ReactRe.wrapPropsShamelessly 
+    foo 
+    (Js.Obj.empty ()) /* BuckleScript bindings. Represents the empty `{}` JS object.
+```
+
 Usage:
 
 ```reason
