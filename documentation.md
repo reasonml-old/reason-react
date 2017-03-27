@@ -90,7 +90,7 @@ The component API uses OCaml's module system rather than our own `createClass`-l
 See the `examples/` folder. The components declaration structure should look quite familiar to those who've worked with ReactJS. To declare a React component class, you'd create a normal OCaml module and include some pre-declared module definitions. Here's the basic version:
 
 ```reason
-/* This is like the object declaration part of RaectJS' `React.createClass(theObjectSpec)` */
+/* This is like the object declaration part of ReactJS' `React.createClass(theObjectSpec)` */
 module MyComponent = {
   include ReactRe.Component.Stateful;
   let name = "MyComponent";
@@ -106,6 +106,25 @@ include ReactRe.CreateComponent MyComponent;
 
 /* The actual call exposed to consumers, via JSX */
 let createElement ::foo ::bar=? => wrapProps {foo, bar};
+```
+
+Or, with a single prop:
+
+```reason
+module MyComponent = {
+  include ReactRe.Component.Stateful;
+  let name = "MyComponent";
+  type props = {
+    foo: string,
+  };
+  /*...*/
+};
+
+/* This is the equivalent of `React.createClass` */
+include ReactRe.CreateComponent MyComponent;
+
+/* The actual call exposed to consumers, via JSX */
+let createElement ::foo => wrapProps {foo: foo};
 ```
 
 #### Last Two Expressions
