@@ -122,7 +122,7 @@ module MyComponent = {
 
 include ReactRe.CreateComponent MyComponent;
 let createElement ::foo => wrapProps {foo: foo};
-// ^ Note: there's no prop punning for records with a single field. Careful! `{foo}` has a different meaning.
+// ^ Note: there's no record field punning sugar for records with a single field. Careful! `{foo}` has a different meaning.
 ```
 
 #### Last Two Expressions
