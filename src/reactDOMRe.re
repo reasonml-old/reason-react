@@ -667,8 +667,8 @@ module Style = {
     opacity::string? =>
 
     /* Backgrounds and Borders Level 3 - CR */
-    backgroundRepeat::string? =>
-    backgroundAttachment::string? =>
+    /* backgroundRepeat - already defined by CSS2Properties */
+    /* backgroundAttachment - already defined by CSS2Properties */
     backgroundOrigin::string? =>
     backgroundSize::string? =>
     backgroundClip::string? =>
@@ -734,7 +734,7 @@ module Style = {
     order::string? =>
 
     /* Text Decoration Level 3 - CR */
-    textDecoration::string? =>
+    /* textDecoration - already defined by CSS2Properties */
     textDecorationColor::string? =>
     textDecorationLine::string? =>
     textDecorationSkip::string? =>
@@ -743,15 +743,15 @@ module Style = {
     textEmphasisColor::string? =>
     textEmphasisPosition::string? =>
     textEmphasisStyle::string? =>
-    textShadow::string? =>
+    /* textShadow - already defined by CSS2Properties */
     textUnderlinePosition::string? =>
 
     /* Fonts Level 3 - CR */
     fontFeatureSettings::string? =>
     fontKerning::string? =>
     fontLanguageOverride::string? =>
-    fontSizeAdjust::string? =>
-    fontStretch::string? =>
+    /* fontSizeAdjust - already defined by CSS2Properties */
+    /* fontStretch - already defined by CSS2Properties */
     fontSynthesis::string? =>
     forntVariantAlternates::string? =>
     fontVariantCaps::string? =>
@@ -843,11 +843,11 @@ module Style = {
     /* Text Level 3 - LC */
     hangingPunctuation::string? =>
     hyphens::string? =>
-    letterSpacing::string? =>
+    /* letterSpacing - already defined by CSS2Properties */
     lineBreak::string? =>
     overflowWrap::string? =>
     tabSize::string? =>
-    textAlign::string? =>
+    /* textAlign - already defined by CSS2Properties */
     textAlignLast::string? =>
     textJustify::string? =>
     wordBreak::string? =>
@@ -880,8 +880,8 @@ module Style = {
     transformStyle::string? =>
 
     /* Box Alignment Level 3 - WD */
-    alignContent::string? =>
-    alignItems::string? =>
+    /* alignContent - already defined by Flexible Box Layout */
+    /* alignItems - already defined by Flexible Box Layout */
     justifyItems::string? =>
     justifySelf::string? =>
     placeContent::string? =>
