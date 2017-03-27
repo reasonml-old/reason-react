@@ -114,9 +114,7 @@ Or, with a single prop:
 module MyComponent = {
   include ReactRe.Component.Stateful;
   let name = "MyComponent";
-  type props = {
-    foo: string,
-  };
+  type props = {foo: string};
   /*...*/
 };
 
