@@ -120,10 +120,7 @@ module MyComponent = {
   /*...*/
 };
 
-/* This is the equivalent of `React.createClass` */
 include ReactRe.CreateComponent MyComponent;
-
-/* The actual call exposed to consumers, via JSX */
 let createElement ::foo => wrapProps {foo: foo};
 ```
 
