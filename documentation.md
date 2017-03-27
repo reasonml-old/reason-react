@@ -121,7 +121,7 @@ module MyComponent = {
 };
 
 include ReactRe.CreateComponent MyComponent;
-let createElement ::foo => wrapProps {foo: foo};
+let createElement ::foo => wrapProps {foo: foo}; // This syntax is necessary for wrapping a single prop
 ```
 
 #### Last Two Expressions
