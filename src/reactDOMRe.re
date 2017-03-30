@@ -521,7 +521,7 @@ external props :
   vocab::string? =>
 
   /* react-specific */
-  dangerouslySetInnerHTML::string? =>
+  dangerouslySetInnerHTML::Js.t {. __html: string }? =>
   suppressContentEditableWarning::Js.boolean? =>
 
   unit =>
