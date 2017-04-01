@@ -379,10 +379,20 @@ Reason-React's equivalent `ReactDOMServerRe` exposes:
 
 - `renderToStaticMarkup : ReactRe.reactElement => string`
 
+## Converting Over ReactJS Idioms
+
+### Passing in Components Class as a Prop
+
+In ReactJS, `<Menu banner=MyBanner />` is easy; in Reason-React, we can't trivially pass the whole component module ([explanations](http://facebook.github.io/reason/modules.html#modules-basic-modules)). Solution:
+
+```reason
+<Menu bannerFunc=(fun prop1 prop2 => <MyBanner message=prop1 count=prop2 />) />
+```
+
 ## Miscellaneous
 
 - Reason-React doesn't support ReactJS context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
-- For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
-- Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
-- Since the mixins aren't provided by Reason-React proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
+  - For us, the runtime metaprogramming of mixing in declarations from other modules is statically analyzed and compiled away (see the output), saving us code initiation cost.
+  - Mixins are statically typed and prevent funny (ab)uses-cases. They're constrained to be easy to understand.
+  - Since the mixins aren't provided by Reason-React proper, there's no library-specific learning overhead/magic mixin behavior (e.g. React.createClass's mixin will merge/override/warn in certain mixin properties).
