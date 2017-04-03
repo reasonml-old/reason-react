@@ -308,6 +308,8 @@ See also the section on [createElement](#createelement).
 
 Reason-React events map cleanly to ReactJS [synthetic events](https://facebook.github.io/react/docs/events.html). More info in the [inline docs](https://github.com/reasonml/reason-react/blob/94b22c3ecad4374d00266727250694fb193b63e2/src/reactEventRe.rei#L1).
 
+If you're accessing fields on your event object, like `event.target.value`, see [Working with DOM](#working-with-dom) below.
+
 ### Working with Styles
 
 Since CSS-in-JS is all the rage right now, we'll recommend our official pick soon. In the meantime, for inline styles, there's the `ReactDOMRe.Style.make` API:
@@ -352,6 +354,12 @@ let callSomethingDangerous componentBag =>
   | Some r => (ReactRe.refToJsObj r)##someMethod 1 2 3 /* I solemnly swear that I am up to no good */
   };
 ```
+
+If you're attaching `ref` on a DOM component, the type of the ref in the ref callback is `DOM.element`. See [Working with DOM](#working-with-dom) below for usage.
+
+### Working with DOM
+
+The `ReactDOMRe` module below exposes an unsafe `domElementToObj`. That's all you need. Alternatively, we have experimental DOM bindings at [reason-js](https://github.com/BuckleTypes/reason-js).
 
 ## ReactDOM
 
