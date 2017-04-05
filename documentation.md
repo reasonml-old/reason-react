@@ -268,9 +268,9 @@ In the rare case where the JS component doesn't accept any prop:
 
 ```reason
 /* Note that here it's a binding =, not a function =>. We're currying. See the section on `createElement`. */
-let createElement = 
-  ReactRe.wrapPropsShamelessly 
-    foo 
+let createElement =
+  ReactRe.wrapPropsShamelessly
+    foo
     (Js.Obj.empty ()) /* BuckleScript bindings. Represents the empty `{}` JS object. */
 ```
 
@@ -296,7 +296,7 @@ What can be a `reactElement`?
 - String, but only through `ReactRe.stringToElement myString`.
 - The null element, `ReactRe.nullElement` (BuckleScript's `Js.null` won't work).
 - `array ReactRe.reactElement`, but only through `ReactRe.arrayToElement myArray`.
-- `list ReactRe.reactElement`, a helper implemented as `ReactRe.arrayToElement (Array.of_list myList)`
+- `list ReactRe.reactElement`, through `ReactRe.listToElement` (a helper implemented as `ReactRe.arrayToElement (Array.of_list myList)`).
 
 ReactJS children must be typed as `Js.null_undefined ReactRe.reactJsChildren`. They can be converted into a `list ReactRe.reactElement` with `ReactRe.jsChildrenToReason myJSChildren`;
 
