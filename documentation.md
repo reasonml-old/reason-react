@@ -371,6 +371,8 @@ Reason-React's equivalent `ReactDOMRe` exposes:
 
 - `findDOMNode : ReactRe.reactRef => Dom.element`
 
+- `objToDOMProps : Js.t {..} => reactDOMProps` (see use-case in [Invalid Prop Name](invalid-prop-name))
+
 And two helpers:
 
 - `domElementToObj : Dom.element => Js.t {..}`: turns a dom element into a Js object whose fields that you can dangerously access: `(ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value`.
@@ -396,6 +398,20 @@ In ReactJS, `<Menu banner=MyBanner />` is easy; in Reason-React, we can't trivia
 ```reason
 <Menu bannerFunc=(fun prop1 prop2 => <MyBanner message=prop1 count=prop2 />) />
 ```
+
+### Invalid Prop Name
+Prop names like `type` (as in `<input type="text" />`) aren't syntactically valid; `type` is a reserved keyword in Reason/OCaml. Use `<input _type="text" />` instead. This follows BuckleScript's [name mangling rules](http://bloomberg.github.io/bucklescript/Manual.html#_object_label_translation_convention).
+
+For `data-*` and `aria-*`, this is a bit trickier; You'd currently need to resort to using `ReactDOMRe.objToDOMProps` + the underlying desugared JSX call:
+
+```reason
+ReactDOMRe.createElement
+  "li"
+  props::(ReactDOMRe.objToDOMProps {"className": "foo", "aria-selected": true})
+  [|child1, child2|]
+```
+
+For non-dom components, you'd need to expose valid prop names.
 
 ## Miscellaneous
 

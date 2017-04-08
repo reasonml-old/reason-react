@@ -45,6 +45,9 @@ module Synthetic = {
   external persist : unit = "" [@@bs.send.pipe: synthetic 'a];
 };
 
+/* Cast any event type to the general synthetic type. This is safe, since synthetic is more general */
+external toSyntheticEvent: synthetic 'a => Synthetic.t = "%identity";
+
 module Clipboard = {
   type tag;
   type t = synthetic tag;

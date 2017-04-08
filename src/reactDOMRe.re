@@ -50,6 +50,8 @@ external domElementToObj : Dom.element => Js.t {..} = "%identity";
 
 type reactDOMProps;
 
+external objToDOMProps : Js.t {..} => reactDOMProps = "%identity";
+
 type style;
 
 /* This list isn't exhaustive. We'll add more as we go. */
