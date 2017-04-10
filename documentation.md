@@ -1,7 +1,5 @@
 __This documentation assumes relative familiarity with ReactJS.__
 
-If reading a linear doc bores you, try this [alternative tutorial](https://github.com/glennsl/reason-react-quick-start/blob/master/quick-start.md)!
-
 ## JSX
 
 The JSX ppx transform resides in the Reason repo itself. The documentation is [here](https://github.com/facebook/reason/tree/master/src#jsx-transform-for-reactjs).
@@ -414,6 +412,8 @@ ReactDOMRe.createElement
 For non-dom components, you'd need to expose valid prop names.
 
 ## Miscellaneous
+
+If reading a linear doc bores you, try this [alternative tutorial](https://github.com/glennsl/reason-react-quick-start/blob/master/quick-start.md)!
 
 - Reason-React doesn't support ReactJS context (yet).
 - No mixins/yes mixins =). OCaml's `include` is actually a form of mixin! With the bindings, you're essentially mixing in functionalities. There are several differences:
