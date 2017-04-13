@@ -2,7 +2,7 @@
 
 Come join us in [Discord](https://discord.gg/reasonml)!
 
-![reason-react](https://cloud.githubusercontent.com/assets/1909539/23924174/dac7a082-08c6-11e7-8243-43ef0133dc52.png)
+![reason-react](https://cloud.githubusercontent.com/assets/1909539/25026859/84a5a4e8-205d-11e7-857b-777ce6909cfd.png)
 
 ```sh
 npm install --save reason-react
