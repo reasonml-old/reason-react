@@ -59,6 +59,9 @@ external props :
   key::string? =>
   ref::(Dom.element => unit)? =>
 
+  /* react textarea/input */
+  defaultValue::string? =>
+
   /* global html attributes */
   accessKey::string? =>
   className::string? => /* substitute for "class" */
