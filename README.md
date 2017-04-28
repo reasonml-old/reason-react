@@ -15,13 +15,13 @@ See https://github.com/chenglou/reason-react-example
 
 See [documentation.md](documentation.md)
 
-## Development
+## Contribute
 
 ```sh
 git clone https://github.com/reasonml/reason-react.git
 cd reason-react
 npm install
 npm start
-# in another window
-npm run build
 ```
+
+Then add some files somewhere (don't forget to change `bsconfig.json`, if needed).

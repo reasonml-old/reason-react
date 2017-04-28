@@ -6,7 +6,6 @@
   "scripts": {
     "test": "exit 0",
     "start": "bsb -make-world -w",
-    "build": "webpack -w",
     "clean": "bsb -clean-world && rm -f finalOutput/*.js"
   },
   "keywords": [],
