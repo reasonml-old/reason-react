@@ -329,17 +329,19 @@ There's no ref-specific API! Just a type: `ReactRe.reactRef`. Through the combin
 
 ```reason
 type instanceVars = {
-  mutable divRef: option Dom.element, /* dom refs directly return the element, no need for the `reactRef` type */
+  mutable divRef: option Dom.element, /* dom refs directly return the element or null, no need for the `reactRef` type */
   mutable componentRef: option ReactRe.reactRef
 };
 let getInstanceVars () => {divRef: None, componentRef: None};
-let getDivRef componentBag theRef => componentBag.instanceVars.divRef = Some theRef;
+let getDivRef componentBag theRef => componentBag.instanceVars.divRef = Js.Null.to_opt theRef;
 let getComponentRef componentBag theRef => componentBag.instanceVars.componentRef = Some theRef;
 let render {props, handler} =>
   <MyComp ref=(handler getComponentRef)>
     <div ref=(handler getDivRef) />
   </MyComp>
 ```
+
+**Note** how [React DOM refs can be null](https://github.com/facebook/react/issues/9328#issuecomment-298438237). Which is why `getDivRef` converts `theRef` from a [JS nullable](http://bloomberg.github.io/bucklescript/Manual.html#_null_and_undefined) to an OCaml `option` (Some/None).
 
 Reason-React ref only accept callbacks. The string `ref` from ReactJS is a deprecated feature, which couldn't be easily removed due to the lack of types in JS.
 
