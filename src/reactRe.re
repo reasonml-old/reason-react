@@ -257,8 +257,9 @@ module CreateComponent
   type jsComponentThis_ =
     ComponentBase.jsComponentThis
       CompleteComponentSpec.state CompleteComponentSpec.props CompleteComponentSpec.instanceVars;
+
   external createClassInternalHack : Js.t 'classSpec => reactClass =
-    "createClass" [@@bs.val] [@@bs.module "react"];
+    "create-react-class" [@@bs.module];
   let maxMemoizedCount = 30;
   let comp =
     createClassInternalHack (
