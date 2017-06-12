@@ -12,7 +12,7 @@ Reason-React's uses idiomatic Reason/OCaml modules to get rid of ReactJS' `this`
 
 ```reason
 /* normal record destructuring. Pick what you need! */
-let render {props, state} => <div className=props.className>(ReactRe.stringToElement state.message)</div>
+let render {props, state} => <div className=props.className>(ReactRe.stringToElement state.message)</div>;
 ```
 
 #### `props`, `state`
@@ -49,12 +49,12 @@ type instanceVars = {mutable intervalID: option int};
 let getInstanceVars () => {intervalID: None};
 let componentDidMount {instanceVars} => {
   instanceVars.intervalID = Some (someBindingsToSetInterval (fun () => Js.log "testing!") 1000);
-  None
+  None;
 };
 let componentWillUnmount {instanceVars} =>
   switch instanceVars.intervalID {
-  | None => ()
-  | Some id => someBindingsToClearInterval id
+  | None => ();
+  | Some id => someBindingsToClearInterval id;
   };
 ```
 
@@ -157,7 +157,7 @@ Note that Reason functions can have default values and be optional. This maps we
 /*...*/
 type props = unit;
 /*...*/
-let createElement = wrapProps ()
+let createElement = wrapProps ();
 ```
 
 #### The Module Itself
@@ -233,7 +233,7 @@ On the JS side, you can require your component like so:
 ```js
 var MyReasonComponent = require('myReasonComponent').comp;
 // make sure you're passing the correct data types! See the jsProps section
-<MyReasonComponent message="hello" />
+<MyReasonComponent message="hello" />;
 ```
 
 Every Reason-React component expose a `comp` value, implicitly, when doing `include ReactRe.CreateComponent MyComponentModule;`. This is mentioned [here](#include-reactrecreatecomponent-mycomponent).
@@ -338,7 +338,7 @@ let getComponentRef componentBag theRef => componentBag.instanceVars.componentRe
 let render {props, handler} =>
   <MyComp ref=(handler getComponentRef)>
     <div ref=(handler getDivRef) />
-  </MyComp>
+  </MyComp>;
 ```
 
 **Note** how [React DOM refs can be null](https://github.com/facebook/react/issues/9328#issuecomment-298438237). Which is why `getDivRef` converts `theRef` from a [JS nullable](http://bloomberg.github.io/bucklescript/Manual.html#_null_and_undefined) to an OCaml `option` (Some/None).
@@ -350,8 +350,8 @@ We also expose an escape hatch `ReactRe.refToJsObj` (type: `ReactRe.reactRef => 
 ```reason
 let callSomethingDangerous componentBag =>
   switch componentBag.instanceVars.theRef {
-  | None => ()
-  | Some r => (ReactRe.refToJsObj r)##someMethod 1 2 3 /* I solemnly swear that I am up to no good */
+  | None => ();
+  | Some r => (ReactRe.refToJsObj r);##someMethod 1 2 3 /* I solemnly swear that I am up to no good */
   };
 ```
 
